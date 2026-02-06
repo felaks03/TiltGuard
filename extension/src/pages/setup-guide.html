@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TiltGuard - Guía de Configuración Avanzada</title>
+    <link rel="stylesheet" href="../styles/setup-guide.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 Protección Avanzada TiltGuard</h1>
+            <p>Haz tu extensión inremovible (opcional pero recomendado)</p>
+        </div>
+
+        <div class="controls">
+            <div class="os-detector">
+                <p>Selecciona tu sistema operativo:</p>
+                <select id="os-selector" class="os-select">
+                    <option value="windows">🪟 Windows</option>
+                    <option value="mac">🍎 macOS</option>
+                    <option value="linux">🐧 Linux</option>
+                </select>
+            </div>
+
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="install">📥 Instalación</button>
+                <button class="mode-btn" data-mode="uninstall">🗑️ Desinstalación</button>
+            </div>
+        </div>
+
+        <!-- WINDOWS INSTALL -->
+        <div class="guide-section" id="guide-windows-install" style="display: none;">
+            <h2>🪟 Windows - Instalación</h2>
+            <div class="warning-box">
+                <p>⚠️ <strong>Importante:</strong> Necesitarás acceso de administrador. Se te pedirá permiso en el paso
+                    2.</p>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Copia el ID de la extensión</h3>
+                        <p>Abre Chrome y accede a <code>chrome://extensions</code></p>
+                        <p>Localiza "TiltGuard" y copia su ID (el código largo debajo del nombre)</p>
+                        <p style="margin-top: 12px; font-size: 12px; color: #666;">Tu ID es:</p>
+                        <div class="code-block"
+                            style="background: #fff3cd; color: #856404; border-left-color: #ffc107;">
+                            <span class="extension-id-example">cargando...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Abre el Editor de Registro (Regedit)</h3>
+                        <ol style="margin: 8px 0; padding-left: 20px;">
+                            <li>Presiona <kbd>Win + R</kbd></li>
+                            <li>Escribe: <code>regedit</code></li>
+                            <li>Presiona Enter</li>
+                        </ol>
+                        <p style="margin-top: 12px;"><strong>Aparecerá un cuadro pidiendo permiso - Haz clic en
+                                "Sí"</strong></p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Navega a la carpeta de Chrome</h3>
+                        <p style="margin-bottom: 12px;">En el panel izquierdo, haz clic en las flechitas para expandir
+                            estas carpetas <strong>en orden</strong>:</p>
+                        <div class="code-block"
+                            style="text-align: left; background: #f0f0f0; border-left-color: #667eea;">
+                            <strong>HKEY_LOCAL_MACHINE</strong><br>
+                            &nbsp;&nbsp;└─ <strong>Software</strong><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ <strong>Policies</strong><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ <strong>Google</strong><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─
+                            <strong>Chrome</strong> (si no existe, créala)
+                        </div>
+                        <p style="margin-top: 12px; font-size: 12px; color: #666;">💡 Si no existe "Chrome", haz clic
+                            derecho en "Google" → Nuevo → Clave → escribe "Chrome"</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Crea la carpeta ExtensionInstallForcelist</h3>
+                        <ol style="margin: 8px 0; padding-left: 20px;">
+                            <li>Haz <strong>clic derecho</strong> en "Chrome"</li>
+                            <li>Selecciona "Nuevo" → "Clave"</li>
+                            <li>Escribe: <code>ExtensionInstallForcelist</code></li>
+                            <li>Presiona Enter</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Añade tu extensión a la lista</h3>
+                        <ol style="margin: 8px 0; padding-left: 20px;">
+                            <li>Haz <strong>clic derecho</strong> en "ExtensionInstallForcelist"</li>
+                            <li>Selecciona "Nuevo" → "Valor de cadena"</li>
+                            <li>Nombralo: <code>1</code></li>
+                            <li>Presiona Enter</li>
+                            <li>Se abrirá una ventana de edición. En "Datos del valor" pega:
+                                <div class="code-block" style="margin-top: 8px;">
+                                    tu_extension_id;https://clients2.google.com/service/update2/crx
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>¡Hecho! Reinicia Chrome</h3>
+                        <p><strong>Cierra Regedit y reinicia Chrome por completo.</strong></p>
+                        <p style="margin-top: 8px;">Ahora, si intentas eliminar TiltGuard desde chrome://extensions:</p>
+                        <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+                            <li>❌ No verás el botón "Quitar"</li>
+                            <li>❌ La extensión estará gris (desactivada desde el gestor)</li>
+                            <li>✅ Solo tú (con acceso de admin) puedes desactivarla eliminando el archivo de registro
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAC INSTALL -->
+        <div class="guide-section" id="guide-mac-install" style="display: none;">
+            <h2>macOS</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Obtén el ID de la extensión</h3>
+                        <p>Abre Chrome y ve a <code>chrome://extensions</code></p>
+                        <p>Busca "TiltGuard" y copia el ID</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Cmd + Espacio → Escribe "Terminal" → Enter</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Crea la carpeta de políticas</h3>
+                        <p>Copia este comando:</p>
+                        <div class="code-block">
+                            sudo nano "/Library/Google/Chrome/policies/managed/force_extension.json"
+                        </div>
+                        <p style="margin-top: 12px;">Presiona Enter y escribe tu contraseña</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Crea el archivo de configuración</h3>
+                        <p>Copia este comando:</p>
+                        <div class="code-block">
+                            sudo nano "/Library/Google/Chrome/policies/managed/force_extension.json"
+                        </div>
+                        <p style="margin-top: 12px;">Se abrirá un editor de texto</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Añade la configuración</h3>
+                        <p>Pega este contenido (REEMPLAZA EL ID):</p>
+                        <div class="code-block">
+                            {
+                            "ExtensionInstallForcelist": [
+                            "tu_extension_id;https://clients2.google.com/service/update2/crx"
+                            ]
+                            }
+                        </div>
+                        <p style="margin-top: 12px; font-size: 12px; color: #666;">Tu ID es: <code
+                                style="background: #fff3cd; padding: 4px 8px; color: #856404;"><span class="extension-id-example">cargando...</span></code>
+                            </puarda y cierra</h3>
+                        <p>Presiona <kbd>Ctrl + O</kbd> → Enter (para guardar)</p>
+                        <p>Presiona <kbd>Ctrl + X</kbd> (para cerrar)</p>
+                    </div>
+                </div>
+
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Chrome</h3>
+                        <p><strong>La extensión ahora es inremovible.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LINUX INSTALL -->
+        <div class="guide-section" id="guide-linux-install" style="display: none;">
+            <h2>Linux</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Obtén el ID de la extensión</h3>
+                        <p>Abre Chrome y ve a <code>chrome://extensions</code></p>
+                        <p>Busca "TiltGuard" y copia el ID</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Ctrl + Alt + T</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Crea la carpeta de políticas (si no existe)</h3>
+                        <p>Copia y ejecuta:</p>
+                        <div class="code-block">
+                            sudo mkdir -p /etc/opt/chrome/policies/managed
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Crea el archivo de configuración</h3>
+                        <p>Copia y ejecuta:</p>
+                        <div class="code-block">
+                            sudo nano /etc/opt/chrome/policies/managed/force_extension.json
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Añade la configuración</h3>
+                        <p>Pega este contenido (reemplaza tu_extension_id):</p>
+                        <div class="code-block">
+                            {
+                            "ExtensionInstallForcelist": [
+                            "tu_extension_id;https://clients2.google.com/service/update2/crx"
+                            ]
+                            }
+                        </div>
+                        <p style="margin-top: 12px; font-size: 12px; color: #666;">Tu ID es: <code
+                                style="background: #fff3cd; padding: 4px 8px; color: #856404;"><span class="extension-id-example">cargando...</span></code>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <h3>Guarda y cierra</h3>
+                        <p>Presiona <kbd>Ctrl + O</kbd> → Enter (para guardar)</p>
+                        <p>Presiona <kbd>Ctrl + X</kbd> (para cerrar)</p>
+                    </div>
+                </div>
+
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Chrome</h3>
+                        <p><strong>La extensión ahora es inremovible.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WINDOWS UNINSTALL -->
+        <div class="guide-section" id="guide-windows-uninstall" style="display: none;">
+            <h2>Windows - Desinstalación</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre el Editor de Registro</h3>
+                        <p>Presiona <kbd>Win + R</kbd></p>
+                        <p>Escribe: <code>regedit</code></p>
+                        <p>Presiona Enter</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Navega a la carpeta</h3>
+                        <div class="code-block" style="text-align: left;">
+                            HKEY_LOCAL_MACHINE<br>
+                            &nbsp;&nbsp;└── Software<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── Policies<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── Google<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──
+                            Chrome
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Elimina la clave</h3>
+                        <p>Busca <code>ExtensionInstallForcelist</code></p>
+                        <p>Haz clic derecho → Eliminar</p>
+                        <p>Confirma la eliminación</p>
+                    </div>
+                </div>
+
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Cierra Regedit y reinicia Chrome</h3>
+                        <p><strong>La extensión ahora se puede desinstalar normalmente</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAC UNINSTALL -->
+        <div class="guide-section" id="guide-mac-uninstall" style="display: none;">
+            <h2>macOS - Desinstalación</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Cmd + Espacio → Escribe "Terminal" → Enter</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Elimina el archivo de configuración</h3>
+                        <p>Copia y ejecuta:</p>
+                        <div class="code-block">
+                            sudo rm "/Library/Google/Chrome/policies/managed/force_extension.json"
+                        </div>
+                        <p style="margin-top: 12px;">Escribe tu contraseña cuando se pida</p>
+                    </div>
+                </div>
+
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Chrome</h3>
+                        <p><strong>La extensión ahora se puede desinstalar normalmente</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LINUX UNINSTALL -->
+        <div class="guide-section" id="guide-linux-uninstall" style="display: none;">
+            <h2>Linux - Desinstalación</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Ctrl + Alt + T</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Elimina el archivo de configuración</h3>
+                        <p>Copia y ejecuta:</p>
+                        <div class="code-block">
+                            sudo rm /etc/opt/chrome/policies/managed/force_extension.json
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Chrome</h3>
+                        <p><strong>La extensión ahora se puede desinstalar normalmente</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <button class="done-btn" id="doneBtn">
+                <span class="done-icon">✓</span>
+                Ya lo he instalado
+            </button>
+        </div>
+
+        <div id="requestScreen" class="request-screen" style="display: none;">
+            <div class="request-message">
+                <h2>📋 Solicitar Acceso a Instalaciones</h2>
+                <p>Ya has completado la configuración anteriormente. Si necesitas volver a revisar las guías de
+                    instalación, solicítalo aquí.</p>
+                <button class="request-btn" id="requestAccessBtn">
+                    📋 Solicitar acceso (Timer: 1 min)
+                </button>
+                <p class="request-hint">Después de solicitar, deberás esperar 1 minuto antes de poder acceder de nuevo.
+                </p>
+            </div>
+        </div>
+
+        <div id="cooldownOverlay" class="cooldown-overlay" style="display: none;">
+            <div class="cooldown-message">
+                <h2>⏱️ Guía en espera</h2>
+                <p>Debes esperar antes de volver a acceder a la guía de instalación.</p>
+                <div class="cooldown-timer" id="cooldownTimer">
+                    Tiempo restante: <strong id="cooldownTime">2:00:00</strong>
+                </div>
+                <button class="close-btn" id="closeBtn">
+                    ✕ Cerrar
+                </button>
+                <p class="cooldown-hint">Podrás acceder a la guía cuando expire el tiempo.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../scripts/setup-guide.js"></script>
+</body>
+
+</html>

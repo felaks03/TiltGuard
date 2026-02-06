@@ -4,6 +4,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const countdownElement = document.getElementById("countdown");
   const durationSelect = document.getElementById("blockDuration");
   const link1 = document.getElementById("link1");
+  const advancedSetupBtn = document.getElementById("advancedSetupBtn");
+
+  // Manejar clic en Protección Avanzada
+  advancedSetupBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const guideUrl = chrome.runtime.getURL("src/pages/setup-guide.html");
+    chrome.tabs.create({ url: guideUrl });
+  });
 
   // Manejar clicks en el link
   link1.addEventListener("click", () => {
