@@ -9,6 +9,16 @@
 </head>
 
 <body>
+    <div id="accessBlockOverlay" class="access-block-overlay" style="display: none;">
+        <div class="access-block-content" id="accessBlockContent">
+            <h2>🔐 Acceso Restringido</h2>
+            <p>Ya has completado la configuración. Si necesitas volver a revisar las guías, solicita acceso.</p>
+            <button class="request-btn" id="requestAccessBtn">
+                📋 Solicitar acceso
+            </button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>🔒 Protección Avanzada TiltGuard</h1>
@@ -412,33 +422,6 @@
                 <span class="done-icon">✓</span>
                 Ya lo he instalado
             </button>
-        </div>
-
-        <div id="requestScreen" class="request-screen" style="display: none;">
-            <div class="request-message">
-                <h2>📋 Solicitar Acceso a Instalaciones</h2>
-                <p>Ya has completado la configuración anteriormente. Si necesitas volver a revisar las guías de
-                    instalación, solicítalo aquí.</p>
-                <button class="request-btn" id="requestAccessBtn">
-                    📋 Solicitar acceso (Timer: 1 min)
-                </button>
-                <p class="request-hint">Después de solicitar, deberás esperar 1 minuto antes de poder acceder de nuevo.
-                </p>
-            </div>
-        </div>
-
-        <div id="cooldownOverlay" class="cooldown-overlay" style="display: none;">
-            <div class="cooldown-message">
-                <h2>⏱️ Guía en espera</h2>
-                <p>Debes esperar antes de volver a acceder a la guía de instalación.</p>
-                <div class="cooldown-timer" id="cooldownTimer">
-                    Tiempo restante: <strong id="cooldownTime">2:00:00</strong>
-                </div>
-                <button class="close-btn" id="closeBtn">
-                    ✕ Cerrar
-                </button>
-                <p class="cooldown-hint">Podrás acceder a la guía cuando expire el tiempo.</p>
-            </div>
         </div>
     </div>
 

@@ -1,54 +1,108 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // TESTING: Limpiar datos guardados
-  chrome.storage.sync.remove(["setupGuideCooldownUntil", "setupGuideCompleted"]);
-  
-  // Proceder normalmente sin bloqueos
-  initializeGuide();
+  // Verificar si el usuario ya completó la guía
+  chrome.storage.sync.get(["setupGuideCompleted", "accessUntil"], (result) => {
+    if (result.setupGuideCompleted) {
+      // Si ya completó, mostrar la guía pero con bloqueo
+      initializeGuide();
+
+      // Verificar si hay un timer activo
+      if (result.accessUntil) {
+        const now = Date.now();
+        if (now < result.accessUntil) {
+          // Timer aún activo, mostrar el timer
+          showAccessBlockOverlay();
+          showAccessTimer(
+            result.accessUntil,
+            document.getElementById("accessBlockContent"),
+          );
+          return;
+        } else {
+          // Timer expiró, limpiar y permitir acceso
+          chrome.storage.sync.remove(["accessUntil"]);
+          return;
+        }
+      }
+
+      // No hay timer activo, mostrar overlay bloqueante normal
+      showAccessBlockOverlay();
+      return;
+    }
+
+    // Proceder normalmente si es la primera vez
+    initializeGuide();
+  });
 });
 
-function showRequestScreen() {
-  // Ocultar contenido principal
-  document.querySelector(".controls").style.display = "none";
-  document.querySelectorAll(".guide-section").forEach((section) => {
-    section.style.display = "none";
+function showAccessBlockOverlay() {
+  const overlay = document.getElementById("accessBlockOverlay");
+  overlay.style.display = "flex";
+
+  const requestBtn = document.getElementById("requestAccessBtn");
+  const blockContent = document.getElementById("accessBlockContent");
+
+  requestBtn.addEventListener("click", async () => {
+    try {
+      // Obtener tiempo actual de la API
+      const response = await fetch(
+        "https://worldtimeapi.org/api/timezone/Etc/UTC",
+      );
+      if (!response.ok) throw new Error("API error");
+
+      const data = await response.json();
+      const currentTime = new Date(data.datetime).getTime();
+
+      // Calcular tiempo de espera: 15 segundos desde ahora
+      const accessUntil = currentTime + 15 * 1000;
+
+      showAccessTimer(accessUntil, blockContent);
+    } catch (error) {
+      console.error("Error al solicitar acceso:", error);
+      // Fallback: usar hora local si la API falla
+      const accessUntil = Date.now() + 15 * 1000;
+      showAccessTimer(accessUntil, blockContent);
+    }
   });
-
-  // Mostrar pantalla de solicitud
-  const requestScreen = document.getElementById("requestScreen");
-  requestScreen.style.display = "flex";
-
-  const requestAccessBtn = document.getElementById("requestAccessBtn");
-  requestAccessBtn.addEventListener("click", activateTimer);
 }
 
-async function activateTimer() {
-  try {
-    // Obtener tiempo actual de la API
-    const response = await fetch(
-      "https://worldtimeapi.org/api/timezone/Etc/UTC",
-    );
-    if (!response.ok) throw new Error("API error");
+function showAccessTimer(accessUntil, blockContent) {
+  // Guardar el timestamp en storage para persistencia
+  chrome.storage.sync.set({ accessUntil: accessUntil });
 
-    const data = await response.json();
-    const currentTime = new Date(data.datetime).getTime();
+  // Cambiar contenido del bloqueo a timer
+  blockContent.innerHTML = `
+    <h2>⏱️ Esperando acceso...</h2>
+    <p>Tu acceso estará disponible en:</p>
+    <div class="access-timer">
+      <strong id="accessTime">0:15</strong>
+    </div>
+  `;
 
-    // Calcular tiempo de espera: 1 minuto desde ahora
-    const cooldownUntil = currentTime + 1 * 60 * 1000;
+  function updateAccessDisplay() {
+    const now = Date.now();
+    const remaining = accessUntil - now;
 
-    // Guardar en storage
-    chrome.storage.sync.set({ setupGuideCooldownUntil: cooldownUntil }, () => {
-      showCooldownScreen(cooldownUntil);
-      document.getElementById("requestScreen").style.display = "none";
-    });
-  } catch (error) {
-    console.error("Error al activar timer:", error);
-    // Fallback: usar hora local si la API falla
-    const cooldownUntil = Date.now() + 1 * 60 * 1000;
-    chrome.storage.sync.set({ setupGuideCooldownUntil: cooldownUntil }, () => {
-      showCooldownScreen(cooldownUntil);
-      document.getElementById("requestScreen").style.display = "none";
-    });
+    if (remaining <= 0) {
+      // Acceso otorgado, cerrar overlay y limpiar storage
+      document.getElementById("accessBlockOverlay").style.display = "none";
+      chrome.storage.sync.remove(["accessUntil"]);
+      return;
+    }
+
+    // Calcular minutos y segundos
+    const totalSeconds = Math.floor(remaining / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    const timeString = `${minutes}:${String(seconds).padStart(2, "0")}`;
+    const accessTimeEl = document.getElementById("accessTime");
+    if (accessTimeEl) {
+      accessTimeEl.textContent = timeString;
+    }
   }
+
+  // Actualizar cada segundo
+  updateAccessDisplay();
+  setInterval(updateAccessDisplay, 1000);
 }
 
 function initializeGuide() {
@@ -113,7 +167,6 @@ function showCooldownScreen(cooldownUntil) {
   document.querySelectorAll(".guide-section").forEach((section) => {
     section.style.display = "none";
   });
-  document.getElementById("requestScreen").style.display = "none";
 
   // Mostrar pantalla de cooldown
   const overlay = document.getElementById("cooldownOverlay");
@@ -131,9 +184,7 @@ function showCooldownScreen(cooldownUntil) {
 
     if (remaining <= 0) {
       // Cooldown expirado, cerrar ventana
-      chrome.storage.sync.remove(["setupGuideCooldownUntil"], () => {
-        window.close();
-      });
+      window.close();
       return;
     }
 
