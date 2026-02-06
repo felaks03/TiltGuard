@@ -87,6 +87,49 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 });
 
+// Funciones para la modal de confirmación
+let pendingAction = null;
+
+function showConfirmationModal(title, message, onConfirm) {
+  const confirmationModal = document.getElementById("confirmationModal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalMessage = document.getElementById("modalMessage");
+  const modalCancelBtn = document.getElementById("modalCancelBtn");
+  const modalConfirmBtn = document.getElementById("modalConfirmBtn");
+
+  modalTitle.textContent = title;
+  modalMessage.textContent = message;
+  confirmationModal.classList.add("active");
+  pendingAction = onConfirm;
+
+  // Limpiar listeners anteriores
+  const newCancelBtn = modalCancelBtn.cloneNode(true);
+  const newConfirmBtn = modalConfirmBtn.cloneNode(true);
+  modalCancelBtn.parentNode.replaceChild(newCancelBtn, modalCancelBtn);
+  modalConfirmBtn.parentNode.replaceChild(newConfirmBtn, modalConfirmBtn);
+
+  newCancelBtn.addEventListener("click", closeConfirmationModal);
+  newConfirmBtn.addEventListener("click", () => {
+    if (pendingAction) {
+      pendingAction();
+    }
+    closeConfirmationModal();
+  });
+
+  // Cerrar modal si se hace clic fuera
+  confirmationModal.addEventListener("click", (e) => {
+    if (e.target === confirmationModal) {
+      closeConfirmationModal();
+    }
+  });
+}
+
+function closeConfirmationModal() {
+  const confirmationModal = document.getElementById("confirmationModal");
+  confirmationModal.classList.remove("active");
+  pendingAction = null;
+}
+
 function showRequestAccessOverlay() {
   const overlay = document.getElementById("accessBlockOverlay");
   overlay.style.display = "flex";
@@ -539,7 +582,17 @@ function initializeGuide() {
       "[initializeGuide] Done button clicked. MainType: " +
         getCurrentMainType(),
     );
-    completeSetup();
+    const mainType = getCurrentMainType();
+    const title = mainType === "install" 
+      ? "¿Completar instalación?"
+      : "¿Desinstalar la extensión?";
+    const message = mainType === "install"
+      ? "Confirma que has completado todos los pasos de instalación."
+      : "Esto desactivará el bloqueo de la extensión. ¿Deseas continuar?";
+    
+    showConfirmationModal(title, message, () => {
+      completeSetup();
+    });
   });
 
   // Mostrar la guía inicial (instalación)

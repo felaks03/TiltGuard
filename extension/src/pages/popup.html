@@ -22,7 +22,16 @@
 
       <div class="step">
         <h3>Paso 2</h3>
-        <p class="message">Configura tus Settings</p>
+        <div class="step-with-help">
+          <p class="message">Configura tus Settings</p>
+          <button id="helpBtn" class="help-btn" title="Ver guía">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="11"></circle>
+              <path d="M12 16v-4"></path>
+              <circle cx="12" cy="7.5" r="0.5" fill="currentColor"></circle>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div class="step">
@@ -42,8 +51,21 @@
     <div class="advanced-setup">
       <a href="#" id="advancedSetupBtn" class="setup-link">🔒 Protección Avanzada</a>
     </div>
+  </div>
 
-    <script src="../scripts/popup.js"></script>
+  <!-- Modal de confirmación -->
+  <div id="confirmationModal" class="modal">
+    <div class="modal-content">
+      <h2 id="modalTitle">¿Estás seguro?</h2>
+      <p id="modalMessage">Por favor, confirma tu acción</p>
+      <div class="modal-buttons">
+        <button id="modalCancelBtn" class="btn btn-cancel">Cancelar</button>
+        <button id="modalConfirmBtn" class="btn btn-confirm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../scripts/popup.js"></script>
 </body>
 
 </html>

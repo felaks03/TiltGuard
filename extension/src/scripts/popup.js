@@ -5,12 +5,43 @@ document.addEventListener("DOMContentLoaded", () => {
   const durationSelect = document.getElementById("blockDuration");
   const link1 = document.getElementById("link1");
   const advancedSetupBtn = document.getElementById("advancedSetupBtn");
+  const helpBtn = document.getElementById("helpBtn");
+
+  // Elementos de la modal
+  const confirmationModal = document.getElementById("confirmationModal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalMessage = document.getElementById("modalMessage");
+  const modalCancelBtn = document.getElementById("modalCancelBtn");
+  const modalConfirmBtn = document.getElementById("modalConfirmBtn");
+
+  let pendingAction = null;
+
+  // Función para abrir la modal
+  function showConfirmationModal(title, message, onConfirm) {
+    modalTitle.textContent = title;
+    modalMessage.textContent = message;
+    confirmationModal.classList.add("active");
+    pendingAction = onConfirm;
+  }
+
+  // Función para cerrar la modal
+  function closeConfirmationModal() {
+    confirmationModal.classList.remove("active");
+    pendingAction = null;
+  }
 
   // Manejar clic en Protección Avanzada
   advancedSetupBtn.addEventListener("click", (e) => {
     e.preventDefault();
     const guideUrl = chrome.runtime.getURL("src/pages/setup-guide.html");
     chrome.tabs.create({ url: guideUrl });
+  });
+
+  // Manejar clic en el botón de ayuda
+  helpBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const settingsGuideUrl = chrome.runtime.getURL("src/pages/settings-guide.html");
+    chrome.tabs.create({ url: settingsGuideUrl });
   });
 
   // Manejar clicks en el link
@@ -52,36 +83,60 @@ document.addEventListener("DOMContentLoaded", () => {
     const duration = durationSelect.value;
     if (!duration) return;
 
-    try {
-      const blockUntil = await calculateBlockUntil(duration);
+    showConfirmationModal(
+      "¿Bloquear Risk Settings?",
+      `Esto bloqueará Risk Settings por ${duration === "day" ? "1 día" : duration === "week" ? "1 semana" : "1 mes"}. ¿Deseas continuar?`,
+      async () => {
+        try {
+          const blockUntil = await calculateBlockUntil(duration);
 
-      chrome.storage.sync.set(
-        { blockRiskSettings: true, blockUntil: blockUntil },
-        () => {
-          chrome.tabs.query({ url: "*://trader.tradovate.com/*" }, (tabs) => {
-            tabs.forEach((tab) => {
-              chrome.tabs
-                .sendMessage(tab.id, {
-                  type: "UPDATE_BLOCK_STATUS",
-                  blockRiskSettings: true,
-                })
-                .catch(() => {
-                  console.log("Tab not ready");
+          chrome.storage.sync.set(
+            { blockRiskSettings: true, blockUntil: blockUntil },
+            () => {
+              chrome.tabs.query({ url: "*://trader.tradovate.com/*" }, (tabs) => {
+                tabs.forEach((tab) => {
+                  chrome.tabs
+                    .sendMessage(tab.id, {
+                      type: "UPDATE_BLOCK_STATUS",
+                      blockRiskSettings: true,
+                    })
+                    .catch(() => {
+                      console.log("Tab not ready");
+                    });
+                  // Recargar la pestaña
+                  chrome.tabs.reload(tab.id);
                 });
-              // Recargar la pestaña
-              chrome.tabs.reload(tab.id);
-            });
-          });
+              });
 
-          updateBlockUI(true, blockUntil);
-          durationSelect.disabled = true;
-          toggleBtn.disabled = true;
-          startCountdown(blockUntil);
-        },
-      );
-    } catch (error) {
-      console.error("Error calculating block until:", error);
-      alert("Error al calcular la fecha de bloqueo");
+              updateBlockUI(true, blockUntil);
+              durationSelect.disabled = true;
+              toggleBtn.disabled = true;
+              startCountdown(blockUntil);
+            },
+          );
+          closeConfirmationModal();
+        } catch (error) {
+          console.error("Error calculating block until:", error);
+          alert("Error al calcular la fecha de bloqueo");
+          closeConfirmationModal();
+        }
+      }
+    );
+  });
+
+  // Botones de la modal
+  modalCancelBtn.addEventListener("click", closeConfirmationModal);
+  
+  modalConfirmBtn.addEventListener("click", () => {
+    if (pendingAction) {
+      pendingAction();
+    }
+  });
+
+  // Cerrar modal si se hace clic fuera
+  confirmationModal.addEventListener("click", (e) => {
+    if (e.target === confirmationModal) {
+      closeConfirmationModal();
     }
   });
 
