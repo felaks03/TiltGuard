@@ -40,7 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Manejar clic en el botón de ayuda
   helpBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    const settingsGuideUrl = chrome.runtime.getURL("src/pages/settings-guide.html");
+    const settingsGuideUrl = chrome.runtime.getURL(
+      "src/pages/settings-guide.html",
+    );
     chrome.tabs.create({ url: settingsGuideUrl });
   });
 
@@ -93,20 +95,23 @@ document.addEventListener("DOMContentLoaded", () => {
           chrome.storage.sync.set(
             { blockRiskSettings: true, blockUntil: blockUntil },
             () => {
-              chrome.tabs.query({ url: "*://trader.tradovate.com/*" }, (tabs) => {
-                tabs.forEach((tab) => {
-                  chrome.tabs
-                    .sendMessage(tab.id, {
-                      type: "UPDATE_BLOCK_STATUS",
-                      blockRiskSettings: true,
-                    })
-                    .catch(() => {
-                      console.log("Tab not ready");
-                    });
-                  // Recargar la pestaña
-                  chrome.tabs.reload(tab.id);
-                });
-              });
+              chrome.tabs.query(
+                { url: "*://trader.tradovate.com/*" },
+                (tabs) => {
+                  tabs.forEach((tab) => {
+                    chrome.tabs
+                      .sendMessage(tab.id, {
+                        type: "UPDATE_BLOCK_STATUS",
+                        blockRiskSettings: true,
+                      })
+                      .catch(() => {
+                        console.log("Tab not ready");
+                      });
+                    // Recargar la pestaña
+                    chrome.tabs.reload(tab.id);
+                  });
+                },
+              );
 
               updateBlockUI(true, blockUntil);
               durationSelect.disabled = true;
@@ -120,13 +125,13 @@ document.addEventListener("DOMContentLoaded", () => {
           alert("Error al calcular la fecha de bloqueo");
           closeConfirmationModal();
         }
-      }
+      },
     );
   });
 
   // Botones de la modal
   modalCancelBtn.addEventListener("click", closeConfirmationModal);
-  
+
   modalConfirmBtn.addEventListener("click", () => {
     if (pendingAction) {
       pendingAction();

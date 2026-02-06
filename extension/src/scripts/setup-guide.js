@@ -583,13 +583,15 @@ function initializeGuide() {
         getCurrentMainType(),
     );
     const mainType = getCurrentMainType();
-    const title = mainType === "install" 
-      ? "¿Completar instalación?"
-      : "¿Desinstalar la extensión?";
-    const message = mainType === "install"
-      ? "Confirma que has completado todos los pasos de instalación."
-      : "Esto desactivará el bloqueo de la extensión. ¿Deseas continuar?";
-    
+    const title =
+      mainType === "install"
+        ? "¿Completar instalación?"
+        : "¿Desinstalar la extensión?";
+    const message =
+      mainType === "install"
+        ? "Confirma que has completado todos los pasos de instalación."
+        : "Esto desactivará el bloqueo de la extensión. ¿Deseas continuar?";
+
     showConfirmationModal(title, message, () => {
       completeSetup();
     });
