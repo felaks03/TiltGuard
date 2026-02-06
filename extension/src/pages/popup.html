@@ -11,10 +11,35 @@
 <body>
   <div class="container">
     <h1>TiltGuard</h1>
-    <p class="status">Risk Settings bloqueado</p>
-  </div>
 
-  <script src="../scripts/popup.js"></script>
+    <div class="guide">
+      <div class="step">
+        <h3>Paso 1</h3>
+        <a id="link1" class="step-link">
+          Ir a Tradovate →
+        </a>
+      </div>
+
+      <div class="step">
+        <h3>Paso 2</h3>
+        <p class="message">Configura tus Settings</p>
+      </div>
+
+      <div class="step">
+        <h3>Paso 3</h3>
+        <select id="blockDuration" class="select-duration">
+          <option value="">Selecciona duración</option>
+          <option value="day">Día</option>
+          <option value="week">Semana</option>
+          <option value="month">Mes</option>
+        </select>
+        <button id="toggleBlockBtn" class="btn btn-toggle" disabled>Bloquear Risk Settings</button>
+        <p class="status" id="status">Estado: Desbloqueado ✗</p>
+        <p class="countdown" id="countdown"></p>
+      </div>
+    </div>
+
+    <script src="../scripts/popup.js"></script>
 </body>
 
 </html>

@@ -10,7 +10,8 @@
   "host_permissions": [
     "https://tradovate.com/*",
     "https://www.tradovate.com/*",
-    "https://trader.tradovate.com/*"
+    "https://trader.tradovate.com/*",
+    "https://worldtimeapi.org/*"
   ],
   "background": {
     "service_worker": "src/scripts/background.js"

@@ -1,12 +1,10 @@
 // Función para bloquear el elemento Risk Settings
 function blockRiskSettings() {
-  // Buscar el contenedor específico por su estructura exacta
   const containers = document.querySelectorAll(
     ".MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-2.MuiGrid-item.MuiGrid-grid-xs-12",
   );
 
   containers.forEach((container) => {
-    // Verificar si contiene el botón "Risk Settings"
     const button = container.querySelector("button");
     if (button && button.textContent.includes("Risk Settings")) {
       container.style.display = "none";
@@ -16,22 +14,67 @@ function blockRiskSettings() {
   });
 }
 
-// Bloquear al cargar la página
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", blockRiskSettings);
-} else {
-  blockRiskSettings();
+// Función para desbloquear
+function unblockRiskSettings() {
+  const blockedElements = document.querySelectorAll(
+    "[data-tiltguard-blocked=true]",
+  );
+
+  blockedElements.forEach((element) => {
+    element.style.display = "";
+    element.removeAttribute("data-tiltguard-blocked");
+    console.log("Risk Settings desbloqueado");
+  });
 }
+
+// Aplicar estado al cargar
+const applyBlockState = () => {
+  chrome.storage.sync.get(["blockRiskSettings"], (result) => {
+    const shouldBlock =
+      result.blockRiskSettings !== undefined ? result.blockRiskSettings : false;
+
+    if (shouldBlock) {
+      blockRiskSettings();
+    } else {
+      unblockRiskSettings();
+    }
+  });
+};
+
+// Cargar al iniciar
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", applyBlockState);
+} else {
+  applyBlockState();
+}
+
+// Escuchar cambios desde el popup
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === "UPDATE_BLOCK_STATUS") {
+    if (request.blockRiskSettings) {
+      blockRiskSettings();
+    } else {
+      unblockRiskSettings();
+    }
+    sendResponse({ success: true });
+  }
+});
 
 // Observar cambios en el DOM y reaplicar bloqueo si es necesario
 const observer = new MutationObserver(() => {
-  // Solo ejecutar bloqueo si no está ya bloqueado
-  const alreadyBlocked = document.querySelector(
-    "[data-tiltguard-blocked=true]",
-  );
-  if (!alreadyBlocked) {
-    blockRiskSettings();
-  }
+  chrome.storage.sync.get(["blockRiskSettings"], (result) => {
+    const shouldBlock =
+      result.blockRiskSettings !== undefined ? result.blockRiskSettings : false;
+
+    if (shouldBlock) {
+      const alreadyBlocked = document.querySelector(
+        "[data-tiltguard-blocked=true]",
+      );
+      if (!alreadyBlocked) {
+        blockRiskSettings();
+      }
+    }
+  });
 });
 
 // Iniciar observación
