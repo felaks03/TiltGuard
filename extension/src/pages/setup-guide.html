@@ -22,27 +22,40 @@
     <div class="container">
         <div class="header">
             <h1>🔒 Protección Avanzada TiltGuard</h1>
-            <p>Haz tu extensión inremovible (opcional pero recomendado)</p>
+            <p>Haz tu extensión inremovible y desactiva el modo incógnito</p>
         </div>
 
         <div class="controls">
-            <div class="os-detector">
-                <p>Selecciona tu sistema operativo:</p>
-                <select id="os-selector" class="os-select">
-                    <option value="windows">🪟 Windows</option>
-                    <option value="mac">🍎 macOS</option>
-                    <option value="linux">🐧 Linux</option>
-                </select>
+            <div class="main-selector">
+                <p>¿Qué deseas hacer?</p>
+                <div class="main-buttons">
+                    <button class="main-btn active" data-main-type="install">📥 Instalación</button>
+                    <button class="main-btn" data-main-type="uninstall" disabled>🗑️ Desinstalación</button>
+                </div>
             </div>
 
-            <div class="mode-selector">
-                <button class="mode-btn active" data-mode="install">📥 Instalación</button>
-                <button class="mode-btn" data-mode="uninstall">🗑️ Desinstalación</button>
+            <div class="browser-detector">
+                <p>Tu navegador: <strong id="detected-browser">Detectando...</strong> | Tu SO: <strong
+                        id="detected-os">Detectando...</strong></p>
+                <p style="font-size: 12px; color: #666; margin-top: 8px;">
+                    <a href="#" id="change-browser-link" style="color: #667eea; text-decoration: none;">¿Usar otro
+                        navegador?</a>
+                </p>
+                <select id="browser-selector" class="browser-select" style="display: none; margin-top: 8px;">
+                    <option value="">-- Selecciona un navegador --</option>
+                    <option value="chrome">Google Chrome</option>
+                    <option value="chromium">Chromium</option>
+                    <option value="edge">Microsoft Edge</option>
+                    <option value="firefox">Mozilla Firefox</option>
+                    <option value="opera">Opera</option>
+                    <option value="brave">Brave</option>
+                    <option value="vivaldi">Vivaldi</option>
+                </select>
             </div>
         </div>
 
-        <!-- WINDOWS INSTALL -->
-        <div class="guide-section" id="guide-windows-install" style="display: none;">
+        <!-- WINDOWS CHROME INSTALL -->
+        <div class="guide-section" id="guide-windows-chrome-extension-install" style="display: none;">
             <h2>🪟 Windows - Instalación</h2>
             <div class="warning-box">
                 <p>⚠️ <strong>Importante:</strong> Necesitarás acceso de administrador. Se te pedirá permiso en el paso
@@ -146,8 +159,8 @@
             </div>
         </div>
 
-        <!-- MAC INSTALL -->
-        <div class="guide-section" id="guide-mac-install" style="display: none;">
+        <!-- MAC CHROME INSTALL -->
+        <div class="guide-section" id="guide-mac-chrome-extension-install" style="display: none;">
             <h2>macOS</h2>
             <div class="steps">
                 <div class="step">
@@ -221,8 +234,8 @@
             </div>
         </div>
 
-        <!-- LINUX INSTALL -->
-        <div class="guide-section" id="guide-linux-install" style="display: none;">
+        <!-- LINUX CHROME INSTALL -->
+        <div class="guide-section" id="guide-linux-chrome-extension-install" style="display: none;">
             <h2>Linux</h2>
             <div class="steps">
                 <div class="step">
@@ -301,8 +314,8 @@
             </div>
         </div>
 
-        <!-- WINDOWS UNINSTALL -->
-        <div class="guide-section" id="guide-windows-uninstall" style="display: none;">
+        <!-- WINDOWS CHROME UNINSTALL -->
+        <div class="guide-section" id="guide-windows-chrome-extension-uninstall" style="display: none;">
             <h2>Windows - Desinstalación</h2>
             <div class="steps">
                 <div class="step">
@@ -350,8 +363,8 @@
             </div>
         </div>
 
-        <!-- MAC UNINSTALL -->
-        <div class="guide-section" id="guide-mac-uninstall" style="display: none;">
+        <!-- MAC CHROME UNINSTALL -->
+        <div class="guide-section" id="guide-mac-chrome-extension-uninstall" style="display: none;">
             <h2>macOS - Desinstalación</h2>
             <div class="steps">
                 <div class="step">
@@ -384,8 +397,8 @@
             </div>
         </div>
 
-        <!-- LINUX UNINSTALL -->
-        <div class="guide-section" id="guide-linux-uninstall" style="display: none;">
+        <!-- LINUX CHROME UNINSTALL -->
+        <div class="guide-section" id="guide-linux-chrome-extension-uninstall" style="display: none;">
             <h2>Linux - Desinstalación</h2>
             <div class="steps">
                 <div class="step">
@@ -414,6 +427,1360 @@
                         <p><strong>La extensión ahora se puede desinstalar normalmente</strong></p>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- WINDOWS CHROME INCOGNITO ACTIVATE -->
+        <div class="guide-section" id="guide-windows-chrome-incognito-activate" style="display: none;">
+            <h2>🪟 Windows - Desactivar Modo Incógnito</h2>
+            <div class="warning-box">
+                <p>⚠️ <strong>Importante:</strong> Esta acción desactivará completamente el modo incógnito en Chrome.
+                    Necesitarás acceso de administrador.</p>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre el Editor de Registro (Regedit)</h3>
+                        <ol style="margin: 8px 0; padding-left: 20px;">
+                            <li>Presiona <kbd>Win + R</kbd></li>
+                            <li>Escribe: <code>regedit</code></li>
+                            <li>Presiona Enter</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Navega a la carpeta de Chrome Policies</h3>
+                        <div class="code-block"
+                            style="text-align: left; background: #f0f0f0; border-left-color: #667eea;">
+                            <strong>HKEY_LOCAL_MACHINE</strong><br>
+                            &nbsp;&nbsp;└─ <strong>Software</strong><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ <strong>Policies</strong><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ <strong>Google</strong><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─
+                            <strong>Chrome</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Crea un nuevo valor DWORD</h3>
+                        <ol style="margin: 8px 0; padding-left: 20px;">
+                            <li>Haz <strong>clic derecho</strong> en el panel derecho</li>
+                            <li>Selecciona "Nuevo" → "Valor DWORD (32 bits)"</li>
+                            <li>Nombralo: <code>IncognitoModeAvailability</code></li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Asigna el valor correcto</h3>
+                        <ol style="margin: 8px 0; padding-left: 20px;">
+                            <li>Haz <strong>doble clic</strong> en <code>IncognitoModeAvailability</code></li>
+                            <li>Cambia el valor a: <code>1</code></li>
+                            <li>Haz clic en OK</li>
+                        </ol>
+                        <p style="margin-top: 12px; font-size: 12px; color: #666;">Valores: 0 = Permitir incógnito, 1 =
+                            Desactivar, 2 = Forzar incógnito</p>
+                    </div>
+                </div>
+
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Chrome</h3>
+                        <p><strong>El modo incógnito ahora está desactivado.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAC CHROME INCOGNITO ACTIVATE -->
+        <div class="guide-section" id="guide-mac-chrome-incognito-activate" style="display: none;">
+            <h2>🍎 macOS - Desactivar Modo Incógnito</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Cmd + Espacio, escribe "Terminal" y presiona Enter</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Copia y ejecuta este comando</h3>
+                        <div class="code-block">
+                            defaults write com.google.Chrome IncognitoModeAvailability -integer 1
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Chrome</h3>
+                        <p><strong>El modo incógnito ahora está desactivado.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LINUX CHROME INCOGNITO ACTIVATE -->
+        <div class="guide-section" id="guide-linux-chrome-incognito-activate" style="display: none;">
+            <h2>🐧 Linux - Desactivar Modo Incógnito</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Ctrl + Alt + T</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Verifica tu navegador</h3>
+                        <p>Ejecuta este comando para saber si usas Chrome o Chromium:</p>
+                        <div class="code-block">
+                            which google-chrome
+                        </div>
+                        <p style="margin-top: 12px; font-size: 13px; color: #666;">Si sale una ruta (ej:
+                            /usr/bin/google-chrome), tienes Chrome instalado.<br>Si no sale nada, usa Chromium.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Para Google Chrome: Edita el ejecutable</h3>
+                        <p>Ejecuta este comando:</p>
+                        <div class="code-block">
+                            sudo sed -i 's/exec -a "$0" "$HERE\/chrome" "$@"/exec -a "$0" "$HERE\/chrome"
+                            --disable-incognito "$@"/' /usr/bin/google-chrome
+                        </div>
+                        <p style="margin-top: 12px;"><strong>O si prefieres editarlo manualmente:</strong></p>
+                        <div class="code-block">
+                            sudo nano /usr/bin/google-chrome
+                        </div>
+                        <p style="margin-top: 12px;">Busca la última línea
+                            (<code>exec -a "$0" "$HERE/chrome" "$@"</code>) y cámbiala
+                            a:<br><code>exec -a "$0" "$HERE/chrome" --disable-incognito "$@"</code></p>
+                        <p style="margin-top: 8px;">Guarda: Ctrl + O → Enter → Ctrl + X</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Para Chromium: Crea el archivo de políticas</h3>
+                        <div class="code-block">
+                            sudo mkdir -p /etc/chromium/policies/managed
+                        </div>
+                        <div class="code-block" style="margin-top: 12px;">
+                            sudo nano /etc/chromium/policies/managed/disable_incognito.json
+                        </div>
+                        <p style="margin-top: 12px;">Pega esto:</p>
+                        <div class="code-block">
+                            {
+                            "IncognitoModeAvailability": 1
+                            }
+                        </div>
+                        <p style="margin-top: 8px;">Guarda: Ctrl + O → Enter → Ctrl + X</p>
+                    </div>
+                </div>
+
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Chrome/Chromium</h3>
+                        <p><strong>Cierra completamente el navegador y abre nuevamente.</strong><br>Intenta abrir una
+                            ventana incógnita - debería estar deshabilitada.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WINDOWS CHROME INCOGNITO DEACTIVATE -->
+        <div class="guide-section" id="guide-windows-chrome-incognito-deactivate" style="display: none;">
+            <h2>🪟 Windows - Reactivar Modo Incógnito</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Regedit</h3>
+                        <p>Presiona <kbd>Win + R</kbd>, escribe <code>regedit</code> y presiona Enter</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Navega a Chrome Policies</h3>
+                        <div class="code-block"
+                            style="text-align: left; background: #f0f0f0; border-left-color: #667eea;">
+                            <strong>HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Elimina la clave IncognitoModeAvailability</h3>
+                        <p>Haz clic derecho en <code>IncognitoModeAvailability</code> → Eliminar</p>
+                    </div>
+                </div>
+
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Chrome</h3>
+                        <p><strong>El modo incógnito está reactivado.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAC CHROME INCOGNITO DEACTIVATE -->
+        <div class="guide-section" id="guide-mac-chrome-incognito-deactivate" style="display: none;">
+            <h2>🍎 macOS - Reactivar Modo Incógnito</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Cmd + Espacio, escribe "Terminal" y presiona Enter</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Ejecuta este comando</h3>
+                        <div class="code-block">
+                            defaults write com.google.Chrome IncognitoModeAvailability -integer 0
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Chrome</h3>
+                        <p><strong>El modo incógnito está reactivado.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LINUX CHROME INCOGNITO DEACTIVATE -->
+        <div class="guide-section" id="guide-linux-chrome-incognito-deactivate" style="display: none;">
+            <h2>🐧 Linux - Reactivar Modo Incógnito</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Ctrl + Alt + T</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Elimina el archivo de configuración</h3>
+                        <div class="code-block">
+                            sudo rm /etc/chromium/policies/managed/disable_incognito.json
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Chrome</h3>
+                        <p><strong>El modo incógnito está reactivado.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FIREFOX INSTALL -->
+        <div class="guide-section" id="guide-windows-firefox-extension-install" style="display: none;">
+            <h2>🦊 Firefox - Extensión Inremovible</h2>
+            <div class="warning-box">
+                <p>⚠️ <strong>Nota:</strong> En Firefox, las extensiones no pueden forzarse de la misma manera que en
+                    Chrome. Esta guía es solo informativa.</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Obtén el ID de la extensión</h3>
+                        <p>Abre Firefox y ve a <code>about:addons</code></p>
+                        <p>Busca "TiltGuard" y copia el ID</p>
+                    </div>
+                </div>
+                <div class="step" style="background: #fff3cd; border: 1px solid #ffc107;">
+                    <div class="step-number" style="background: #ffc107;">⚠️</div>
+                    <div class="step-content">
+                        <h3>Limitación de Firefox</h3>
+                        <p>Firefox no permite forzar extensiones a través de políticas como Chrome. La extensión se
+                            puede desinstalar desde <code>about:addons</code>.</p>
+                        <p>Considera usar Google Chrome o Microsoft Edge para mejor protección.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-windows-firefox-extension-uninstall" style="display: none;">
+            <h2>🦊 Firefox - Remover Extensión</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre about:addons</h3>
+                        <p>En la barra de dirección, escribe <code>about:addons</code> y presiona Enter</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Busca TiltGuard</h3>
+                        <p>Localiza "TiltGuard" en la lista de extensiones</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Desinstala</h3>
+                        <p>Haz clic en el botón "Quitar"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-windows-firefox-incognito-activate" style="display: none;">
+            <h2>🦊 Firefox - Desactivar Navegación Privada</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre about:preferences</h3>
+                        <p>En la barra de dirección, escribe <code>about:preferences</code></p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Ve a Privacidad</h3>
+                        <p>Haz clic en la pestaña "Privacidad y seguridad"</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Desactiva la navegación privada</h3>
+                        <p>En la sección "Navegación privada", desactiva cualquier opción de modo privado</p>
+                        <p style="margin-top: 8px; font-size: 12px; color: #666;">Nota: Firefox no tiene una opción para
+                            deshabilitar completamente la navegación privada desde preferencias</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-windows-firefox-incognito-deactivate" style="display: none;">
+            <h2>🦊 Firefox - Reactivar Navegación Privada</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>No requiere configuración</h3>
+                        <p>La navegación privada en Firefox está activada por defecto.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LINUX FIREFOX -->
+        <div class="guide-section" id="guide-linux-firefox-extension-install" style="display: none;">
+            <h2>🦊 Linux (Firefox) - Extensión Inremovible</h2>
+            <div class="warning-box">
+                <p>⚠️ <strong>Nota:</strong> Firefox no soporta forzar extensiones como Chrome. Considera usar Chromium
+                    o Google Chrome en Linux.</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Opción: Usar Chromium o Chrome</h3>
+                        <p>Para mejor control sobre las extensiones, instala Google Chrome:</p>
+                        <div class="code-block">
+                            sudo apt install google-chrome-stable
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-firefox-extension-uninstall" style="display: none;">
+            <h2>🦊 Linux (Firefox) - Remover Extensión</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre about:addons</h3>
+                        <p>En la barra de dirección, escribe <code>about:addons</code></p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Busca y desinstala TiltGuard</h3>
+                        <p>Haz clic en "Quitar"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-firefox-incognito-activate" style="display: none;">
+            <h2>🦊 Linux (Firefox) - Desactivar Navegación Privada</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre about:preferences</h3>
+                        <p>En la barra de dirección, escribe <code>about:preferences</code></p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Accede a Privacidad</h3>
+                        <p>Haz clic en "Privacidad y seguridad"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-firefox-incognito-deactivate" style="display: none;">
+            <h2>🦊 Linux (Firefox) - Reactivar Navegación Privada</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Ya está activada</h3>
+                        <p>Firefox tiene navegación privada activada por defecto</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAC FIREFOX -->
+        <div class="guide-section" id="guide-mac-firefox-extension-install" style="display: none;">
+            <h2>🦊 macOS (Firefox) - Extensión Inremovible</h2>
+            <div class="warning-box">
+                <p>⚠️ <strong>Nota:</strong> Firefox no soporta políticas de extensión forzadas como Chrome o Edge.</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Considera usar Chrome o Edge</h3>
+                        <p>Para extensiones inremovibles, usa Google Chrome o Microsoft Edge en macOS.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-firefox-extension-uninstall" style="display: none;">
+            <h2>🦊 macOS (Firefox) - Remover Extensión</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre about:addons</h3>
+                        <p>En la barra de dirección, escribe <code>about:addons</code></p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Desinstala TiltGuard</h3>
+                        <p>Haz clic en "Quitar"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-firefox-incognito-activate" style="display: none;">
+            <h2>🦊 macOS (Firefox) - Desactivar Navegación Privada</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Preferencias</h3>
+                        <p>Firefox → Preferencias</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-firefox-incognito-deactivate" style="display: none;">
+            <h2>🦊 macOS (Firefox) - Reactivar Navegación Privada</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Ya está habilitada</h3>
+                        <p>Navega normalmente en Firefox</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EDGE WINDOWS -->
+        <div class="guide-section" id="guide-windows-edge-extension-install" style="display: none;">
+            <h2>🌀 Microsoft Edge - Extensión Inremovible</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Copia el ID de la extensión</h3>
+                        <p>Abre Edge y accede a <code>edge://extensions</code></p>
+                        <p>Localiza "TiltGuard" y copia su ID</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Abre el Editor de Registro</h3>
+                        <p>Presiona <kbd>Win + R</kbd>, escribe <code>regedit</code> y presiona Enter</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Navega a la carpeta de Edge</h3>
+                        <div class="code-block"
+                            style="text-align: left; background: #f0f0f0; border-left-color: #667eea;">
+                            <strong>HKEY_LOCAL_MACHINE</strong><br>
+                            &nbsp;&nbsp;└─ <strong>Software</strong><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ <strong>Policies</strong><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─
+                            <strong>Microsoft</strong><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─
+                            <strong>Edge</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Crea ExtensionInstallForcelist</h3>
+                        <p>Haz clic derecho en "Edge" → Nuevo → Clave</p>
+                        <p>Nombralo: <code>ExtensionInstallForcelist</code></p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Añade la extensión</h3>
+                        <p>Haz clic derecho en "ExtensionInstallForcelist" → Nuevo → Valor de cadena</p>
+                        <p>Nombralo: <code>1</code></p>
+                        <p>En "Datos del valor" pega:</p>
+                        <div class="code-block">
+                            tu_extension_id;https://clients2.google.com/service/update2/crx
+                        </div>
+                    </div>
+                </div>
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>¡Hecho! Reinicia Edge</h3>
+                        <p><strong>La extensión es ahora inremovible.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-windows-edge-extension-uninstall" style="display: none;">
+            <h2>🌀 Microsoft Edge - Remover Protección</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Regedit</h3>
+                        <p>Presiona <kbd>Win + R</kbd>, escribe <code>regedit</code>, presiona Enter</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Navega a HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Edge</h3>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Elimina ExtensionInstallForcelist</h3>
+                        <p>Haz clic derecho → Eliminar</p>
+                    </div>
+                </div>
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Edge</h3>
+                        <p><strong>La extensión se puede desinstalar normalmente.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-windows-edge-incognito-activate" style="display: none;">
+            <h2>🌀 Microsoft Edge - Desactivar Modo InPrivate</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Regedit</h3>
+                        <p>Presiona <kbd>Win + R</kbd>, escribe <code>regedit</code>, presiona Enter</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Navega a Edge Policies</h3>
+                        <div class="code-block">
+                            HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Edge
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Crea InPrivateModeAvailability</h3>
+                        <p>Clic derecho → Nuevo → DWORD (32 bits)</p>
+                        <p>Nombralo: <code>InPrivateModeAvailability</code></p>
+                        <p>Valor: <code>1</code></p>
+                    </div>
+                </div>
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Edge</h3>
+                        <p><strong>El modo InPrivate está desactivado.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-windows-edge-incognito-deactivate" style="display: none;">
+            <h2>🌀 Microsoft Edge - Reactivar Modo InPrivate</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Regedit</h3>
+                        <p>Presiona <kbd>Win + R</kbd>, escribe <code>regedit</code>, presiona Enter</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Navega a HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Edge</h3>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Elimina InPrivateModeAvailability</h3>
+                        <p>Haz clic derecho → Eliminar</p>
+                    </div>
+                </div>
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Edge</h3>
+                        <p><strong>El modo InPrivate está reactivado.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EDGE LINUX -->
+        <div class="guide-section" id="guide-linux-edge-extension-install" style="display: none;">
+            <h2>🌀 Microsoft Edge (Linux) - Extensión Inremovible</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Ctrl + Alt + T</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Crea el directorio de políticas</h3>
+                        <div class="code-block">
+                            sudo mkdir -p /etc/opt/edge/policies/managed
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Crea el archivo de configuración</h3>
+                        <div class="code-block">
+                            sudo nano /etc/opt/edge/policies/managed/force_extension.json
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Pega esta configuración</h3>
+                        <div class="code-block">
+                            {
+                            "ExtensionInstallForcelist": [
+                            "tu_extension_id;https://clients2.google.com/service/update2/crx"
+                            ]
+                            }
+                        </div>
+                        <p style="margin-top: 12px;">Presiona Ctrl + O → Enter → Ctrl + X</p>
+                    </div>
+                </div>
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Edge</h3>
+                        <p><strong>La extensión es inremovible.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-edge-extension-uninstall" style="display: none;">
+            <h2>🌀 Microsoft Edge (Linux) - Remover Protección</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Ctrl + Alt + T</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Elimina el archivo</h3>
+                        <div class="code-block">
+                            sudo rm /etc/opt/edge/policies/managed/force_extension.json
+                        </div>
+                    </div>
+                </div>
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Edge</h3>
+                        <p><strong>La extensión se puede desinstalar normalmente.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-edge-incognito-activate" style="display: none;">
+            <h2>🌀 Microsoft Edge (Linux) - Desactivar Modo InPrivate</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Ctrl + Alt + T</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Crea el archivo de configuración</h3>
+                        <div class="code-block">
+                            sudo nano /etc/opt/edge/policies/managed/disable_inprivate.json
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Pega esta configuración</h3>
+                        <div class="code-block">
+                            {
+                            "InPrivateModeAvailability": 1
+                            }
+                        </div>
+                        <p style="margin-top: 12px;">Presiona Ctrl + O → Enter → Ctrl + X</p>
+                    </div>
+                </div>
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Edge</h3>
+                        <p><strong>El modo InPrivate está desactivado.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-edge-incognito-deactivate" style="display: none;">
+            <h2>🌀 Microsoft Edge (Linux) - Reactivar Modo InPrivate</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Ctrl + Alt + T</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Elimina el archivo</h3>
+                        <div class="code-block">
+                            sudo rm /etc/opt/edge/policies/managed/disable_inprivate.json
+                        </div>
+                    </div>
+                </div>
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Edge</h3>
+                        <p><strong>El modo InPrivate está reactivado.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EDGE MACOS -->
+        <div class="guide-section" id="guide-mac-edge-extension-install" style="display: none;">
+            <h2>🌀 Microsoft Edge (macOS) - Extensión Inremovible</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Cmd + Espacio → "Terminal" → Enter</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Crea el directorio de políticas</h3>
+                        <div class="code-block">
+                            sudo mkdir -p "/Library/Microsoft/Edge/policies/managed"
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Crea el archivo de configuración</h3>
+                        <div class="code-block">
+                            sudo nano "/Library/Microsoft/Edge/policies/managed/force_extension.json"
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Pega esta configuración</h3>
+                        <div class="code-block">
+                            {
+                            "ExtensionInstallForcelist": [
+                            "tu_extension_id;https://clients2.google.com/service/update2/crx"
+                            ]
+                            }
+                        </div>
+                        <p style="margin-top: 12px;">Presiona Ctrl + O → Enter → Ctrl + X</p>
+                    </div>
+                </div>
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Edge</h3>
+                        <p><strong>La extensión es inremovible.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-edge-extension-uninstall" style="display: none;">
+            <h2>🌀 Microsoft Edge (macOS) - Remover Protección</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Cmd + Espacio → "Terminal" → Enter</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Elimina el archivo</h3>
+                        <div class="code-block">
+                            sudo rm "/Library/Microsoft/Edge/policies/managed/force_extension.json"
+                        </div>
+                    </div>
+                </div>
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Edge</h3>
+                        <p><strong>La extensión se puede desinstalar normalmente.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-edge-incognito-activate" style="display: none;">
+            <h2>🌀 Microsoft Edge (macOS) - Desactivar Modo InPrivate</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Cmd + Espacio → "Terminal" → Enter</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Ejecuta este comando</h3>
+                        <div class="code-block">
+                            defaults write com.microsoft.edge InPrivateModeAvailability -integer 1
+                        </div>
+                    </div>
+                </div>
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Edge</h3>
+                        <p><strong>El modo InPrivate está desactivado.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-edge-incognito-deactivate" style="display: none;">
+            <h2>🌀 Microsoft Edge (macOS) - Reactivar Modo InPrivate</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Abre Terminal</h3>
+                        <p>Cmd + Espacio → "Terminal" → Enter</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Ejecuta este comando</h3>
+                        <div class="code-block">
+                            defaults write com.microsoft.edge InPrivateModeAvailability -integer 0
+                        </div>
+                    </div>
+                </div>
+                <div class="step" style="background: #d4edda; border: 1px solid #c3e6cb;">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <div class="step-content">
+                        <h3>Reinicia Edge</h3>
+                        <p><strong>El modo InPrivate está reactivado.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHROMIUM WINDOWS -->
+        <div class="guide-section" id="guide-windows-chromium-extension-install" style="display: none;">
+            <h2>💻 Chromium - Extensión Inremovible</h2>
+            <p style="padding: 15px; background: #e3f2fd; border-left: 4px solid #2196F3; margin: 15px 0;">Las
+                instrucciones son iguales a Google Chrome. Usa la misma carpeta de políticas:</p>
+            <p><code>HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome</code></p>
+            <p style="margin-top: 12px; font-size: 13px;">Sigue la <strong>guía de Chrome</strong> pero aplícala a
+                Chromium.</p>
+        </div>
+
+        <div class="guide-section" id="guide-windows-chromium-extension-uninstall" style="display: none;">
+            <h2>💻 Chromium - Remover Protección</h2>
+            <p style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107;">Las instrucciones son iguales
+                a Chrome. Sigue la guía de desinstalación de Chrome.</p>
+        </div>
+
+        <div class="guide-section" id="guide-windows-chromium-incognito-activate" style="display: none;">
+            <h2>💻 Chromium - Desactivar Navegación Privada</h2>
+            <p style="padding: 15px; background: #e8f5e9; border-left: 4px solid #4CAF50;">Las instrucciones son iguales
+                a Chrome. Usa:</p>
+            <p><code>HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome</code> y la clave
+                <code>IncognitoModeAvailability</code>
+            </p>
+        </div>
+
+        <div class="guide-section" id="guide-windows-chromium-incognito-deactivate" style="display: none;">
+            <h2>💻 Chromium - Reactivar Navegación Privada</h2>
+            <p style="padding: 15px; background: #fce4ec; border-left: 4px solid #E91E63;">Sigue la guía de
+                desactivación de Chrome.</p>
+        </div>
+
+        <!-- CHROMIUM LINUX -->
+        <div class="guide-section" id="guide-linux-chromium-extension-install" style="display: none;">
+            <h2>💻 Chromium (Linux) - Extensión Inremovible</h2>
+            <p style="padding: 15px; background: #e3f2fd; border-left: 4px solid #2196F3;">Las instrucciones son iguales
+                a Chrome en Linux:</p>
+            <div class="code-block" style="margin: 12px 0;">
+                sudo mkdir -p /etc/chromium/policies/managed<br>
+                sudo nano /etc/chromium/policies/managed/force_extension.json
+            </div>
+            <p>Pega el mismo JSON que en Chrome.</p>
+        </div>
+
+        <div class="guide-section" id="guide-linux-chromium-extension-uninstall" style="display: none;">
+            <h2>💻 Chromium (Linux) - Remover Protección</h2>
+            <div class="code-block">
+                sudo rm /etc/chromium/policies/managed/force_extension.json
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-chromium-incognito-activate" style="display: none;">
+            <h2>💻 Chromium (Linux) - Desactivar Navegación Privada</h2>
+            <div class="code-block" style="margin: 12px 0;">
+                sudo nano /etc/chromium/policies/managed/disable_incognito.json
+            </div>
+            <p>Pega:</p>
+            <div class="code-block">
+                {
+                "IncognitoModeAvailability": 1
+                }
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-chromium-incognito-deactivate" style="display: none;">
+            <h2>💻 Chromium (Linux) - Reactivar Navegación Privada</h2>
+            <div class="code-block">
+                sudo rm /etc/chromium/policies/managed/disable_incognito.json
+            </div>
+        </div>
+
+        <!-- CHROMIUM MACOS -->
+        <div class="guide-section" id="guide-mac-chromium-extension-install" style="display: none;">
+            <h2>💻 Chromium (macOS) - Extensión Inremovible</h2>
+            <p style="padding: 15px; background: #e3f2fd; border-left: 4px solid #2196F3;">Sigue la misma guía que
+                Chrome pero usa la carpeta de Chromium:</p>
+            <p><code>/Library/Application Support/Chromium/policies/managed</code></p>
+        </div>
+
+        <div class="guide-section" id="guide-mac-chromium-extension-uninstall" style="display: none;">
+            <h2>💻 Chromium (macOS) - Remover Protección</h2>
+            <div class="code-block">
+                sudo rm "/Library/Application Support/Chromium/policies/managed/force_extension.json"
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-chromium-incognito-activate" style="display: none;">
+            <h2>💻 Chromium (macOS) - Desactivar Navegación Privada</h2>
+            <div class="code-block">
+                defaults write org.chromium.Chromium IncognitoModeAvailability -integer 1
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-chromium-incognito-deactivate" style="display: none;">
+            <h2>💻 Chromium (macOS) - Reactivar Navegación Privada</h2>
+            <div class="code-block">
+                defaults write org.chromium.Chromium IncognitoModeAvailability -integer 0
+            </div>
+        </div>
+
+        <!-- BRAVE WINDOWS -->
+        <div class="guide-section" id="guide-windows-brave-extension-install" style="display: none;">
+            <h2>🦁 Brave - Extensión Inremovible</h2>
+            <p style="padding: 15px; background: #e3f2fd; border-left: 4px solid #2196F3;">Brave usa la misma estructura
+                que Chrome. Navega a:</p>
+            <p><code>HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome</code></p>
+            <p style="margin-top: 12px;">Sigue los mismos pasos que Chrome para forzar la extensión.</p>
+        </div>
+
+        <div class="guide-section" id="guide-windows-brave-extension-uninstall" style="display: none;">
+            <h2>🦁 Brave - Remover Protección</h2>
+            <p>Elimina la clave <code>ExtensionInstallForcelist</code> del registro como en Chrome.</p>
+        </div>
+
+        <div class="guide-section" id="guide-windows-brave-incognito-activate" style="display: none;">
+            <h2>🦁 Brave - Desactivar Modo Privado</h2>
+            <p>En Brave usa:</p>
+            <p><code>HKEY_LOCAL_MACHINE\Software\Policies\BraveSoftware\Brave</code></p>
+            <p style="margin-top: 12px;">Crea <code>IncognitoModeAvailability</code> con valor <code>1</code></p>
+        </div>
+
+        <div class="guide-section" id="guide-windows-brave-incognito-deactivate" style="display: none;">
+            <h2>🦁 Brave - Reactivar Modo Privado</h2>
+            <p>Elimina la clave <code>IncognitoModeAvailability</code> de <code>Policies\BraveSoftware\Brave</code></p>
+        </div>
+
+        <!-- BRAVE LINUX -->
+        <div class="guide-section" id="guide-linux-brave-extension-install" style="display: none;">
+            <h2>🦁 Brave (Linux) - Extensión Inremovible</h2>
+            <div class="code-block" style="margin: 12px 0;">
+                sudo mkdir -p /etc/opt/brave/policies/managed<br>
+                sudo nano /etc/opt/brave/policies/managed/force_extension.json
+            </div>
+            <p>Pega el JSON con ExtensionInstallForcelist.</p>
+        </div>
+
+        <div class="guide-section" id="guide-linux-brave-extension-uninstall" style="display: none;">
+            <h2>🦁 Brave (Linux) - Remover Protección</h2>
+            <div class="code-block">
+                sudo rm /etc/opt/brave/policies/managed/force_extension.json
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-brave-incognito-activate" style="display: none;">
+            <h2>🦁 Brave (Linux) - Desactivar Modo Privado</h2>
+            <div class="code-block" style="margin: 12px 0;">
+                sudo nano /etc/opt/brave/policies/managed/disable_incognito.json
+            </div>
+            <div class="code-block">
+                {
+                "IncognitoModeAvailability": 1
+                }
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-brave-incognito-deactivate" style="display: none;">
+            <h2>🦁 Brave (Linux) - Reactivar Modo Privado</h2>
+            <div class="code-block">
+                sudo rm /etc/opt/brave/policies/managed/disable_incognito.json
+            </div>
+        </div>
+
+        <!-- BRAVE MACOS -->
+        <div class="guide-section" id="guide-mac-brave-extension-install" style="display: none;">
+            <h2>🦁 Brave (macOS) - Extensión Inremovible</h2>
+            <div class="code-block" style="margin: 12px 0;">
+                sudo mkdir -p "/Library/Application Support/BraveSoftware/Brave-Browser/policies/managed"<br>
+                sudo nano "/Library/Application
+                Support/BraveSoftware/Brave-Browser/policies/managed/force_extension.json"
+            </div>
+            <p>Pega el JSON con ExtensionInstallForcelist.</p>
+        </div>
+
+        <div class="guide-section" id="guide-mac-brave-extension-uninstall" style="display: none;">
+            <h2>🦁 Brave (macOS) - Remover Protección</h2>
+            <div class="code-block">
+                sudo rm "/Library/Application Support/BraveSoftware/Brave-Browser/policies/managed/force_extension.json"
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-brave-incognito-activate" style="display: none;">
+            <h2>🦁 Brave (macOS) - Desactivar Modo Privado</h2>
+            <div class="code-block">
+                defaults write com.brave.Browser IncognitoModeAvailability -integer 1
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-brave-incognito-deactivate" style="display: none;">
+            <h2>🦁 Brave (macOS) - Reactivar Modo Privado</h2>
+            <div class="code-block">
+                defaults write com.brave.Browser IncognitoModeAvailability -integer 0
+            </div>
+        </div>
+
+        <!-- OPERA WINDOWS -->
+        <div class="guide-section" id="guide-windows-opera-extension-install" style="display: none;">
+            <h2>🎭 Opera - Extensión Inremovible</h2>
+            <p style="padding: 15px; background: #e3f2fd; border-left: 4px solid #2196F3;">Opera usa Chrome como base.
+                Navega a:</p>
+            <p><code>HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome</code></p>
+            <p style="margin-top: 12px;">Sigue la guía de Chrome exactamente igual.</p>
+        </div>
+
+        <div class="guide-section" id="guide-windows-opera-extension-uninstall" style="display: none;">
+            <h2>🎭 Opera - Remover Protección</h2>
+            <p>Sigue la guía de desinstalación de Chrome.</p>
+        </div>
+
+        <div class="guide-section" id="guide-windows-opera-incognito-activate" style="display: none;">
+            <h2>🎭 Opera - Desactivar Modo Privado</h2>
+            <p>Usa la misma configuración que Chrome en el registro.</p>
+        </div>
+
+        <div class="guide-section" id="guide-windows-opera-incognito-deactivate" style="display: none;">
+            <h2>🎭 Opera - Reactivar Modo Privado</h2>
+            <p>Elimina la clave como en Chrome.</p>
+        </div>
+
+        <!-- OPERA LINUX -->
+        <div class="guide-section" id="guide-linux-opera-extension-install" style="display: none;">
+            <h2>🎭 Opera (Linux) - Extensión Inremovible</h2>
+            <div class="code-block" style="margin: 12px 0;">
+                sudo mkdir -p /etc/opt/opera/policies/managed<br>
+                sudo nano /etc/opt/opera/policies/managed/force_extension.json
+            </div>
+            <p>Pega el JSON con ExtensionInstallForcelist.</p>
+        </div>
+
+        <div class="guide-section" id="guide-linux-opera-extension-uninstall" style="display: none;">
+            <h2>🎭 Opera (Linux) - Remover Protección</h2>
+            <div class="code-block">
+                sudo rm /etc/opt/opera/policies/managed/force_extension.json
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-opera-incognito-activate" style="display: none;">
+            <h2>🎭 Opera (Linux) - Desactivar Modo Privado</h2>
+            <div class="code-block" style="margin: 12px 0;">
+                sudo nano /etc/opt/opera/policies/managed/disable_incognito.json
+            </div>
+            <div class="code-block">
+                {
+                "IncognitoModeAvailability": 1
+                }
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-opera-incognito-deactivate" style="display: none;">
+            <h2>🎭 Opera (Linux) - Reactivar Modo Privado</h2>
+            <div class="code-block">
+                sudo rm /etc/opt/opera/policies/managed/disable_incognito.json
+            </div>
+        </div>
+
+        <!-- OPERA MACOS -->
+        <div class="guide-section" id="guide-mac-opera-extension-install" style="display: none;">
+            <h2>🎭 Opera (macOS) - Extensión Inremovible</h2>
+            <div class="code-block" style="margin: 12px 0;">
+                sudo mkdir -p "/Library/Opera Stable/policies/managed"<br>
+                sudo nano "/Library/Opera Stable/policies/managed/force_extension.json"
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-opera-extension-uninstall" style="display: none;">
+            <h2>🎭 Opera (macOS) - Remover Protección</h2>
+            <div class="code-block">
+                sudo rm "/Library/Opera Stable/policies/managed/force_extension.json"
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-opera-incognito-activate" style="display: none;">
+            <h2>🎭 Opera (macOS) - Desactivar Modo Privado</h2>
+            <div class="code-block">
+                defaults write com.operasoftware.Opera IncognitoModeAvailability -integer 1
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-opera-incognito-deactivate" style="display: none;">
+            <h2>🎭 Opera (macOS) - Reactivar Modo Privado</h2>
+            <div class="code-block">
+                defaults write com.operasoftware.Opera IncognitoModeAvailability -integer 0
+            </div>
+        </div>
+
+        <!-- VIVALDI WINDOWS -->
+        <div class="guide-section" id="guide-windows-vivaldi-extension-install" style="display: none;">
+            <h2>💎 Vivaldi - Extensión Inremovible</h2>
+            <p style="padding: 15px; background: #e3f2fd; border-left: 4px solid #2196F3;">Vivaldi usa Chromium. Navega
+                a:</p>
+            <p><code>HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome</code></p>
+            <p style="margin-top: 12px;">Sigue la guía de Chrome.</p>
+        </div>
+
+        <div class="guide-section" id="guide-windows-vivaldi-extension-uninstall" style="display: none;">
+            <h2>💎 Vivaldi - Remover Protección</h2>
+            <p>Sigue la guía de desinstalación de Chrome.</p>
+        </div>
+
+        <div class="guide-section" id="guide-windows-vivaldi-incognito-activate" style="display: none;">
+            <h2>💎 Vivaldi - Desactivar Modo Privado</h2>
+            <p>Usa la misma configuración que Chrome en el registro.</p>
+        </div>
+
+        <div class="guide-section" id="guide-windows-vivaldi-incognito-deactivate" style="display: none;">
+            <h2>💎 Vivaldi - Reactivar Modo Privado</h2>
+            <p>Elimina la clave como en Chrome.</p>
+        </div>
+
+        <!-- VIVALDI LINUX -->
+        <div class="guide-section" id="guide-linux-vivaldi-extension-install" style="display: none;">
+            <h2>💎 Vivaldi (Linux) - Extensión Inremovible</h2>
+            <div class="code-block" style="margin: 12px 0;">
+                sudo mkdir -p /etc/opt/vivaldi/policies/managed<br>
+                sudo nano /etc/opt/vivaldi/policies/managed/force_extension.json
+            </div>
+            <p>Pega el JSON con ExtensionInstallForcelist.</p>
+        </div>
+
+        <div class="guide-section" id="guide-linux-vivaldi-extension-uninstall" style="display: none;">
+            <h2>💎 Vivaldi (Linux) - Remover Protección</h2>
+            <div class="code-block">
+                sudo rm /etc/opt/vivaldi/policies/managed/force_extension.json
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-vivaldi-incognito-activate" style="display: none;">
+            <h2>💎 Vivaldi (Linux) - Desactivar Modo Privado</h2>
+            <div class="code-block" style="margin: 12px 0;">
+                sudo nano /etc/opt/vivaldi/policies/managed/disable_incognito.json
+            </div>
+            <div class="code-block">
+                {
+                "IncognitoModeAvailability": 1
+                }
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-linux-vivaldi-incognito-deactivate" style="display: none;">
+            <h2>💎 Vivaldi (Linux) - Reactivar Modo Privado</h2>
+            <div class="code-block">
+                sudo rm /etc/opt/vivaldi/policies/managed/disable_incognito.json
+            </div>
+        </div>
+
+        <!-- VIVALDI MACOS -->
+        <div class="guide-section" id="guide-mac-vivaldi-extension-install" style="display: none;">
+            <h2>💎 Vivaldi (macOS) - Extensión Inremovible</h2>
+            <div class="code-block" style="margin: 12px 0;">
+                sudo mkdir -p "/Library/Application Support/Vivaldi/policies/managed"<br>
+                sudo nano "/Library/Application Support/Vivaldi/policies/managed/force_extension.json"
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-vivaldi-extension-uninstall" style="display: none;">
+            <h2>💎 Vivaldi (macOS) - Remover Protección</h2>
+            <div class="code-block">
+                sudo rm "/Library/Application Support/Vivaldi/policies/managed/force_extension.json"
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-vivaldi-incognito-activate" style="display: none;">
+            <h2>💎 Vivaldi (macOS) - Desactivar Modo Privado</h2>
+            <div class="code-block">
+                defaults write com.vivaldi.Vivaldi IncognitoModeAvailability -integer 1
+            </div>
+        </div>
+
+        <div class="guide-section" id="guide-mac-vivaldi-incognito-deactivate" style="display: none;">
+            <h2>💎 Vivaldi (macOS) - Reactivar Modo Privado</h2>
+            <div class="code-block">
+                defaults write com.vivaldi.Vivaldi IncognitoModeAvailability -integer 0
             </div>
         </div>
 

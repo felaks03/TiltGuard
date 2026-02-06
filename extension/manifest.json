@@ -30,9 +30,7 @@
       "js": [
         "src/scripts/content.js"
       ],
-      "run_at": "document_start",
-      "incognito": "split"
+      "run_at": "document_start"
     }
-  ],
-  "incognito": "split"
+  ]
 }
