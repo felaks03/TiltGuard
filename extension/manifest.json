@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "TiltGuard - Tradovate Blocker",
+  "version": "1.0.0",
+  "description": "Bloquea elementos específicos en Tradovate.com",
+  "permissions": [
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://tradovate.com/*",
+    "https://www.tradovate.com/*",
+    "https://trader.tradovate.com/*"
+  ],
+  "background": {
+    "service_worker": "src/scripts/background.js"
+  },
+  "action": {
+    "default_popup": "src/pages/popup.html",
+    "default_title": "TiltGuard"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://tradovate.com/*",
+        "https://www.tradovate.com/*",
+        "https://trader.tradovate.com/*"
+      ],
+      "js": [
+        "src/scripts/content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ]
+}
