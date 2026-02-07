@@ -1,8 +1,8 @@
 import { Component, HostBinding } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
-import { HeaderComponent } from "./header/header.component";
-import { SidebarComponent } from "./sidebar/sidebar.component";
+import { HeaderComponent } from "./pages/header/header.component";
+import { SidebarComponent } from "./pages/sidebar/sidebar.component";
 
 @Component({
   selector: "app-root",
