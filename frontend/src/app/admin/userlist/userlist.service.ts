@@ -25,7 +25,7 @@ export interface UsuariosResponse {
 @Injectable({
   providedIn: "root",
 })
-export class UserService {
+export class UserlistService {
   private http = inject(HttpClient);
   private apiUrl = "http://localhost:5000/api/usuarios";
 

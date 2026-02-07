@@ -1,55 +1,51 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from "@angular/core";
+import { Component, inject, effect } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { UserService, Usuario } from "./user.service";
+import { signal } from "@angular/core";
+import { UserlistService, Usuario } from "./userlist.service";
 
 @Component({
-  selector: "app-user",
+  selector: "app-userlist",
   standalone: true,
   imports: [CommonModule],
-  templateUrl: "./user.component.html",
-  styleUrls: ["./user.component.scss"],
+  templateUrl: "./userlist.component.html",
+  styleUrls: ["./userlist.component.scss"],
 })
-export class UserComponent implements OnInit {
-  usuarios: Usuario[] = [];
-  cargando = false;
-  error: string | null = null;
-  menuAbiertoId: string | null = null;
+export class UserlistComponent {
+  usuarios = signal<Usuario[]>([]);
+  error = signal<string | null>(null);
+  menuAbiertoId = signal<string | null>(null);
 
-  private userService = inject(UserService);
-  private cdr = inject(ChangeDetectorRef);
+  private userService = inject(UserlistService);
 
-  ngOnInit(): void {
-    console.log("✅ UserComponent inicializado");
+  constructor() {
     this.cargarUsuarios();
   }
 
   cargarUsuarios(): void {
     console.log("📡 Iniciando carga de usuarios...");
-    this.cargando = true;
-    this.error = null;
+    this.error.set(null);
     this.userService.obtenerTodos().subscribe({
       next: (response) => {
         console.log("✅ Usuarios cargados:", response);
-        this.usuarios = response.data;
-        this.cargando = false;
-        this.cdr.markForCheck();
+        this.usuarios.set(response.data);
       },
       error: (err) => {
         console.error("❌ Error al cargar usuarios:", err);
-        this.error = `Error al cargar los usuarios: ${err.message || err.status}`;
-        this.cargando = false;
-        this.cdr.markForCheck();
+        this.error.set(
+          `Error al cargar los usuarios: ${err.message || err.status}`,
+        );
       },
     });
   }
 
   toggleMenu(usuarioId: string, event: Event): void {
     event.stopPropagation();
-    this.menuAbiertoId = this.menuAbiertoId === usuarioId ? null : usuarioId;
+    const currentId = this.menuAbiertoId();
+    this.menuAbiertoId.set(currentId === usuarioId ? null : usuarioId);
   }
 
   cerrarMenu(): void {
-    this.menuAbiertoId = null;
+    this.menuAbiertoId.set(null);
   }
 
   editar(usuario: Usuario): void {

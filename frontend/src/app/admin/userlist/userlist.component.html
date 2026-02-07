@@ -1,12 +1,16 @@
 <div class="content" (click)="cerrarMenu()">
     <h1>Usuarios</h1>
 
-    <div *ngIf="error" class="error">
-        <p>{{ error }}</p>
+    @if (error()) {
+    <div class="error">
+        <p>{{ error() }}</p>
     </div>
+    }
 
-    <div *ngIf="!error && usuarios.length > 0" class="usuarios-lista">
-        <div class="usuario-item" *ngFor="let usuario of usuarios">
+    @if (!error() && usuarios().length > 0) {
+    <div class="usuarios-lista">
+        @for (usuario of usuarios(); track usuario._id) {
+        <div class="usuario-item">
             <div class="usuario-info">
                 <div class="usuario-nombre">{{ usuario.nombre }}</div>
                 <div class="usuario-email">{{ usuario.email }}</div>
@@ -22,7 +26,8 @@
                 <button class="menu-btn" (click)="toggleMenu(usuario._id, $event)" title="Opciones">
                     <span class="menu-dots">⋮</span>
                 </button>
-                <div class="menu-dropdown" *ngIf="menuAbiertoId === usuario._id" (click)="$event.stopPropagation()">
+                @if (menuAbiertoId() === usuario._id) {
+                <div class="menu-dropdown" (click)="$event.stopPropagation()">
                     <button class="menu-item" (click)="editar(usuario)">
                         <span class="icon">✏️</span> Editar
                     </button>
@@ -33,11 +38,16 @@
                         <span class="icon">🗑️</span> Eliminar
                     </button>
                 </div>
+                }
             </div>
         </div>
+        }
     </div>
+    }
 
-    <div *ngIf="!error && usuarios.length === 0" class="no-usuarios">
+    @if (!error() && usuarios().length === 0) {
+    <div class="no-usuarios">
         <p>No hay usuarios registrados</p>
     </div>
+    }
 </div>

@@ -4,20 +4,22 @@ export const routes: Routes = [
   {
     path: "admin",
     loadComponent: () =>
-      import("./admin/admin.component").then((m) => m.AdminComponent),
+      import("./admin/admin-dashboard/admin-dashboard.component").then(
+        (m) => m.AdminDashboardComponent,
+      ),
   },
   {
-    path: "usuarios",
+    path: "admin/user-list",
     loadComponent: () =>
-      import("./main/dashboard/dashboard.component").then(
-        (m) => m.DashboardComponent,
+      import("./admin/userlist/userlist.component").then(
+        (m) => m.UserlistComponent
       ),
   },
   {
     path: "user",
     loadComponent: () =>
-      import("./main/dashboard/dashboard.component").then(
-        (m) => m.DashboardComponent,
+      import("./main/user-dashboard/user-dashboard.component").then(
+        (m) => m.UserDashboardComponent,
       ),
   },
   {
