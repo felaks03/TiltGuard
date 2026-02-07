@@ -120,6 +120,19 @@ Antes de que el proyecto esté listo, necesitas:
 - [ ] Gestión de estado (RxJS/Observable)
 - [ ] Rutas de navegación
 
+**⚠️ IMPORTANTE - Estructura de Componentes:**
+Cada componente de Angular debe tener la siguiente estructura:
+```
+ComponentName/
+├── component-name.component.ts       # Lógica del componente
+├── component-name.component.html     # Template
+├── component-name.component.scss     # Estilos
+├── component-name.module.ts          # Módulo del componente
+└── component-name.service.ts         # Servicio asociado
+```
+- Cada componente **DEBE** tener su propio `module.ts`
+- Cada componente **DEBE** tener su propio `service.ts` (aunque sea vacío inicialmente)
+
 ### General
 - [ ] Variables de entorno configuradas (.env)
 - [ ] Tests unitarios

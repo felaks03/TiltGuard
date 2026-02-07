@@ -2,6 +2,8 @@
 
 Sistema de landing page y registro de usuarios con frontend Angular y backend Node.js/Express/MongoDB.
 
+**⚠️ NOTA IMPORTANTE:** Este proyecto utiliza **TypeScript** para todo el código (Frontend y Backend).
+
 ## Estructura del Proyecto
 
 ```

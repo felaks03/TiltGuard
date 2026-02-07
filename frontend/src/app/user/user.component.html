@@ -1,0 +1,47 @@
+<div class="content">
+    <h1>Usuarios</h1>
+
+    <div *ngIf="cargando" class="loading">
+        <p>Cargando usuarios...</p>
+    </div>
+
+    <div *ngIf="error" class="error">
+        <p>{{ error }}</p>
+    </div>
+
+    <table *ngIf="!cargando && !error && usuarios.length > 0" class="usuarios-table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Ciudad</th>
+                <th>Teléfono</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let usuario of usuarios" class="usuario-row">
+                <td>{{ usuario.nombre }}</td>
+                <td>{{ usuario.email }}</td>
+                <td>
+                    <span class="rol" [class.admin]="usuario.rol === 'admin'"
+                        [class.usuario]="usuario.rol === 'usuario'">
+                        {{ usuario.rol }}
+                    </span>
+                </td>
+                <td>{{ usuario.ciudad || "-" }}</td>
+                <td>{{ usuario.telefono || "-" }}</td>
+                <td>
+                    <span class="estado" [class.activo]="usuario.activo" [class.inactivo]="!usuario.activo">
+                        {{ usuario.activo ? "Activo" : "Inactivo" }}
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div *ngIf="!cargando && !error && usuarios.length === 0" class="no-usuarios">
+        <p>No hay usuarios registrados</p>
+    </div>
+</div>

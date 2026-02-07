@@ -1,7 +1,23 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+:host.sidebar-closed {
+  --sidebar-width: 60px;
+}
+
+:host {
+  --sidebar-width: 250px;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  flex: 1;
+  overflow-y: auto;
 }
 
 h1 {

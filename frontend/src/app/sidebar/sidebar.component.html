@@ -1,0 +1,8 @@
+<nav class="sidebar" [class.closed]="!isOpen">
+    <button class="toggle-btn" (click)="toggleSidebar()">
+        {{ isOpen ? '✕' : '☰' }}
+    </button>
+    <ul>
+        <li><a routerLink="/usuarios">👥 Usuarios</a></li>
+    </ul>
+</nav>

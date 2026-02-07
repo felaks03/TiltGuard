@@ -1,0 +1,26 @@
+.header {
+  background-color: #fff;
+  color: #333;
+  padding: 30px 40px;
+  margin: 15px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: auto;
+  display: flex;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  width: calc(100% - var(--sidebar-width) - 40px);
+  margin-left: calc(var(--sidebar-width) + 10px);
+  transition:
+    width 0.3s ease,
+    margin-left 0.3s ease;
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+}
