@@ -9,12 +9,16 @@ export const routes: Routes = [
   {
     path: "usuarios",
     loadComponent: () =>
-      import("./main/dashboard/dashboard.component").then((m) => m.DashboardComponent),
+      import("./main/dashboard/dashboard.component").then(
+        (m) => m.DashboardComponent,
+      ),
   },
   {
     path: "user",
     loadComponent: () =>
-      import("./main/dashboard/dashboard.component").then((m) => m.DashboardComponent),
+      import("./main/dashboard/dashboard.component").then(
+        (m) => m.DashboardComponent,
+      ),
   },
   {
     path: "",
