@@ -9,16 +9,16 @@ export const routes: Routes = [
   {
     path: "usuarios",
     loadComponent: () =>
-      import("./user/user.component").then((m) => m.UserComponent),
+      import("./main/dashboard/dashboard.component").then((m) => m.DashboardComponent),
   },
   {
     path: "user",
     loadComponent: () =>
-      import("./user/user.component").then((m) => m.UserComponent),
+      import("./main/dashboard/dashboard.component").then((m) => m.DashboardComponent),
   },
   {
     path: "",
-    redirectTo: "usuarios",
+    redirectTo: "admin",
     pathMatch: "full",
   },
 ];

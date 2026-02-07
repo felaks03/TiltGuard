@@ -14,19 +14,31 @@ TiltGuard/
 ├── frontend/          # Proyecto Angular
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── admin/              # Componentes de administrador
-│   │   │   │   ├── admin.component.ts
-│   │   │   │   ├── admin.component.html
-│   │   │   │   ├── admin.component.scss
-│   │   │   │   ├── admin.module.ts
-│   │   │   │   └── admin.service.ts
-│   │   │   ├── user/               # Componentes de usuario normal
-│   │   │   │   ├── user.component.ts
-│   │   │   │   ├── user.component.html
-│   │   │   │   ├── user.component.scss
-│   │   │   │   ├── user.module.ts
-│   │   │   │   └── user.service.ts
-│   │   │   ├── pages/              # Páginas y componentes compartidos
+│   │   │   ├── admin/              # Panel de administración
+│   │   │   │   ├── dashboard/      # Dashboard del admin
+│   │   │   │   │   ├── dashboard.component.ts
+│   │   │   │   │   ├── dashboard.component.html
+│   │   │   │   │   ├── dashboard.component.scss
+│   │   │   │   │   └── dashboard.component.module.ts
+│   │   │   │   └── userlist/       # Listado de usuarios (admin)
+│   │   │   │       ├── user.component.ts
+│   │   │   │       ├── user.component.html
+│   │   │   │       ├── user.component.scss
+│   │   │   │       ├── user.module.ts
+│   │   │   │       └── user.service.ts
+│   │   │   ├── main/               # Componentes principales del usuario
+│   │   │   │   ├── dashboard/      # Dashboard del usuario
+│   │   │   │   │   ├── dashboard.component.ts
+│   │   │   │   │   ├── dashboard.component.html
+│   │   │   │   │   ├── dashboard.component.scss
+│   │   │   │   │   └── dashboard.component.module.ts
+│   │   │   │   └── user/           # Gestión de usuario principal
+│   │   │   │       ├── user.component.ts
+│   │   │   │       ├── user.component.html
+│   │   │   │       ├── user.component.scss
+│   │   │   │       ├── user.module.ts
+│   │   │   │       └── user.service.ts
+│   │   │   ├── pages/              # Componentes compartidos
 │   │   │   │   ├── header/
 │   │   │   │   │   ├── header.component.ts
 │   │   │   │   │   ├── header.component.html
@@ -113,9 +125,17 @@ ng serve
 
 ## Estructura de Carpetas Frontend
 
-- **`admin/`** - Componentes exclusivos para el panel de administración
-- **`user/`** - Componentes para usuarios normales (listado, perfil, etc.)
-- **`pages/`** - Componentes compartidos (Header, Sidebar, Layouts)
+**Norma:** Dentro de `admin/`, `main/` y `pages/` solo deben haber carpetas con componentes, no archivos sueltos.
+
+- **`admin/`** - Panel de administración
+  - `dashboard/` - Dashboard del administrador
+  - `userlist/` - Listado de usuarios (gestión)
+- **`main/`** - Componentes principales del usuario
+  - `dashboard/` - Dashboard del usuario (en desarrollo)
+  - `user/` - Gestión de usuario principal
+- **`pages/`** - Componentes compartidos
+  - `header/` - Encabezado de la aplicación
+  - `sidebar/` - Barra lateral de navegación
 
 ## Próximos Pasos
 - [x] Crear modelos de usuario (Mongoose)
