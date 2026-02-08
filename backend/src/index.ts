@@ -14,12 +14,9 @@ const MONGODB_URI =
   "mongodb://admin:password123@localhost:27017/tiltguard?authSource=admin";
 
 // Conectar a MongoDB
-mongoose
-  .connect(MONGODB_URI)
-  .then(() => console.log("✅ MongoDB conectado"))
-  .catch((err) =>
-    console.error("❌ Error de conexión a MongoDB:", err.message),
-  );
+mongoose.connect(MONGODB_URI).catch((err) => {
+  // MongoDB connection error
+});
 
 // Middlewares
 app.use(cors());
@@ -36,11 +33,8 @@ app.get("/api/health", (_req: Request, res: Response) => {
 
 // Error handling middleware
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error(err.stack);
   res.status(500).json({ error: "Something went wrong!" });
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
-});
+app.listen(PORT, () => {});

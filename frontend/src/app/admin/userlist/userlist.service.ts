@@ -6,12 +6,14 @@ export interface Usuario {
   _id: string;
   nombre: string;
   email: string;
+  password?: string;
   rol: "usuario" | "admin";
   activo: boolean;
-  avatar?: string;
-  telefono?: string;
-  ciudad?: string;
-  pais?: string;
+  avatar?: string | null;
+  telefono?: string | null;
+  direccion?: string | null;
+  ciudad?: string | null;
+  pais?: string | null;
   createdAt: string;
   updatedAt: string;
 }

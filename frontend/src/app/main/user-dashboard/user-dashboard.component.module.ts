@@ -1,9 +1,10 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { DashboardComponent } from "./dashboard.component";
+import { UserDashboardComponent } from "./user-dashboard.component";
 
 @NgModule({
-  imports: [CommonModule, DashboardComponent],
-  exports: [DashboardComponent],
+  imports: [CommonModule, UserDashboardComponent],
+  exports: [UserDashboardComponent],
 })
-export class DashboardModule {}
+export class UserDashboardModule {}
+

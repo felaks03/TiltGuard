@@ -1,11 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("[DOMContentLoaded] Event fired - iniciando setup");
-
   // Verificar que chrome.runtime esté disponible
   if (!chrome || !chrome.runtime) {
-    console.error(
-      "[DOMContentLoaded] chrome.runtime no disponible - modo web puro?",
-    );
     // En modo web puro, solo inicializar sin verificar storage
     initializeGuide();
     return;
@@ -15,40 +10,17 @@ document.addEventListener("DOMContentLoaded", () => {
   chrome.storage.sync.get(
     ["setupGuideCompleted", "accessUntil", "cooldownUntil"],
     (result) => {
-      console.log("[DOMContentLoaded] Storage check result:", {
-        setupGuideCompleted: result.setupGuideCompleted,
-        accessUntil: result.accessUntil,
-        cooldownUntil: result.cooldownUntil,
-        now: Date.now(),
-      });
-
       const isSetupCompleted = result.setupGuideCompleted === true;
       const now = Date.now();
       const hasActiveAccess = result.accessUntil && now < result.accessUntil;
       const hasCooldown = result.cooldownUntil && now < result.cooldownUntil;
 
-      console.log("[DOMContentLoaded] Status:", {
-        isSetupCompleted,
-        hasActiveAccess,
-        hasCooldown,
-        timeUntilAccessExpires: hasActiveAccess
-          ? result.accessUntil - now
-          : null,
-        timeUntilCooldownExpires: hasCooldown
-          ? result.cooldownUntil - now
-          : null,
-      });
-
       // Inicializar la guía en cualquier caso
-      console.log("[DOMContentLoaded] Calling initializeGuide()");
       initializeGuide();
 
       if (isSetupCompleted) {
         if (hasCooldown) {
           // El usuario está en cooldown, mostrar timer de cooldown
-          console.log(
-            "[DOMContentLoaded] Cooldown en progreso. Mostrando contador.",
-          );
           const blockContent = document.getElementById("accessBlockContent");
           blockContent.innerHTML = `
           <h2>⏳ Procesando solicitud...</h2>
@@ -61,23 +33,14 @@ document.addEventListener("DOMContentLoaded", () => {
           showCooldownTimerDisplay(result.cooldownUntil);
         } else if (hasActiveAccess) {
           // Timer activo - mostrar las guías libremente con timer de 20 segundos de visualización
-          console.log(
-            "[DOMContentLoaded] Active access detected. Showing guides with 20-second timer.",
-          );
           document.getElementById("accessBlockOverlay").style.display = "none";
           startFreeAccessTimer(result.accessUntil);
         } else {
           // Setup completado pero sin acceso activo - mostrar overlay con "Solicitar acceso"
-          console.log(
-            "[DOMContentLoaded] Setup completed. Showing request access overlay.",
-          );
           showRequestAccessOverlay();
         }
       } else {
         // Primera vez - sin restricciones
-        console.log(
-          "[DOMContentLoaded] First time access. Guides visible without restrictions.",
-        );
         const overlay = document.getElementById("accessBlockOverlay");
         if (overlay) {
           overlay.style.display = "none";
@@ -145,7 +108,6 @@ function showRequestAccessOverlay() {
 
   const requestBtn = document.getElementById("requestAccessBtn");
   requestBtn.addEventListener("click", () => {
-    console.log("[showRequestAccessOverlay] Usuario solicitó acceso");
     startCooldownTimer();
   });
 }
@@ -169,13 +131,8 @@ async function getServerTime() {
     const data = await response.json();
     const serverTime = new Date(data.utc_datetime).getTime();
 
-    console.log(
-      "[getServerTime] Hora del servidor obtenida:",
-      new Date(serverTime).toISOString(),
-    );
     return serverTime;
   } catch (error) {
-    console.error("[getServerTime] Error al obtener hora del servidor:", error);
     // Fallback: usar hora local
     return Date.now();
   }
@@ -183,9 +140,6 @@ async function getServerTime() {
 
 function startCooldownTimer() {
   // Timer 1: 10 segundos de cooldown (overlay visible con contador)
-  console.log(
-    "[startCooldownTimer] Iniciando timer de cooldown de 10 segundos",
-  );
 
   // Mostrar contador de acceso en la esquina superior derecha
   const timerDisplay = document.getElementById("accessTimer");
@@ -211,10 +165,6 @@ function startCooldownTimer() {
   getServerTime()
     .then((serverNow) => {
       const cooldownUntil = serverNow + 10 * 1000; // 10 segundos
-      console.log(
-        "[startCooldownTimer] Timer de cooldown set until:",
-        new Date(cooldownUntil).toISOString(),
-      );
 
       // Guardar en storage para sincronización si se recarga la página
       chrome.storage.sync.set({ cooldownUntil: cooldownUntil }, () => {
@@ -222,10 +172,6 @@ function startCooldownTimer() {
       });
     })
     .catch((error) => {
-      console.error(
-        "[startCooldownTimer] Error al obtener tiempo del servidor:",
-        error,
-      );
       // Fallback: usar hora local si API falla
       const now = Date.now();
       const cooldownUntil = now + 10 * 1000;
@@ -262,9 +208,6 @@ function showCooldownTimerDisplay(cooldownUntil) {
 
       if (remaining <= 0) {
         // Cooldown completado, iniciar acceso de 10 segundos
-        console.log(
-          "[showCooldownTimerDisplay] Cooldown completado. Iniciando acceso de 10 segundos.",
-        );
 
         if (intervalId) clearInterval(intervalId);
 
@@ -280,20 +223,12 @@ function showCooldownTimerDisplay(cooldownUntil) {
             cooldownUntil: null,
           },
           () => {
-            console.log(
-              "[showCooldownTimerDisplay] Acceso guardado hasta:",
-              new Date(accessUntil).toISOString(),
-            );
             startFreeAccessTimer(accessUntil);
           },
         );
         return;
       }
     } catch (error) {
-      console.error(
-        "[showCooldownTimerDisplay] Error en updateCooldownDisplay:",
-        error,
-      );
       // Fallback a hora local si falla la API
       const now = Date.now();
       const remaining = cooldownUntil - now;
@@ -332,27 +267,17 @@ function showCooldownTimerDisplay(cooldownUntil) {
 
 function startFreeAccessTimer(accessUntil) {
   // Timer 2: 10 segundos de acceso libre (overlay oculto)
-  console.log(
-    "[startFreeAccessTimer] INICIADO - Acceso libre hasta:",
-    new Date(accessUntil).toISOString(),
-  );
 
   // Mostrar contador de acceso en la esquina superior derecha
   const timerDisplay = document.getElementById("accessTimer");
-  console.log(
-    "[startFreeAccessTimer] timerDisplay element found:",
-    !!timerDisplay,
-  );
 
   if (timerDisplay) {
     timerDisplay.style.display = "flex";
-    console.log("[startFreeAccessTimer] Timer display set to flex");
 
     // Actualizar label a "Acceso"
     const timerLabel = timerDisplay.querySelector(".timer-label");
     if (timerLabel) {
       timerLabel.textContent = "⏱️ Acceso:";
-      console.log("[startFreeAccessTimer] Label updated to Acceso");
     }
 
     // Set initial value synchronously to avoid blank counter
@@ -362,49 +287,33 @@ function startFreeAccessTimer(accessUntil) {
       const remaining = accessUntil - now;
       const seconds = Math.max(0, Math.ceil(remaining / 1000));
       timerValueEl.textContent = `${seconds}s`;
-      console.log(
-        "[startFreeAccessTimer] Initial counter set to:",
-        `${seconds}s`,
-      );
     }
   } else {
-    console.error(
-      "[startFreeAccessTimer] ERROR: accessTimer element NOT found!",
-    );
+    // Element not found
   }
 
   let intervalId = null;
 
   async function updateAccessDisplay() {
-    console.log("[updateAccessDisplay] Called - fetching server time...");
     try {
       // Obtener hora del servidor para máxima precisión
       const serverNow = await getServerTime();
       const remaining = accessUntil - serverNow;
-
-      console.log(
-        "[updateAccessDisplay] Server time received. Remaining:",
-        remaining,
-        "ms",
-      );
 
       // Actualizar contador visible
       const timerValueEl = document.querySelector(".timer-value");
       if (timerValueEl) {
         const seconds = Math.max(0, Math.ceil(remaining / 1000));
         timerValueEl.textContent = `${seconds}s`;
-        console.log("[updateAccessDisplay] Counter updated to:", `${seconds}s`);
       } else {
-        console.warn("[updateAccessDisplay] timer-value element not found");
+        // timer-value element not found
       }
 
       if (remaining <= 0) {
         // Acceso expirado, cerrar ventana
-        console.log("[updateAccessDisplay] Access EXPIRED. Closing window...");
 
         if (intervalId) {
           clearInterval(intervalId);
-          console.log("[updateAccessDisplay] Interval cleared");
         }
 
         // Ocultar contador
@@ -413,39 +322,22 @@ function startFreeAccessTimer(accessUntil) {
         }
 
         chrome.storage.sync.remove(["accessUntil", "cooldownUntil"], () => {
-          console.log(
-            "[updateAccessDisplay] Storage cleared. Window will close...",
-          );
           setTimeout(() => {
-            console.log("[updateAccessDisplay] Executing window.close()");
             window.close();
           }, 500);
         });
         return;
       }
     } catch (error) {
-      console.error(
-        "[updateAccessDisplay] Error during async operation:",
-        error,
-      );
       // Fallback a hora local si falla la API
       const now = Date.now();
       const remaining = accessUntil - now;
-
-      console.log(
-        "[updateAccessDisplay] Using fallback (local time). Remaining:",
-        remaining,
-      );
 
       // Actualizar contador con fallback
       const timerValueEl = document.querySelector(".timer-value");
       if (timerValueEl) {
         const seconds = Math.max(0, Math.ceil(remaining / 1000));
         timerValueEl.textContent = `${seconds}s`;
-        console.log(
-          "[updateAccessDisplay] Fallback counter updated to:",
-          `${seconds}s`,
-        );
       }
 
       if (remaining <= 0) {
@@ -464,19 +356,12 @@ function startFreeAccessTimer(accessUntil) {
   }
 
   // Actualizar inmediatamente y luego cada segundo
-  console.log(
-    "[startFreeAccessTimer] Calling updateAccessDisplay immediately...",
-  );
-  updateAccessDisplay().catch((err) => {
-    console.error("[startFreeAccessTimer] updateAccessDisplay error:", err);
-  });
+  updateAccessDisplay().catch(() => {});
 
   intervalId = setInterval(updateAccessDisplay, 1000);
-  console.log("[startFreeAccessTimer] Interval set up (1000ms)");
 }
 
 function initializeGuide() {
-  console.log("=== [initializeGuide] INICIANDO ===");
   const browserSelector = document.getElementById("browser-selector");
   const changeBrowserLink = document.getElementById("change-browser-link");
   const detectedBrowserEl = document.getElementById("detected-browser");
@@ -484,17 +369,7 @@ function initializeGuide() {
   const mainBtns = document.querySelectorAll(".main-btn");
   const doneBtn = document.getElementById("doneBtn");
 
-  console.log("[initializeGuide] DOM elements check:", {
-    browserSelector: !!browserSelector,
-    changeBrowserLink: !!changeBrowserLink,
-    detectedBrowserEl: !!detectedBrowserEl,
-    detectedOsEl: !!detectedOsEl,
-    mainBtns: mainBtns.length,
-    doneBtn: !!doneBtn,
-  });
-
   if (!detectedBrowserEl || !detectedOsEl) {
-    console.error("[initializeGuide] FATAL: Missing required DOM elements!");
     return;
   }
 
@@ -504,11 +379,6 @@ function initializeGuide() {
   // Detectar navegador y SO automáticamente
   const detectedBrowser = detectBrowser();
   const detectedOS = detectOS();
-
-  console.log("[initializeGuide] Detection results:", {
-    browser: detectedBrowser,
-    os: detectedOS,
-  });
 
   // Mostrar lo detectado
   detectedBrowserEl.textContent = detectedBrowser.name;
@@ -526,10 +396,6 @@ function initializeGuide() {
     if (selectedBrowser) {
       const browserInfo = getBrowserInfo(selectedBrowser);
       detectedBrowserEl.textContent = browserInfo.name;
-      console.log(
-        "[initializeGuide] Browser selected manually:",
-        selectedBrowser,
-      );
       updateGuides(detectedOS.id, getCurrentMainType(), selectedBrowser);
     }
   });
@@ -548,7 +414,6 @@ function initializeGuide() {
   mainBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       const mainType = btn.dataset.mainType;
-      console.log("[initializeGuide] Main button clicked:", mainType);
 
       // Actualizar botones activos
       mainBtns.forEach((b) => b.classList.remove("active"));
@@ -567,21 +432,12 @@ function initializeGuide() {
       // Actualizar guías (mostrar ambas: extension e incognito)
       const selectedBrowser =
         document.getElementById("browser-selector").value || detectedBrowser.id;
-      console.log("[initializeGuide] Updating guides:", {
-        os: detectedOS.id,
-        mainType: mainType,
-        browser: selectedBrowser,
-      });
       updateGuides(detectedOS.id, mainType, selectedBrowser);
     });
   });
 
   // Event listener para el botón de finalización
   doneBtn.addEventListener("click", () => {
-    console.log(
-      "[initializeGuide] Done button clicked. MainType: " +
-        getCurrentMainType(),
-    );
     const mainType = getCurrentMainType();
     const title =
       mainType === "install"
@@ -600,9 +456,6 @@ function initializeGuide() {
   // Mostrar la guía inicial (instalación)
   const selectedBrowser =
     document.getElementById("browser-selector").value || detectedBrowser.id;
-  console.log(
-    `[initializeGuide] Showing initial guides - OS: ${detectedOS.id}, Browser: ${selectedBrowser}, Type: install`,
-  );
   updateGuides(detectedOS.id, "install", selectedBrowser);
   doneBtn.style.display = "inline-flex";
   doneBtn.textContent = "✓ Ya he completado la instalación";
@@ -610,9 +463,6 @@ function initializeGuide() {
   // Verificar si ya se ha completado la instalación antes para habilitar desinstalación
   chrome.storage.sync.get(["setupGuideCompleted"], (result) => {
     if (result.setupGuideCompleted === true) {
-      console.log(
-        "[initializeGuide] Setup ya fue completado, habilitando botón de desinstalación",
-      );
       const uninstallBtn = document.querySelector(
         '.main-btn[data-main-type="uninstall"]',
       );
@@ -621,8 +471,6 @@ function initializeGuide() {
       }
     }
   });
-
-  console.log("=== [initializeGuide] COMPLETADO ===");
 }
 
 function showCooldownScreen(cooldownUntil) {
@@ -669,15 +517,10 @@ function showCooldownScreen(cooldownUntil) {
 
 function completeSetup() {
   const mainType = getCurrentMainType();
-  console.log("Setup completado:", mainType);
 
   if (mainType === "install") {
     // Guardar que completó la instalación y habilitar botón de desinstalación
     chrome.storage.sync.set({ setupGuideCompleted: true }, () => {
-      console.log(
-        "Instalación completada. Habilitando botón de desinstalación.",
-      );
-
       // Habilitar botón de desinstalación
       const uninstallBtn = document.querySelector(
         '.main-btn[data-main-type="uninstall"]',
@@ -694,7 +537,6 @@ function completeSetup() {
   } else if (mainType === "uninstall") {
     // Remover el bloqueo
     chrome.storage.sync.remove(["setupGuideCompleted", "accessUntil"], () => {
-      console.log("Desinstalación completada. Bloqueo removido.");
       alert("Bloqueo desactivado. Ahora puedes cerrar esta ventana.");
       window.close();
     });
@@ -703,7 +545,6 @@ function completeSetup() {
 
 function completeInstallation() {
   // Esta función se mantiene para compatibilidad pero no se usa
-  console.log("completeInstallation (deprecated)");
 }
 
 function getCurrentMainType() {
@@ -712,27 +553,15 @@ function getCurrentMainType() {
 }
 
 function updateGuides(osId, mainType, browserId = "") {
-  console.log(
-    `[updateGuides] START - osId=${osId}, mainType=${mainType}, browserId=${browserId}`,
-  );
-
   // Validar parámetros
   if (!osId || !mainType) {
-    console.error(
-      "[updateGuides] ERROR: Parámetros inválidos. osId y mainType son requeridos",
-    );
     return;
   }
 
   // Ocultar todas las guías
   const allGuides = document.querySelectorAll(".guide-section");
-  console.log(`[updateGuides] Total guide sections found: ${allGuides.length}`);
 
   if (allGuides.length === 0) {
-    console.error("[updateGuides] FATAL: No guide sections found in DOM!");
-    console.error(
-      "[updateGuides] El HTML debería tener elementos con class='guide-section'",
-    );
     return;
   }
 
@@ -743,10 +572,6 @@ function updateGuides(osId, mainType, browserId = "") {
   // Usar el navegador proporcionado o detectado
   const browserToUse = browserId || detectBrowser().id;
   const mode = mainType === "install" ? "install" : "uninstall";
-
-  console.log(
-    `[updateGuides] Using: osId=${osId}, browser=${browserToUse}, mode=${mode}`,
-  );
 
   // Mostrar ambas guías en secuencia: extension + incognito
   const guides = ["extension", "incognito"];
@@ -764,16 +589,12 @@ function updateGuides(osId, mainType, browserId = "") {
     }
 
     searchedGuides.push(guideId);
-    console.log(`[updateGuides] Looking for guide: ${guideId}`);
 
     const guideElement = document.getElementById(guideId);
     if (guideElement) {
       guideElement.style.display = "block";
       foundCount++;
-      console.log(`[updateGuides] ✓ Guide found and shown: ${guideId}`);
     } else {
-      console.log(`[updateGuides] ✗ Guide NOT found: ${guideId}`);
-
       // Debug: listar guías disponibles que coinciden parcialmente
       const availableGuides = Array.from(allGuides).map((el) => el.id);
       const similarGuides = availableGuides.filter((id) => {
@@ -781,37 +602,15 @@ function updateGuides(osId, mainType, browserId = "") {
       });
 
       if (similarGuides.length > 0) {
-        console.log(
-          `[updateGuides] Similar guides for ${osId}-${browserToUse}:`,
-        );
-        similarGuides.slice(0, 3).forEach((id) => console.log(`  - ${id}`));
+        // Similar guides found
       } else {
-        console.log(
-          `[updateGuides] No similar guides found for ${osId}-${browserToUse}`,
-        );
-        console.log(
-          `[updateGuides] Available OS-Browser combinations (first 5):`,
-        );
-        const uniquePatterns = new Set();
-        availableGuides.slice(0, 20).forEach((id) => {
-          const match = id.match(/guide-([^-]+)-([^-]+)-/);
-          if (match) {
-            uniquePatterns.add(`${match[1]}-${match[2]}`);
-          }
-        });
-        Array.from(uniquePatterns).forEach((pattern) => {
-          console.log(`  - ${pattern}`);
-        });
+        // No similar guides
       }
     }
   });
 
-  console.log(`[updateGuides] END - Successfully shown ${foundCount}/2 guides`);
-
   if (foundCount === 0) {
-    console.error(
-      "[updateGuides] WARNING: No guides were shown! Check browser/OS compatibility.",
-    );
+    // No guides were shown
   }
 }
 

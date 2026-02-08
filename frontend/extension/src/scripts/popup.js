@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         blockRiskSettings: true,
                       })
                       .catch(() => {
-                        console.log("Tab not ready");
+                        // Tab not ready
                       });
                     // Recargar la pestaña
                     chrome.tabs.reload(tab.id);
@@ -121,7 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           closeConfirmationModal();
         } catch (error) {
-          console.error("Error calculating block until:", error);
           alert("Error al calcular la fecha de bloqueo");
           closeConfirmationModal();
         }
@@ -175,7 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       return blockUntilDate.getTime();
     } catch (error) {
-      console.error("Error fetching time:", error);
       // Fallback: usar hora local si la API falla
       const nowDate = new Date();
       let blockUntilDate = new Date(nowDate);

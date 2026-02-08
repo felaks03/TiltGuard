@@ -1,0 +1,71 @@
+<div class="content">
+    <div class="header">
+        <button class="btn-volver" (click)="volver()">← Volver</button>
+        <h1>Detalles del Usuario</h1>
+    </div>
+
+    @if (loading()) {
+    <div class="loading">Cargando...</div>
+    }
+
+    @if (error()) {
+    <div class="error">
+        <p>{{ error() }}</p>
+    </div>
+    }
+
+    @if (!loading() && usuario()) {
+    <div class="user-details-container">
+        <div class="user-header">
+            <img class="user-avatar" [src]="usuario()!.avatar || '/assets/defaultAvatar.jpg'"
+                [alt]="usuario()!.nombre" />
+            <div class="user-header-info">
+                <h2>{{ usuario()!.nombre }}</h2>
+                <p class="email">{{ usuario()!.email }}</p>
+            </div>
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-item">
+                <label>Rol</label>
+                <span class="badge" [class.admin]="usuario()!.rol === 'admin'"
+                    [class.usuario]="usuario()!.rol === 'usuario'">
+                    {{ usuario()!.rol }}
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <label>Estado</label>
+                <span class="badge" [class.activo]="usuario()!.activo" [class.inactivo]="!usuario()!.activo">
+                    {{ usuario()!.activo ? "Activo" : "Inactivo" }}
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <label>Teléfono</label>
+                <p>{{ usuario()!.telefono || "No disponible" }}</p>
+            </div>
+
+            <div class="detail-item">
+                <label>Ciudad</label>
+                <p>{{ usuario()!.ciudad || "No disponible" }}</p>
+            </div>
+
+            <div class="detail-item">
+                <label>País</label>
+                <p>{{ usuario()!.pais || "No disponible" }}</p>
+            </div>
+
+            <div class="detail-item">
+                <label>Creado</label>
+                <p>{{ usuario()!.createdAt | date: "short" }}</p>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" (click)="editarUsuario()">Editar Usuario</button>
+            <button class="btn btn-secondary" (click)="volver()">Cancelar</button>
+        </div>
+    </div>
+    }
+</div>

@@ -12,7 +12,21 @@ export const routes: Routes = [
     path: "admin/user-list",
     loadComponent: () =>
       import("./admin/userlist/userlist.component").then(
-        (m) => m.UserlistComponent
+        (m) => m.UserlistComponent,
+      ),
+  },
+  {
+    path: "admin/user-details/:id",
+    loadComponent: () =>
+      import("./admin/user-details/user-details.component").then(
+        (m) => m.UserDetailsComponent,
+      ),
+  },
+  {
+    path: "admin/user-edit/:id",
+    loadComponent: () =>
+      import("./admin/user-edit/user-edit.component").then(
+        (m) => m.UserEditComponent,
       ),
   },
   {
@@ -24,7 +38,7 @@ export const routes: Routes = [
   },
   {
     path: "",
-    redirectTo: "admin",
+    redirectTo: "admin/user-list",
     pathMatch: "full",
   },
 ];

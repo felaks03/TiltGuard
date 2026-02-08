@@ -56,13 +56,38 @@ export const createUser = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { nombre, email, password, rol } = req.body;
-
-    const user = new User({
+    const {
       nombre,
       email,
       password,
+      rol,
+      activo,
+      telefono,
+      ciudad,
+      pais,
+      avatar,
+      direccion,
+    } = req.body;
+
+    // Función auxiliar para convertir strings vacíos a null
+    const sanitizeField = (value: any) => {
+      if (value === "" || value === undefined || value === null) {
+        return null;
+      }
+      return value;
+    };
+
+    const user = new User({
+      nombre: nombre?.trim() || "",
+      email: email?.trim() || "",
+      password,
       rol: rol || "usuario",
+      activo: activo !== undefined ? activo : true,
+      telefono: sanitizeField(telefono),
+      ciudad: sanitizeField(ciudad),
+      pais: sanitizeField(pais),
+      avatar: sanitizeField(avatar),
+      direccion: sanitizeField(direccion),
     });
 
     await user.save();
@@ -73,9 +98,24 @@ export const createUser = async (
     });
   } catch (error) {
     const err = error as any;
+
+    // Manejar errores de validación específicos
+    let errorMessage = "Error al crear el usuario";
+
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyPattern)[0];
+      errorMessage = `El ${field} ya está registrado. Por favor usa otro ${field}.`;
+    } else if (err.errors) {
+      errorMessage = Object.values(err.errors)
+        .map((e: any) => e.message)
+        .join(", ");
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+
     res.status(400).json({
       success: false,
-      error: err.message,
+      error: errorMessage,
     });
   }
 };

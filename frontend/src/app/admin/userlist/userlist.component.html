@@ -1,5 +1,8 @@
 <div class="content" (click)="cerrarMenu()">
-    <h1>Usuarios</h1>
+    <div class="header-container">
+        <h1>Usuarios</h1>
+        <button class="btn-crear" (click)="abrirSidebar()">+ Crear Usuario</button>
+    </div>
 
     @if (error()) {
     <div class="error">
@@ -8,9 +11,13 @@
     }
 
     @if (!error() && usuarios().length > 0) {
+    <div class="usuarios-header">
+        <span class="usuarios-counter">Total: {{ usuarios().length }} usuarios</span>
+    </div>
     <div class="usuarios-lista">
         @for (usuario of usuarios(); track usuario._id) {
         <div class="usuario-item">
+            <img class="usuario-avatar" [src]="usuario.avatar || '/assets/defaultAvatar.jpg'" [alt]="usuario.nombre" />
             <div class="usuario-info">
                 <div class="usuario-nombre">{{ usuario.nombre }}</div>
                 <div class="usuario-email">{{ usuario.email }}</div>
@@ -21,24 +28,24 @@
                 <span class="usuario-estado" [class.activo]="usuario.activo" [class.inactivo]="!usuario.activo">
                     {{ usuario.activo ? "Activo" : "Inactivo" }}
                 </span>
-            </div>
-            <div class="usuario-menu-container">
-                <button class="menu-btn" (click)="toggleMenu(usuario._id, $event)" title="Opciones">
-                    <span class="menu-dots">⋮</span>
-                </button>
-                @if (menuAbiertoId() === usuario._id) {
-                <div class="menu-dropdown" (click)="$event.stopPropagation()">
-                    <button class="menu-item" (click)="editar(usuario)">
-                        <span class="icon">✏️</span> Editar
+                <div class="usuario-menu-container">
+                    <button class="menu-btn" (click)="toggleMenu(usuario._id, $event)" title="Opciones">
+                        <span class="menu-dots">⋮</span>
                     </button>
-                    <button class="menu-item" (click)="cambiarEstado(usuario)">
-                        <span class="icon">🔄</span> Cambiar estado
-                    </button>
-                    <button class="menu-item delete" (click)="eliminar(usuario)">
-                        <span class="icon">🗑️</span> Eliminar
-                    </button>
+                    @if (menuAbiertoId() === usuario._id) {
+                    <div class="menu-dropdown" (click)="$event.stopPropagation()">
+                        <button class="menu-item" (click)="verDetalles(usuario)">
+                            <span class="icon">👁️</span> Detalles
+                        </button>
+                        <button class="menu-item" (click)="editar(usuario)">
+                            <span class="icon">✏️</span> Editar
+                        </button>
+                        <button class="menu-item delete" (click)="eliminar(usuario)">
+                            <span class="icon">🗑️</span> Eliminar
+                        </button>
+                    </div>
+                    }
                 </div>
-                }
             </div>
         </div>
         }
@@ -51,3 +58,73 @@
     </div>
     }
 </div>
+
+@if (sidebarAbierta()) {
+<div class="sidebar-overlay" (click)="cerrarSidebar()"></div>
+<div class="sidebar">
+    <div class="sidebar-header">
+        <h2>Crear Nuevo Usuario</h2>
+        <button class="btn-cerrar" (click)="cerrarSidebar()">✕</button>
+    </div>
+
+    <form (ngSubmit)="crearUsuario()" class="create-form">
+        <div class="form-group">
+            <label for="nombre">Nombre *</label>
+            <input type="text" id="nombre" [(ngModel)]="nuevoUsuario().nombre" name="nombre"
+                placeholder="Nombre del usuario" required />
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" [(ngModel)]="nuevoUsuario().email" name="email"
+                placeholder="correo@example.com" required />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Contraseña *</label>
+            <input type="password" id="password" [(ngModel)]="nuevoUsuario().password" name="password"
+                placeholder="Contraseña segura" required />
+        </div>
+
+        <div class="form-group">
+            <label for="rol">Rol</label>
+            <select id="rol" [(ngModel)]="nuevoUsuario().rol" name="rol">
+                <option value="usuario">Usuario</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="telefono">Teléfono</label>
+            <input type="text" id="telefono" [(ngModel)]="nuevoUsuario().telefono" name="telefono"
+                placeholder="+34 600 000 000" />
+        </div>
+
+        <div class="form-group">
+            <label for="ciudad">Ciudad</label>
+            <input type="text" id="ciudad" [(ngModel)]="nuevoUsuario().ciudad" name="ciudad" placeholder="Madrid" />
+        </div>
+
+        <div class="form-group">
+            <label for="pais">País</label>
+            <input type="text" id="pais" [(ngModel)]="nuevoUsuario().pais" name="pais" placeholder="España" />
+        </div>
+
+        <div class="form-group checkbox">
+            <label for="activo">
+                <input type="checkbox" id="activo" [(ngModel)]="nuevoUsuario().activo" name="activo" />
+                Usuario Activo
+            </label>
+        </div>
+
+        <div class="sidebar-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="creandoUsuario()">
+                {{ creandoUsuario() ? "Creando..." : "Crear Usuario" }}
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="cerrarSidebar()" [disabled]="creandoUsuario()">
+                Cancelar
+            </button>
+        </div>
+    </form>
+</div>
+}

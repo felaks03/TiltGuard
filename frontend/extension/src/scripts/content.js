@@ -9,7 +9,6 @@ function blockRiskSettings() {
     if (button && button.textContent.includes("Risk Settings")) {
       container.style.display = "none";
       container.setAttribute("data-tiltguard-blocked", "true");
-      console.log("Risk Settings bloqueado");
     }
   });
 }
@@ -23,7 +22,6 @@ function unblockRiskSettings() {
   blockedElements.forEach((element) => {
     element.style.display = "";
     element.removeAttribute("data-tiltguard-blocked");
-    console.log("Risk Settings desbloqueado");
   });
 }
 
