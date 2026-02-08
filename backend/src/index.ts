@@ -14,7 +14,7 @@ const MONGODB_URI =
   "mongodb://admin:password123@localhost:27017/tiltguard?authSource=admin";
 
 // Conectar a MongoDB
-mongoose.connect(MONGODB_URI).catch((err) => {
+mongoose.connect(MONGODB_URI).catch((_err) => {
   // MongoDB connection error
 });
 
@@ -32,7 +32,7 @@ app.get("/api/health", (_req: Request, res: Response) => {
 });
 
 // Error handling middleware
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+app.use((_err: any, _req: Request, res: Response, _next: NextFunction) => {
   res.status(500).json({ error: "Something went wrong!" });
 });
 

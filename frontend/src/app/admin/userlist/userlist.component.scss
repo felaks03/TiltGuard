@@ -119,14 +119,17 @@
 }
 
 .usuario-nombre {
-  flex: 1;
+  flex: 0 0 150px;
   font-weight: 600;
   color: #333;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .usuario-email {
-  flex: 1;
+  flex: 0 0 180px;
   color: #666;
   font-size: 13px;
   white-space: nowrap;
