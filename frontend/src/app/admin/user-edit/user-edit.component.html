@@ -1,6 +1,6 @@
 <div class="content">
     <div class="header">
-        <button class="btn-volver" (click)="volver()">← Volver</button>
+        <button class="btn-volver" (click)="navigateBack()">← Volver</button>
         <h1>Editar Usuario</h1>
     </div>
 
@@ -15,7 +15,7 @@
     }
 
     @if (!loading() && usuario()) {
-    <form (ngSubmit)="guardarCambios()" class="edit-form">
+    <form (ngSubmit)="usersSave()" class="edit-form">
         <div class="form-container">
             <div class="form-group">
                 <label for="nombre">Nombre</label>
@@ -62,7 +62,7 @@
             <button type="submit" class="btn btn-primary" [disabled]="guardando()">
                 {{ guardando() ? "Guardando..." : "Guardar Cambios" }}
             </button>
-            <button type="button" class="btn btn-secondary" (click)="volver()">Cancelar</button>
+            <button type="button" class="btn btn-secondary" (click)="navigateBack()">Cancelar</button>
         </div>
     </form>
     }

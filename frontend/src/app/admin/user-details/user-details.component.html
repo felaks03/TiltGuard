@@ -1,6 +1,6 @@
 <div class="content">
     <div class="header">
-        <button class="btn-volver" (click)="volver()">← Volver</button>
+        <button class="btn-volver" (click)="navigateBack()">← Volver</button>
         <h1>Detalles del Usuario</h1>
     </div>
 
@@ -63,8 +63,8 @@
         </div>
 
         <div class="actions">
-            <button class="btn btn-primary" (click)="editarUsuario()">Editar Usuario</button>
-            <button class="btn btn-secondary" (click)="volver()">Cancelar</button>
+            <button class="btn btn-primary" (click)="usersNavigateEdit()">Editar Usuario</button>
+            <button class="btn btn-secondary" (click)="navigateBack()">Cancelar</button>
         </div>
     </div>
     }

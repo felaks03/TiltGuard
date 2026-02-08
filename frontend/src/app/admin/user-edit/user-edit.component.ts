@@ -3,7 +3,8 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, RouterModule, Router } from "@angular/router";
 import { signal } from "@angular/core";
-import { UserlistService, Usuario } from "../userlist/userlist.service";
+import { Usuario } from "../userlist/userlist.service";
+import { UserEditService } from "./user-edit.service";
 
 @Component({
   selector: "app-user-edit",
@@ -20,13 +21,13 @@ export class UserEditComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private userService = inject(UserlistService);
+  private userEditService = inject(UserEditService);
 
   ngOnInit(): void {
-    this.cargarUsuario();
+    this.usersLoad();
   }
 
-  cargarUsuario(): void {
+  usersLoad(): void {
     const id = this.route.snapshot.paramMap.get("id");
     if (!id) {
       this.error.set("ID de usuario no encontrado");
@@ -34,7 +35,7 @@ export class UserEditComponent implements OnInit {
       return;
     }
 
-    this.userService.obtenerPorId(id).subscribe({
+    this.userEditService.usersGetById(id).subscribe({
       next: (response) => {
         this.usuario.set(response.data);
         this.loading.set(false);
@@ -46,27 +47,29 @@ export class UserEditComponent implements OnInit {
     });
   }
 
-  guardarCambios(): void {
+  usersSave(): void {
     const usuarioActual = this.usuario();
-    if (!usuarioActual || !usuarioActual._id) {
+    if (!usuarioActual || !this.userEditService.usersValidate(usuarioActual)) {
       this.error.set("Error: Usuario no válido");
       return;
     }
 
     this.guardando.set(true);
-    this.userService.actualizar(usuarioActual._id, usuarioActual).subscribe({
-      next: () => {
-        this.guardando.set(false);
-        this.router.navigate(["/admin/user-list"]);
-      },
-      error: (err) => {
-        this.guardando.set(false);
-        this.error.set(`Error al guardar los cambios: ${err.message}`);
-      },
-    });
+    this.userEditService
+      .usersUpdate(usuarioActual._id, usuarioActual)
+      .subscribe({
+        next: () => {
+          this.guardando.set(false);
+          this.router.navigate(["/admin/user-list"]);
+        },
+        error: (err) => {
+          this.guardando.set(false);
+          this.error.set(`Error al guardar los cambios: ${err.message}`);
+        },
+      });
   }
 
-  volver(): void {
+  navigateBack(): void {
     this.router.navigate(["/admin/user-list"]);
   }
 }

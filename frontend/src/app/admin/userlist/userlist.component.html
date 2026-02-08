@@ -1,7 +1,21 @@
-<div class="content" (click)="cerrarMenu()">
+<div class="content" (click)="menuClose()">
+    <!-- Modal de confirmación para eliminar -->
+    @if (mostrarModalEliminar()) {
+    <div class="confirmation-modal">
+        <div class="modal-content">
+            <h2>Confirmar eliminación</h2>
+            <p>¿Estás seguro de que deseas eliminar a <strong>{{ usuarioAEliminar()?.nombre }}</strong>? Esta acción no se puede deshacer.</p>
+            <div class="modal-buttons">
+                <button class="btn-cancel" (click)="usersDeleteCancel()">Cancelar</button>
+                <button class="btn-delete" (click)="usersDeleteConfirm()">Eliminar</button>
+            </div>
+        </div>
+    </div>
+    }
+
     <div class="header-container">
         <h1>Usuarios</h1>
-        <button class="btn-crear" (click)="abrirSidebar()">+ Crear Usuario</button>
+        <button class="btn-crear" (click)="sidebarOpen()">+ Crear Usuario</button>
     </div>
 
     @if (error()) {
@@ -29,19 +43,19 @@
                     {{ usuario.activo ? "Activo" : "Inactivo" }}
                 </span>
                 <div class="usuario-menu-container">
-                    <button class="menu-btn" (click)="toggleMenu(usuario._id, $event)" title="Opciones">
+                    <button class="menu-btn" (click)="menuToggle(usuario._id, $event)" title="Opciones">
                         <span class="menu-dots">⋮</span>
                     </button>
                     @if (menuAbiertoId() === usuario._id) {
                     <div class="menu-dropdown" (click)="$event.stopPropagation()">
-                        <button class="menu-item" (click)="verDetalles(usuario)">
-                            <span class="icon">👁️</span> Detalles
+                        <button class="menu-item" (click)="usersViewDetails(usuario)">
+                            Detalles
                         </button>
-                        <button class="menu-item" (click)="editar(usuario)">
-                            <span class="icon">✏️</span> Editar
+                        <button class="menu-item" (click)="usersNavigateEdit(usuario)">
+                            Editar
                         </button>
-                        <button class="menu-item delete" (click)="eliminar(usuario)">
-                            <span class="icon">🗑️</span> Eliminar
+                        <button class="menu-item delete" (click)="usersDeleteStart(usuario)">
+                            Eliminar
                         </button>
                     </div>
                     }
@@ -60,14 +74,14 @@
 </div>
 
 @if (sidebarAbierta()) {
-<div class="sidebar-overlay" (click)="cerrarSidebar()"></div>
+<div class="sidebar-overlay" (click)="sidebarClose()"></div>
 <div class="sidebar">
     <div class="sidebar-header">
         <h2>Crear Nuevo Usuario</h2>
-        <button class="btn-cerrar" (click)="cerrarSidebar()">✕</button>
+        <button class="btn-cerrar" (click)="sidebarClose()">✕</button>
     </div>
 
-    <form (ngSubmit)="crearUsuario()" class="create-form">
+    <form (ngSubmit)="usersCreate()" class="create-form">
         <div class="form-group">
             <label for="nombre">Nombre *</label>
             <input type="text" id="nombre" [(ngModel)]="nuevoUsuario().nombre" name="nombre"
@@ -121,7 +135,7 @@
             <button type="submit" class="btn btn-primary" [disabled]="creandoUsuario()">
                 {{ creandoUsuario() ? "Creando..." : "Crear Usuario" }}
             </button>
-            <button type="button" class="btn btn-secondary" (click)="cerrarSidebar()" [disabled]="creandoUsuario()">
+            <button type="button" class="btn btn-secondary" (click)="sidebarClose()" [disabled]="creandoUsuario()">
                 Cancelar
             </button>
         </div>

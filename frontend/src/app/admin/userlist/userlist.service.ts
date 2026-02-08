@@ -31,25 +31,39 @@ export class UserlistService {
   private http = inject(HttpClient);
   private apiUrl = "http://localhost:5000/api/usuarios";
 
-  obtenerTodos(): Observable<UsuariosResponse> {
+  usersGetAll(): Observable<UsuariosResponse> {
     return this.http.get<UsuariosResponse>(this.apiUrl);
   }
 
-  obtenerPorId(id: string): Observable<any> {
+  usersGetById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  crear(
+  usersCreate(
     usuario: Omit<Usuario, "_id" | "createdAt" | "updatedAt">,
   ): Observable<any> {
     return this.http.post<any>(this.apiUrl, usuario);
   }
 
-  actualizar(id: string, usuario: Partial<Usuario>): Observable<any> {
+  usersUpdate(id: string, usuario: Partial<Usuario>): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, usuario);
   }
 
-  eliminar(id: string): Observable<any> {
+  usersDelete(id: string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  }
+
+  usersValidate(usuario: Partial<Usuario>): {
+    valido: boolean;
+    mensaje?: string;
+  } {
+    if (!usuario.nombre || !usuario.email || !usuario.password) {
+      return {
+        valido: false,
+        mensaje:
+          "Por favor completa los campos obligatorios: nombre, email y contraseña",
+      };
+    }
+    return { valido: true };
   }
 }

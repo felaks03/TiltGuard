@@ -2,7 +2,8 @@ import { Component, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, RouterModule, Router } from "@angular/router";
 import { signal } from "@angular/core";
-import { UserlistService, Usuario } from "../userlist/userlist.service";
+import { Usuario } from "../userlist/userlist.service";
+import { UserDetailsService } from "./user-details.service";
 
 @Component({
   selector: "app-user-details",
@@ -18,13 +19,13 @@ export class UserDetailsComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private userService = inject(UserlistService);
+  private userDetailsService = inject(UserDetailsService);
 
   ngOnInit(): void {
-    this.cargarUsuario();
+    this.usersLoad();
   }
 
-  cargarUsuario(): void {
+  usersLoad(): void {
     const id = this.route.snapshot.paramMap.get("id");
     if (!id) {
       this.error.set("ID de usuario no encontrado");
@@ -32,7 +33,7 @@ export class UserDetailsComponent implements OnInit {
       return;
     }
 
-    this.userService.obtenerPorId(id).subscribe({
+    this.userDetailsService.usersGetById(id).subscribe({
       next: (response) => {
         this.usuario.set(response.data);
         this.loading.set(false);
@@ -44,11 +45,11 @@ export class UserDetailsComponent implements OnInit {
     });
   }
 
-  volver(): void {
+  navigateBack(): void {
     this.router.navigate(["/admin/user-list"]);
   }
 
-  editarUsuario(): void {
+  usersNavigateEdit(): void {
     const id = this.usuario()?._id;
     if (id) {
       this.router.navigate(["/admin/user-edit", id]);

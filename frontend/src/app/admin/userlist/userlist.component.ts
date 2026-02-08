@@ -18,6 +18,8 @@ export class UserlistComponent {
   menuAbiertoId = signal<string | null>(null);
   sidebarAbierta = signal<boolean>(false);
   creandoUsuario = signal<boolean>(false);
+  mostrarModalEliminar = signal<boolean>(false);
+  usuarioAEliminar = signal<Usuario | null>(null);
   nuevoUsuario = signal<Partial<Usuario>>({
     nombre: "",
     email: "",
@@ -33,12 +35,12 @@ export class UserlistComponent {
   private router = inject(Router);
 
   constructor() {
-    this.cargarUsuarios();
+    this.usersLoad();
   }
 
-  cargarUsuarios(): void {
+  usersLoad(): void {
     this.error.set(null);
-    this.userService.obtenerTodos().subscribe({
+    this.userService.usersGetAll().subscribe({
       next: (response) => {
         if (response.data && Array.isArray(response.data)) {
           this.usuarios.set(response.data);
@@ -54,52 +56,61 @@ export class UserlistComponent {
     });
   }
 
-  toggleMenu(usuarioId: string, event: Event): void {
+  menuToggle(usuarioId: string, event: Event): void {
     event.stopPropagation();
     const currentId = this.menuAbiertoId();
     this.menuAbiertoId.set(currentId === usuarioId ? null : usuarioId);
   }
 
-  cerrarMenu(): void {
+  menuClose(): void {
     this.menuAbiertoId.set(null);
   }
 
-  verDetalles(usuario: Usuario): void {
-    this.cerrarMenu();
+  usersViewDetails(usuario: Usuario): void {
+    this.menuClose();
     this.router.navigate(["/admin/user-details", usuario._id]);
   }
 
-  editar(usuario: Usuario): void {
-    this.cerrarMenu();
+  usersNavigateEdit(usuario: Usuario): void {
+    this.menuClose();
     this.router.navigate(["/admin/user-edit", usuario._id]);
   }
 
-  eliminar(usuario: Usuario): void {
-    const confirmacion = confirm(
-      `¿Estás seguro de que deseas eliminar a ${usuario.nombre}? Esta acción no se puede deshacer.`,
-    );
-
-    if (confirmacion) {
-      this.cerrarMenu();
-      this.userService.eliminar(usuario._id).subscribe({
-        next: () => {
-          this.cargarUsuarios();
-        },
-        error: (err) => {
-          this.error.set(`Error al eliminar usuario: ${err.message}`);
-        },
-      });
-    } else {
-      this.cerrarMenu();
-    }
+  usersDeleteStart(usuario: Usuario): void {
+    this.usuarioAEliminar.set(usuario);
+    this.mostrarModalEliminar.set(true);
+    this.menuClose();
   }
 
-  cambiarEstado(usuario: Usuario): void {
-    this.cerrarMenu();
+  usersDeleteCancel(): void {
+    this.mostrarModalEliminar.set(false);
+    this.usuarioAEliminar.set(null);
+  }
+
+  usersDeleteConfirm(): void {
+    const usuario = this.usuarioAEliminar();
+    if (!usuario) return;
+
+    this.userService.usersDelete(usuario._id).subscribe({
+      next: () => {
+        this.mostrarModalEliminar.set(false);
+        this.usuarioAEliminar.set(null);
+        this.usersLoad();
+      },
+      error: (err) => {
+        this.error.set(`Error al eliminar usuario: ${err.message}`);
+        this.mostrarModalEliminar.set(false);
+        this.usuarioAEliminar.set(null);
+      },
+    });
+  }
+
+  usersChangeStatus(usuario: Usuario): void {
+    this.menuClose();
     // Implementar lógica de cambio de estado
   }
 
-  abrirSidebar(): void {
+  sidebarOpen(): void {
     this.sidebarAbierta.set(true);
     this.nuevoUsuario.set({
       nombre: "",
@@ -113,28 +124,27 @@ export class UserlistComponent {
     });
   }
 
-  cerrarSidebar(): void {
+  sidebarClose(): void {
     this.sidebarAbierta.set(false);
   }
 
-  crearUsuario(): void {
+  usersCreate(): void {
     const usuario = this.nuevoUsuario();
 
-    if (!usuario.nombre || !usuario.email || !usuario.password) {
-      alert(
-        "Por favor completa los campos obligatorios: nombre, email y contraseña",
-      );
+    const validacion = this.userService.usersValidate(usuario);
+    if (!validacion.valido) {
+      alert(validacion.mensaje);
       return;
     }
 
     this.creandoUsuario.set(true);
     this.userService
-      .crear(usuario as Omit<Usuario, "_id" | "createdAt" | "updatedAt">)
+      .usersCreate(usuario as Omit<Usuario, "_id" | "createdAt" | "updatedAt">)
       .subscribe({
         next: () => {
           this.creandoUsuario.set(false);
-          this.cerrarSidebar();
-          this.cargarUsuarios();
+          this.sidebarClose();
+          this.usersLoad();
         },
         error: (err) => {
           const errorMessage =
