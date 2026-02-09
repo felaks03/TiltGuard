@@ -68,7 +68,7 @@ export const routes: Routes = [
   // Requieren: autenticación (cualquier rol)
   // ============================================
   {
-    path: "user",
+    path: "dashboard",
     loadComponent: () =>
       import("./main/user-dashboard/user-dashboard.component").then(
         (m) => m.UserDashboardComponent,

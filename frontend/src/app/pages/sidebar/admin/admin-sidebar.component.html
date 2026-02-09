@@ -3,6 +3,7 @@
         {{ isOpen ? '✕' : '☰' }}
     </button>
     <ul *ngIf="isAdmin()">
-        <li><a routerLink="/admin/user-list">Lista de Usuarios</a></li>
+        <li><a routerLink="/admin/user-list">📋 Lista de Usuarios</a></li>
+        <li><a routerLink="/admin">📊 Dashboard</a></li>
     </ul>
 </nav>

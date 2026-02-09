@@ -422,6 +422,19 @@
     }
   }
 
+  &.impersonate {
+    color: #1976d2;
+
+    &:hover:not(:disabled) {
+      background-color: #e3f2fd;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
   .icon {
     width: 16px;
     text-align: center;

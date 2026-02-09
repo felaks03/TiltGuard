@@ -161,4 +161,71 @@ export class AuthService {
   getCurrentUser$(): Observable<any> {
     return this.currentUserSubject.asObservable();
   }
+
+  /**
+   * Suplanta a otro usuario (solo para admins)
+   * POST /api/auth/impersonate/:userId
+   *
+   * Parámetros:
+   * - userId: string (ID del usuario a suplantar)
+   */
+  impersonate(userId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/impersonate/${userId}`, {}).pipe(
+      tap((response: any) => {
+        if (response.token && response.user) {
+          console.log(
+            `[AuthService] Suplantación exitosa: ahora eres ${response.user.email}`,
+          );
+          // Guarda el nuevo token
+          localStorage.setItem("token", response.token);
+          // Guarda los datos del usuario suplantado
+          localStorage.setItem("user", JSON.stringify(response.user));
+          // Actualiza los BehaviorSubjects
+          this.currentUserSubject.next(response.user);
+          this.isAuthenticatedSubject.next(true);
+        }
+      }),
+    );
+  }
+
+  /**
+   * Detiene la suplantación y vuelve a la sesión del admin original
+   * POST /api/auth/stop-impersonation
+   */
+  stopImpersonation(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/stop-impersonation`, {}).pipe(
+      tap((response: any) => {
+        if (response.token && response.user) {
+          console.log(
+            `[AuthService] Suplantación detenida: volviste a ser ${response.user.email}`,
+          );
+          // Restaura el token del admin
+          localStorage.setItem("token", response.token);
+          // Restaura los datos del admin
+          localStorage.setItem("user", JSON.stringify(response.user));
+          // Actualiza los BehaviorSubjects
+          this.currentUserSubject.next(response.user);
+          this.isAuthenticatedSubject.next(true);
+        }
+      }),
+    );
+  }
+
+  /**
+   * Verifica si estamos suplantando a otro usuario
+   * Retorna: true si el token contiene impersonatedBy, false si no
+   */
+  isImpersonating(): boolean {
+    const user = this.currentUserSubject.value;
+    return user && !!user.impersonatedBy;
+  }
+
+  /**
+   * Obtiene el ID del admin que está suplantando (si existe)
+   * Retorna: string (ID del admin) o null
+   */
+  getImpersonatedBy(): string | null {
+    const user = this.currentUserSubject.value;
+    return user && user.impersonatedBy ? user.impersonatedBy : null;
+  }
 }

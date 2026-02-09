@@ -37,11 +37,13 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
-    // NO agregar token a las rutas de autenticación
-    const isAuthRoute = request.url.includes("/api/auth/");
+    // NO agregar token solo a rutas públicas de autenticación (registro y login)
+    const isPublicAuthRoute =
+      request.url.includes("/api/auth/register") ||
+      request.url.includes("/api/auth/login");
 
-    if (!isAuthRoute) {
-      // Para rutas que NO son de auth, agregar el token
+    if (!isPublicAuthRoute) {
+      // Para todas las otras rutas, agregar el token
       const token = this.authService.getToken();
       console.log(
         `[AuthInterceptor] URL: ${request.url}, Token: ${token ? "SÍ" : "NO"}`,

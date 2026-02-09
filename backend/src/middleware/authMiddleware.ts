@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
  * Extrae el token del header Authorization: Bearer <token>
  * Verifica la validez del token
  * Añade el userId al objeto request para usar en controladores
+ * Si el token contiene impersonatedBy, también lo añade
  */
 export const verifyToken = (
   req: Request,
@@ -29,10 +30,15 @@ export const verifyToken = (
 
     // Verificar el token
     const secret = process.env.JWT_SECRET || "tu_super_secreto_seguro";
-    const decoded = jwt.verify(token, secret) as { id: string };
+    const decoded = jwt.verify(token, secret) as any;
 
     // Añadir el userId al objeto request para usarlo en controladores
     (req as any).userId = decoded.id;
+
+    // Si hay impersonatedBy en el payload, también lo agregamos
+    if (decoded.impersonatedBy) {
+      (req as any).impersonatedBy = decoded.impersonatedBy;
+    }
 
     next();
   } catch (error) {

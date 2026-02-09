@@ -55,6 +55,16 @@
                         <button class="menu-item" (click)="usersNavigateEdit(usuario)">
                             Editar
                         </button>
+                        @if (usuario.rol === 'usuario') {
+                        <button class="menu-item impersonate" (click)="usersImpersonate(usuario)"
+                            [disabled]="impersonandoUsuarioId() === usuario._id">
+                            @if (impersonandoUsuarioId() === usuario._id) {
+                            Entrando...
+                            } @else {
+                            Entrar como usuario
+                            }
+                        </button>
+                        }
                         <button class="menu-item delete" (click)="usersDeleteStart(usuario)">
                             Eliminar
                         </button>

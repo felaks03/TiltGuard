@@ -1,3 +1,27 @@
+<!-- Banner de impersonación -->
+@if (isImpersonating) {
+<div class="impersonation-banner">
+  <div class="banner-content">
+    <span class="banner-text">
+      🔒 Estás navegando como <strong>{{ impersonatedUserName }}</strong>
+    </span>
+    <button class="banner-btn" (click)="stopImpersonation()" [disabled]="detieneImpersonacion()">
+      @if (detieneImpersonacion()) {
+      Volviendo...
+      } @else {
+      Volver a mi sesión
+      }
+    </button>
+  </div>
+</div>
+}
+
 <app-header *ngIf="!isAuthPage"></app-header>
-<app-sidebar *ngIf="!isAuthPage" (sidebarToggled)="onSidebarToggled($event)"></app-sidebar>
+@if (!isAuthPage) {
+@if (isAdmin) {
+<app-admin-sidebar (sidebarToggled)="onSidebarToggled($event)"></app-admin-sidebar>
+} @else {
+<app-user-sidebar (sidebarToggled)="onSidebarToggled($event)"></app-user-sidebar>
+}
+}
 <router-outlet></router-outlet>
