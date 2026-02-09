@@ -9,10 +9,7 @@ interface TokenPayload {
 }
 
 // Generar JWT Token
-const generateToken = (
-  userId: string,
-  impersonatedBy?: string,
-): string => {
+const generateToken = (userId: string, impersonatedBy?: string): string => {
   const secret = process.env.JWT_SECRET || "tu_super_secreto_seguro";
   const payload: TokenPayload = { id: userId };
 
