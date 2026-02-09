@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule, Router } from "@angular/router";
 import { signal } from "@angular/core";
 import { UserlistService, Usuario } from "./userlist.service";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: "app-userlist",
@@ -20,6 +21,7 @@ export class UserlistComponent {
   creandoUsuario = signal<boolean>(false);
   mostrarModalEliminar = signal<boolean>(false);
   usuarioAEliminar = signal<Usuario | null>(null);
+  impersonandoUsuarioId = signal<string | null>(null);
   nuevoUsuario = signal<Partial<Usuario>>({
     nombre: "",
     email: "",
@@ -32,6 +34,7 @@ export class UserlistComponent {
   });
 
   private userService = inject(UserlistService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   constructor() {
@@ -153,5 +156,35 @@ export class UserlistComponent {
           alert(`Error al crear usuario: ${errorMessage}`);
         },
       });
+  }
+
+  /**
+   * Suplanta al usuario seleccionado
+   * Solo disponible para admins y no permite suplantar a otros admins
+   */
+  usersImpersonate(usuario: Usuario): void {
+    // Validar que no sea admin
+    if (usuario.rol === "admin") {
+      alert("No puedes suplantar a otros administradores");
+      return;
+    }
+
+    this.impersonandoUsuarioId.set(usuario._id);
+    this.menuClose();
+
+    this.authService.impersonate(usuario._id).subscribe({
+      next: (response) => {
+        // El AuthService ya actualizó el token y el usuario en localStorage
+        this.impersonandoUsuarioId.set(null);
+        // Redirigir al dashboard del usuario suplantado
+        this.router.navigate(["/dashboard"]);
+      },
+      error: (err) => {
+        const errorMessage =
+          err.error?.error || err.message || "Error al suplantar usuario";
+        this.impersonandoUsuarioId.set(null);
+        alert(errorMessage);
+      },
+    });
   }
 }

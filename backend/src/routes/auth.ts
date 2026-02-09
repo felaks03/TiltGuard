@@ -1,6 +1,12 @@
 import { Router } from "express";
-import { register, login, getCurrentUser } from "../controllers/authController";
-import { verifyToken } from "../middleware/authMiddleware";
+import {
+  register,
+  login,
+  getCurrentUser,
+  impersonate,
+  stopImpersonation,
+} from "../controllers/authController";
+import { verifyToken, verifyAdmin } from "../middleware/authMiddleware";
 
 const router = Router();
 
@@ -27,5 +33,22 @@ router.post("/login", login);
  * Response: { user: { id, nombre, email, rol } }
  */
 router.get("/me", verifyToken, getCurrentUser);
+
+/**
+ * POST /api/auth/impersonate/:userId
+ * Permite a un admin suplantar a otro usuario
+ * Requiere: Token JWT de admin válido en header Authorization
+ * Parámetros: userId (ID del usuario a suplantar)
+ * Response: { token, user: { id, nombre, email, rol, impersonatedBy } }
+ */
+router.post("/impersonate/:userId", verifyToken, verifyAdmin, impersonate);
+
+/**
+ * POST /api/auth/stop-impersonation
+ * Vuelve a la sesión original del admin
+ * Requiere: Token JWT de usuario suplantado con impersonatedBy
+ * Response: { token, user: { id, nombre, email, rol } }
+ */
+router.post("/stop-impersonation", verifyToken, stopImpersonation);
 
 export default router;

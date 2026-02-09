@@ -17,7 +17,7 @@ import { AuthService } from "../../services/auth.service";
  * - Validar que las contraseñas coincidan
  * - Validar longitud de caracteres
  * - Llamar a AuthService.register()
- * - Redirigir a /login después
+ * - Iniciar sesión automáticamente y redirigir al dashboard
  */
 @Component({
   selector: "app-register",
@@ -30,7 +30,6 @@ export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
   isLoading = false;
   errorMessage: string | null = null;
-  successMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -96,12 +95,14 @@ export class RegisterComponent implements OnInit {
     this.authService.register(nombre, email, password).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.successMessage = "¡Registro exitoso! Redirigiendo a login...";
+        const user = response.user;
 
-        // Espera 1.5 segundos y redirige a /login
-        setTimeout(() => {
-          this.router.navigate(["/login"]);
-        }, 1500);
+        // Redirige según el rol del usuario (aunque normalmente sea "usuario")
+        if (user.rol === "admin") {
+          this.router.navigate(["/admin/user-list"]);
+        } else {
+          this.router.navigate(["/dashboard"]);
+        }
       },
       error: (error) => {
         this.isLoading = false;

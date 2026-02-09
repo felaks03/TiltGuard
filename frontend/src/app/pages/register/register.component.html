@@ -60,11 +60,6 @@
                 {{ errorMessage }}
             </div>
 
-            <!-- Mensaje de Éxito -->
-            <div class="success-box" *ngIf="successMessage">
-                {{ successMessage }}
-            </div>
-
             <!-- Botón Submit -->
             <button type="submit" class="btn-submit" [disabled]="registerForm.invalid || isLoading">
                 {{ isLoading ? 'Registrando...' : 'Registrarse' }}
