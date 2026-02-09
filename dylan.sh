@@ -178,13 +178,26 @@ if [ -f "docker-compose.yml" ]; then
     docker compose up -d
     print_success "Servicios Docker iniciados"
     print_info "Esperando a que MongoDB esté listo..."
-    sleep 5
+    sleep 10
 else
     print_error "docker-compose.yml no encontrado"
     exit 1
 fi
 
-# 9. Ejecutar el proyecto
+# 9. Inyectar usuarios en la base de datos
+print_header "Paso 9: Inyectando Usuarios en la Base de Datos"
+if [ -d "backend" ]; then
+    cd backend
+    print_info "Ejecutando seed de usuarios..."
+    npm run seed
+    print_success "Usuarios inyectados correctamente"
+    cd ..
+else
+    print_error "Directorio backend no encontrado"
+    exit 1
+fi
+
+# 10. Ejecutar el proyecto
 print_header "Instalación Completada"
 print_success "Todas las dependencias se han instalado correctamente"
 print_success "Iniciando proyecto TiltGuard..."

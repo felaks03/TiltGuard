@@ -1,6 +1,6 @@
 import { Component, HostBinding } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterOutlet } from "@angular/router";
+import { Router, RouterOutlet } from "@angular/router";
 import { HeaderComponent } from "./pages/header/header.component";
 import { SidebarComponent } from "./pages/sidebar/sidebar.component";
 
@@ -18,6 +18,12 @@ export class AppComponent {
   @HostBinding("class.sidebar-closed")
   get sidebarClosed() {
     return !this.sidebarOpen;
+  }
+
+  constructor(private router: Router) {}
+
+  get isAuthPage(): boolean {
+    return this.router.url === "/login" || this.router.url === "/register";
   }
 
   onSidebarToggled(isOpen: boolean) {

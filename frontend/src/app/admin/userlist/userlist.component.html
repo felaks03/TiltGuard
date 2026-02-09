@@ -4,7 +4,8 @@
     <div class="confirmation-modal">
         <div class="modal-content">
             <h2>Confirmar eliminación</h2>
-            <p>¿Estás seguro de que deseas eliminar a <strong>{{ usuarioAEliminar()?.nombre }}</strong>? Esta acción no se puede deshacer.</p>
+            <p>¿Estás seguro de que deseas eliminar a <strong>{{ usuarioAEliminar()?.nombre }}</strong>? Esta acción no
+                se puede deshacer.</p>
             <div class="modal-buttons">
                 <button class="btn-cancel" (click)="usersDeleteCancel()">Cancelar</button>
                 <button class="btn-delete" (click)="usersDeleteConfirm()">Eliminar</button>
