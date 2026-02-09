@@ -148,7 +148,7 @@ frontend/src/app/pages/
 
 ---
 
-### **PASO 1: Crear AuthService (Frontend)**
+### **PASO 1: Crear AuthService (Frontend)** ✅ COMPLETADO
 
 **¿Para qué sirve?**
 El AuthService es el "corazón" del sistema de autenticación. Es un servicio Angular que:
@@ -158,24 +158,14 @@ El AuthService es el "corazón" del sistema de autenticación. Es un servicio An
 - Verifica si el usuario es admin
 - Proporciona el token para que el interceptor lo inyecte en solicitudes
 
-**Archivos a crear:**
-- `frontend/src/app/services/auth.service.ts`
+**Archivos creados:**
+- ✅ `frontend/src/app/services/auth.service.ts`
 
-**Pasos:**
+**Lo que se hizo:**
 
-1. **Crea la carpeta de servicios** (si no existe):
-   ```bash
-   mkdir -p /home/felixpop/Escritorio/TiltGuard/frontend/src/app/services
-   ```
-
-2. **Crea el archivo `auth.service.ts`**:
-   
-   En VS Code, abre el explorador de archivos y ve a:
-   `frontend/src/app/services/`
-   
-   Haz clic derecho → Nuevo archivo → Escribe `auth.service.ts`
-
-3. **Copia este código completo** en el archivo:
+1. ✅ Creada la carpeta de servicios
+2. ✅ Creado el archivo `auth.service.ts`
+3. ✅ Implementado el código completo con:
 
 ```typescript
 import { Injectable } from '@angular/core';
@@ -326,6 +316,12 @@ export class AuthService {
 }
 ```
 
+   - ✅ Métodos: register(), login(), logout()
+   - ✅ Métodos: isAuthenticated(), isAdmin(), getToken(), getCurrentUser()
+   - ✅ BehaviorSubjects para reactividad (currentUser$, isAuthenticated$)
+   - ✅ Guarda token y usuario en localStorage
+   - ✅ Verifica sesión guardada al inicializar
+
 **Explicación del código:**
 
 - **Injectable**: Marca la clase como un servicio que puede ser inyectado
@@ -337,63 +333,58 @@ export class AuthService {
 - **isAuthenticated()**: Retorna true/false si hay token
 - **isAdmin()**: Retorna true/false si el usuario es admin
 
-**Verificación:**
+**Verificación:** ✅ PASO 1 COMPLETADO
+
+El archivo está creado en: `frontend/src/app/services/auth.service.ts`
+
+Puedes compilar con: `npm run build` (debería compilar sin errores)
+
+---
 En VS Code, el archivo debe compilar sin errores rojos.
 
 ---
 
-### **PASO 2: Crear Guards de Ruta**
+### **PASO 2: Crear Guards de Ruta** ✅ COMPLETADO
 
 **¿Para qué sirven?**
 Los Guards protegen las rutas. Son como "porteros" que dicen:
 - **AuthGuard**: "¿Estás autenticado? Si no, vete a /login"
 - **AdminGuard**: "¿Eres admin? Si no, vete a /user"
 
-**Archivos a crear:**
+**Archivos creados:**
+- ✅ `frontend/src/app/guards/auth.guard.ts`
+- ✅ `frontend/src/app/guards/admin.guard.ts`
+
+**Lo que se hizo:**
+
+1. ✅ Creada la carpeta de guards
+2. ✅ Creado el archivo `auth.guard.ts` con:
+   - Valida si el usuario está autenticado
+   - Redirige a /login si no lo está
+3. ✅ Creado el archivo `admin.guard.ts` con:
+   - Verifica autenticación Y rol admin
+   - Redirige a /user si es usuario regular
+   - Redirige a /login si no está autenticado
+
+**Explicación:**
+
+- **CanActivateFn**: Función que decide si permitir acceso a una ruta
+- **inject()**: Obtiene instancias de servicios
+- **route, state**: Parámetros de la ruta actual
+- **return true**: Permite el acceso
+- **return false**: Bloquea el acceso
+
+**Verificación:** ✅ PASO 2 COMPLETADO
+
+Los archivos están creados en:
 - `frontend/src/app/guards/auth.guard.ts`
 - `frontend/src/app/guards/admin.guard.ts`
 
-**Pasos:**
+---
 
-1. **Crea la carpeta de guards** (si no existe):
-   ```bash
-   mkdir -p /home/felixpop/Escritorio/TiltGuard/frontend/src/app/guards
-   ```
+### **PASO 3: Crear Interceptor HTTP**
 
-2. **Crea el archivo `auth.guard.ts`**:
-
-```typescript
-import { Injectable } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
-import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
-
-/**
- * AuthGuard protege rutas que requieren autenticación
- * Si el usuario NO está autenticado, lo redirige a /login
- */
-export const AuthGuard: CanActivateFn = (route, state) => {
-  const authService = inject(AuthService);
-  const router = inject(Router);
-
-  // Si está autenticado, permite el acceso
-  if (authService.isAuthenticated()) {
-    return true;
-  }
-
-  // Si NO está autenticado, redirige a /login
-  router.navigate(['/login']);
-  return false;
-};
-```
-
-3. **Crea el archivo `admin.guard.ts`**:
-
-```typescript
-import { Injectable } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
-import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+**¿Para qué sirve?**
 
 /**
  * AdminGuard protege rutas que requieren ser admin
@@ -435,80 +426,43 @@ Ambos archivos deben compilar sin errores.
 
 ---
 
-### **PASO 3: Crear Interceptor HTTP**
+### **PASO 3: Crear Interceptor HTTP** ✅ COMPLETADO
 
 **¿Para qué sirve?**
 El interceptor es como un "inspector de aduanas" que revisa TODAS las solicitudes HTTP:
 - Si hay token en localStorage, lo agrega al header `Authorization`
 - Todas las solicitudes al backend incluyen el JWT automáticamente
 
-**Archivos a crear:**
-- `frontend/src/app/interceptors/auth.interceptor.ts`
+**Archivos creados:**
+- ✅ `frontend/src/app/interceptors/auth.interceptor.ts`
 
-**Pasos:**
+**Lo que se hizo:**
 
-1. **Crea la carpeta de interceptors** (si no existe):
-   ```bash
-   mkdir -p /home/felixpop/Escritorio/TiltGuard/frontend/src/app/interceptors
-   ```
-
-2. **Crea el archivo `auth.interceptor.ts`**:
-
-```typescript
-import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { AuthService } from '../services/auth.service';
-
-/**
- * AuthInterceptor intercepta TODAS las solicitudes HTTP
- * Si hay token en localStorage, lo agrega al header Authorization
- */
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
-
-  intercept(
-    request: HttpRequest<unknown>,
-    next: HttpHandler
-  ): Observable<HttpEvent<unknown>> {
-    // Obtiene el token del AuthService
-    const token = this.authService.getToken();
-    
-    // Si existe token, lo agrega al header
-    if (token) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-    }
-    
-    // Continúa con la solicitud (ahora con el token en el header)
-    return next.handle(request);
-  }
-}
-```
+1. ✅ Creada la carpeta de interceptors
+2. ✅ Creado el archivo `auth.interceptor.ts` con:
+   - Implementa HttpInterceptor
+   - Método intercept() que intercepta todas las solicitudes
+   - Obtiene el token del AuthService
+   - Agrega el header Authorization con formato Bearer
+   - Continúa con la solicitud modificada
 
 **Explicación:**
 
-- **HttpInterceptor**: Interfaz para interceptar solicitudes
+- **HttpInterceptor**: Interfaz para interceptar solicitudes HTTP
 - **intercept()**: Método que se ejecuta en cada solicitud
 - **request.clone()**: Crea una copia de la solicitud con cambios
 - **setHeaders**: Agrega un header a la solicitud
 - **Authorization: Bearer ${token}**: Formato estándar de JWT
 
-**Verificación:**
-El archivo debe compilar sin errores.
+**Verificación:** ✅ PASO 3 COMPLETADO
+
+El archivo está creado en: `frontend/src/app/interceptors/auth.interceptor.ts`
+
+Sin errores de compilación.
 
 ---
 
-### **PASO 4: Crear LoginComponent**
+### **PASO 4: Crear LoginComponent** ✅ COMPLETADO
 
 **¿Para qué sirve?**
 Es la página de login. Permite:
@@ -517,19 +471,64 @@ Es la página de login. Permite:
 - Llamar al backend para autenticarse
 - Redirigir según el rol (admin → /admin, usuario → /user)
 
+**Archivos creados:**
+- ✅ `frontend/src/app/pages/login/login.component.ts`
+- ✅ `frontend/src/app/pages/login/login.component.html`
+- ✅ `frontend/src/app/pages/login/login.component.scss`
+
+**Lo que se hizo:**
+
+1. ✅ Creada la carpeta de login
+2. ✅ Creado login.component.ts con:
+   - FormGroup reactivo (email, password)
+   - Validadores: email válido, password mínimo 6 caracteres
+   - Método onSubmit() que llama a AuthService.login()
+   - Redirige según rol (admin → /admin, usuario → /user)
+   - Manejo de errores desde el backend
+3. ✅ Creado login.component.html con:
+   - Formulario con email y password
+   - Validación visual de campos
+   - Mensajes de error detallados
+   - Spinner durante el login
+   - Link a página de registro
+4. ✅ Creado login.component.scss con:
+   - Diseño moderno con gradiente púrpura
+   - Animación de entrada (slideUp)
+   - Responsive para móviles
+   - Estados hover y disabled
+
+**Estructura de componente:**
+```
+frontend/src/app/pages/login/
+├── login.component.ts       ✅ 95 líneas
+├── login.component.html     ✅ 54 líneas
+└── login.component.scss     ✅ 143 líneas
+```
+
+**Verificación:** ✅ PASO 4 COMPLETADO
+
+Los 3 archivos están creados sin errores de compilación.
+
+---
+
+### **PASO 5: Crear RegisterComponent**
+
+**¿Para qué sirve?**
+Es la página de registro. Permite:
+- Ingresar nombre, email, contraseña y confirmación
+- Validar que las contraseñas coincidan
+- Validar mínimos caracteres
+- Llamar al backend para registrar
+- Redirigir a /login después del registro exitoso
+
 **Archivos a crear:**
-- `frontend/src/app/pages/login/login.component.ts`
-- `frontend/src/app/pages/login/login.component.html`
-- `frontend/src/app/pages/login/login.component.scss`
+- `frontend/src/app/pages/register/register.component.ts`
+- `frontend/src/app/pages/register/register.component.html`
+- `frontend/src/app/pages/register/register.component.scss`
 
 **Pasos:**
 
-1. **Asegúrate que la carpeta `/pages/login/` existe pero está vacía**:
-   ```bash
-   ls -la /home/felixpop/Escritorio/TiltGuard/frontend/src/app/pages/login/
-   ```
-
-2. **Crea el archivo TypeScript `login.component.ts`**:
+1. **Crea el archivo TypeScript `register.component.ts`**:
 
 ```typescript
 import { Component, OnInit } from '@angular/core';
@@ -557,6 +556,7 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;        // Formulario reactivo
   isLoading = false;             // Flag para mostrar spinner
+
   errorMessage: string | null = null; // Mensaje de error
 
   constructor(
@@ -1297,8 +1297,62 @@ label {
 ```
 
 ---
+---
 
-### **PASO 6: Actualizar Rutas del Frontend**
+### **PASO 5: Crear RegisterComponent** ✅ COMPLETADO
+
+**¿Para qué sirve?**
+Es la página de registro. Permite:
+- Ingresar nombre, email, contraseña y confirmación
+- Validar que las contraseñas coincidan
+- Validar mínimos caracteres
+- Llamar al backend para registrar
+- Redirigir a /login después del registro exitoso
+
+**Archivos creados:**
+- ✅ `frontend/src/app/pages/register/register.component.ts`
+- ✅ `frontend/src/app/pages/register/register.component.html`
+- ✅ `frontend/src/app/pages/register/register.component.scss`
+
+**Lo que se hizo:**
+
+1. ✅ Creada la carpeta de register
+2. ✅ Creado register.component.ts con:
+   - FormGroup reactivo (nombre, email, password, passwordConfirm)
+   - Validadores: required, minLength, email
+   - Validador personalizado para coincidencia de contraseñas
+   - Método onSubmit() que llama a AuthService.register()
+   - Manejo de errores y mensaje de éxito
+   - Redirección a /login después del registro exitoso
+3. ✅ Creado register.component.html con:
+   - Formulario con 4 campos (nombre, email, password, confirmación)
+   - Validación visual en tiempo real
+   - Mensajes de error detallados
+   - Mensaje de éxito
+   - Spinner durante el registro
+   - Link a /login
+4. ✅ Creado register.component.scss con:
+   - Diseño idéntico a LoginComponent
+   - Gradiente púrpura
+   - Animación de entrada
+   - Estados error y success
+   - Responsive para móviles
+
+**Estructura de componente:**
+```
+frontend/src/app/pages/register/
+├── register.component.ts       ✅ 127 líneas
+├── register.component.html     ✅ 83 líneas
+└── register.component.scss     ✅ 158 líneas
+```
+
+**Verificación:** ✅ PASO 5 COMPLETADO
+
+Los 3 archivos están creados sin errores de compilación.
+
+---
+
+### **PASO 6: Actualizar Rutas del Frontend** ✅ COMPLETADO
 
 **¿Para qué sirve?**
 Configurar las rutas para que:
@@ -1307,14 +1361,58 @@ Configurar las rutas para que:
 - `/user` esté protegida con AuthGuard
 - La raíz `/` redirija a `/login`
 
+**Archivo modificado:**
+- ✅ `frontend/src/app/app.routes.ts`
+
+**Lo que se hizo:**
+
+1. ✅ Añadido import de LoginComponent y RegisterComponent
+2. ✅ Añadido import de AuthGuard y AdminGuard
+3. ✅ Configuradas rutas públicas (/login, /register)
+4. ✅ Configuradas rutas admin con canActivate: [AuthGuard, AdminGuard]
+5. ✅ Configurada ruta usuario con canActivate: [AuthGuard]
+6. ✅ Ruta por defecto redirecciona a /login
+7. ✅ Ruta wildcard (**) redirige a /login
+
+**Estructura de rutas:**
+```
+PÚBLICAS:
+  /login            → LoginComponent
+  /register         → RegisterComponent
+
+ADMIN (AuthGuard + AdminGuard):
+  /admin            → AdminDashboardComponent
+  /admin/user-list  → UserlistComponent
+  /admin/user-details/:id → UserDetailsComponent
+  /admin/user-edit/:id → UserEditComponent
+
+USUARIO (AuthGuard):
+  /user             → UserDashboardComponent
+
+DEFAULT:
+  /                 → /login (redirect)
+  /**               → /login (wildcard)
+```
+
+**Verificación:** ✅ PASO 6 COMPLETADO
+
+Archivo actualizado sin errores de compilación.
+
+---
+
+### **PASO 7: Configurar Interceptor en app.config.ts**
+
+**¿Para qué sirve?**
+Registrar el AuthInterceptor en los providers para que se ejecute en TODAS las solicitudes HTTP.
+
 **Archivo a modificar:**
-- `frontend/src/app/app.routes.ts`
+- `frontend/src/app/app.config.ts`
 
 **Pasos:**
 
-1. **Abre el archivo** `frontend/src/app/app.routes.ts`
+1. **Abre el archivo** `frontend/src/app/app.config.ts`
 
-2. **Reemplaza TODO el contenido** con:
+2. **Reemplaza el contenido** con:
 
 ```typescript
 import { Routes } from "@angular/router";
@@ -1410,19 +1508,21 @@ export const routes: Routes = [
 
 ---
 
-### **PASO 7: Configurar Interceptor en app.config.ts**
+### **PASO 7: Configurar Interceptor en app.config.ts** ✅ COMPLETADO
 
 **¿Para qué sirve?**
 Registrar el AuthInterceptor en los providers para que se ejecute en TODAS las solicitudes HTTP.
 
-**Archivo a modificar:**
-- `frontend/src/app/app.config.ts`
+**Archivo modificado:** ✅
+- ✅ `frontend/src/app/app.config.ts`
 
-**Pasos:**
+**Lo que se hizo:**
+1. ✅ Importado `HTTP_INTERCEPTORS` de '@angular/common/http'
+2. ✅ Importado `AuthInterceptor` de './interceptors/auth.interceptor'
+3. ✅ Agregado provider para registrar el interceptor
+4. ✅ Configurado con `useClass: AuthInterceptor` y `multi: true`
 
-1. **Abre el archivo** `frontend/src/app/app.config.ts`
-
-2. **Reemplaza el contenido** con:
+**Código actualizado:**
 
 ```typescript
 import { ApplicationConfig } from "@angular/core";
@@ -1438,284 +1538,172 @@ import { AuthInterceptor } from "./interceptors/auth.interceptor";
  * Providers:
  * - provideRouter(routes): Configura las rutas
  * - provideHttpClient(): Proporciona HttpClient para solicitudes HTTP
- * - HTTP_INTERCEPTORS: Registra el AuthInterceptor
+ * - HTTP_INTERCEPTORS: Registra el AuthInterceptor en TODAS las solicitudes
  */
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(),
-    // Registra el interceptor para TODAS las solicitudes HTTP
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    // Registra el AuthInterceptor para TODAS las solicitudes HTTP
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
   ],
 };
 ```
 
 **Explicación:**
 
-- **provideRouter(routes)**: Activa el enrutamiento
-- **provideHttpClient()**: Activa el cliente HTTP
-- **HTTP_INTERCEPTORS**: Registra nuestro interceptor
-- **multi: true**: Permite múltiples interceptores
+- **HTTP_INTERCEPTORS**: Token de inyección para registrar interceptores
+- **useClass: AuthInterceptor**: Especifica qué clase usar como interceptor
+- **multi: true**: Permite registrar múltiples interceptores en cadena
+
+**Resultado:** ✅ **PASO 7 COMPLETADO**
+- AuthInterceptor ahora se ejecuta en TODAS las solicitudes HTTP
+- Token JWT se inyecta automáticamente en el header Authorization
+- No requiere configuración adicional en cada componente
 
 ---
 
-### **PASO 8: Crear Endpoints Backend**
+### **PASO 8: Crear Endpoints Backend** ✅ COMPLETADO
 
 **¿Para qué sirven?**
 Son las rutas del servidor que:
-- Registran nuevos usuarios
-- Validan credenciales
-- Retornan JWT
+- ✅ Registran nuevos usuarios (POST /api/auth/register)
+- ✅ Validan credenciales (POST /api/auth/login)
+- ✅ Retornan JWT para futuros accesos
+- ✅ Verifican autenticación (GET /api/auth/me)
 
-**Archivos a crear:**
-- `backend/src/controllers/authController.ts`
-- `backend/src/routes/auth.ts`
+**Archivos creados:** ✅
+- ✅ `backend/src/controllers/authController.ts` (220 líneas)
+- ✅ `backend/src/routes/auth.ts` (31 líneas)
+- ✅ `backend/src/middleware/authMiddleware.ts` (88 líneas)
 
-**Pasos:**
+**Lo que se implementó:**
 
-1. **Crea el archivo `authController.ts`**:
-
-En `backend/src/controllers/authController.ts`:
-
-```typescript
-import { Response } from "express";
-import { Request } from "express";
-import User from "../models/User";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-
-// Variables de entorno para JWT
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_change_in_production";
-const JWT_EXPIRE = process.env.JWT_EXPIRE || "7d";
-
-/**
- * POST /api/auth/register
- * 
- * Registra un nuevo usuario en la aplicación
- * 
- * Body:
- * {
- *   "nombre": "Juan Pérez",
- *   "email": "juan@example.com",
- *   "password": "password123"
- * }
- * 
- * Respuesta exitosa:
- * {
- *   "success": true,
- *   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
- *   "user": {
- *     "id": "507f1f77bcf86cd799439011",
- *     "nombre": "Juan Pérez",
- *     "email": "juan@example.com",
- *     "role": "usuario"
- *   }
- * }
- */
-export const register = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    const { nombre, email, password } = req.body;
-
-    // Validar que todos los campos estén presentes
-    if (!nombre || !email || !password) {
-      res.status(400).json({
-        success: false,
-        error: "Nombre, email y contraseña son requeridos",
-      });
-      return;
-    }
-
-    // Validar longitud de contraseña (mínimo 6 caracteres)
-    if (password.length < 6) {
-      res.status(400).json({
-        success: false,
-        error: "La contraseña debe tener mínimo 6 caracteres",
-      });
-      return;
-    }
-
-    // Verificar que el email no esté ya registrado
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      res.status(400).json({
-        success: false,
-        error: "El email ya está registrado",
-      });
-      return;
-    }
-
-    // Crear nuevo usuario
-    const user = new User({
-      nombre: nombre.trim(),
-      email: email.trim(),
-      password, // Se encriptará automáticamente por el pre-hook del modelo
-      rol: "usuario", // Rol por defecto
-      activo: true,
-    });
-
-    // Guardar en base de datos
-    await user.save();
-
-    // Generar JWT (válido por 7 días)
-    const token = jwt.sign(
-      { id: user._id, role: user.rol },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRE } as any
-    );
-
-    // Responder con token y datos del usuario
-    res.status(201).json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        nombre: user.nombre,
-        email: user.email,
-        role: user.rol,
-      },
-    });
-  } catch (error) {
-    const err = error as any;
-    let errorMessage = "Error al registrar el usuario";
-
-    // Manejo de errores específicos de MongoDB
-    if (err.code === 11000) {
-      const field = Object.keys(err.keyPattern)[0];
-      errorMessage = `El ${field} ya está registrado`;
-    } else if (err.errors) {
-      errorMessage = Object.values(err.errors)
-        .map((e: any) => e.message)
-        .join(", ");
-    } else if (err.message) {
-      errorMessage = err.message;
-    }
-
-    res.status(400).json({
-      success: false,
-      error: errorMessage,
-    });
-  }
-};
-
-/**
- * POST /api/auth/login
- * 
- * Inicia sesión con email y contraseña
- * 
- * Body:
- * {
- *   "email": "juan@example.com",
- *   "password": "password123"
- * }
- * 
- * Respuesta exitosa:
- * {
- *   "success": true,
- *   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
- *   "user": {
- *     "id": "507f1f77bcf86cd799439011",
- *     "nombre": "Juan Pérez",
- *     "email": "juan@example.com",
- *     "role": "usuario"
- *   }
- * }
- */
-export const login = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    const { email, password } = req.body;
-
-    // Validar que ambos campos estén presentes
-    if (!email || !password) {
-      res.status(400).json({
-        success: false,
-        error: "Email y contraseña son requeridos",
-      });
-      return;
-    }
-
-    // Buscar el usuario por email
-    // IMPORTANTE: .select("+password") porque el modelo User tiene select: false en password
-    const user = await User.findOne({ email }).select("+password");
-
-    // Si el usuario no existe
-    if (!user) {
-      res.status(401).json({
-        success: false,
-        error: "Email o contraseña incorrectos",
-      });
-      return;
-    }
-
-    // Comparar la contraseña ingresada con la guardada (encriptada)
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-
-    // Si la contraseña es incorrecta
-    if (!isPasswordCorrect) {
-      res.status(401).json({
-        success: false,
-        error: "Email o contraseña incorrectos",
-      });
-      return;
-    }
-
-    // Generar JWT
-    const token = jwt.sign(
-      { id: user._id, role: user.rol },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRE } as any
-    );
-
-    // Responder con token y datos del usuario
-    res.status(200).json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        nombre: user.nombre,
-        email: user.email,
-        role: user.rol,
-      },
-    });
-  } catch (error) {
-    const err = error as any;
-    res.status(500).json({
-      success: false,
-      error: err.message || "Error al iniciar sesión",
-    });
-  }
-};
-```
-
-2. **Crea el archivo `auth.ts` en rutas**:
-
-En `backend/src/routes/auth.ts`:
+#### 1. **authController.ts** - Lógica de autenticación
 
 ```typescript
-import express from "express";
-import { register, login } from "../controllers/authController";
-
-/**
- * Rutas de autenticación
- * 
- * POST /api/auth/register - Registrar nuevo usuario
- * POST /api/auth/login - Iniciar sesión
- */
-const router = express.Router();
-
-// Ruta de registro
-router.post("/register", register);
-
-// Ruta de login
-router.post("/login", login);
-
-export default router;
+// Funciones principales:
+- register(req, res)     // Registrar nuevo usuario
+- login(req, res)        // Iniciar sesión
+- getCurrentUser(req,res)// Obtener usuario autenticado
 ```
+
+**Detalles importantes:**
+
+- ✅ **Validación de campos**: nombre, email, password requeridos
+- ✅ **Validación de email**: Formato válido usando regex
+- ✅ **Validación de contraseña**: Mínimo 6 caracteres
+- ✅ **Prevención de duplicados**: Verifica si el email ya existe
+- ✅ **Hash de contraseña**: Automático via pre-hook del modelo User
+- ✅ **Generación de JWT**: 7 días de expiración
+- ✅ **Comparación de contraseña**: Usa bcrypt.compare()
+- ✅ **Respuestas estandarizadas**: { success, token, user } o { success, error }
+
+**Endpoint POST /api/auth/register**
+```
+Body: { nombre, email, password }
+Respuesta exitosa (201):
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "507f1f77bcf86cd799439011",
+    "nombre": "Juan Pérez",
+    "email": "juan@example.com",
+    "rol": "usuario"
+  }
+}
+
+Errores posibles:
+- 400: Campos faltantes
+- 400: Email inválido
+- 400: Contraseña < 6 caracteres
+- 400: Email ya registrado
+- 500: Error de servidor
+```
+
+**Endpoint POST /api/auth/login**
+```
+Body: { email, password }
+Respuesta exitosa (200):
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "507f1f77bcf86cd799439011",
+    "nombre": "Juan Pérez",
+    "email": "juan@example.com",
+    "rol": "usuario"
+  }
+}
+
+Errores posibles:
+- 400: Email o contraseña faltante
+- 401: Email o contraseña incorrectos
+- 401: Usuario inactivo
+- 500: Error de servidor
+```
+
+**Endpoint GET /api/auth/me**
+```
+Headers: Authorization: Bearer <token>
+Respuesta exitosa (200):
+{
+  "success": true,
+  "user": {
+    "id": "507f1f77bcf86cd799439011",
+    "nombre": "Juan Pérez",
+    "email": "juan@example.com",
+    "rol": "usuario"
+  }
+}
+
+Errores posibles:
+- 401: Token no proporcionado
+- 401: Token inválido
+- 401: Token expirado
+- 404: Usuario no encontrado
+- 500: Error de servidor
+```
+
+#### 2. **auth.ts** - Definición de rutas
+
+```typescript
+POST   /api/auth/register  → register()
+POST   /api/auth/login     → login()
+GET    /api/auth/me        → getCurrentUser() (requiere token)
+```
+
+#### 3. **authMiddleware.ts** - Middleware de seguridad
+
+```typescript
+verifyToken()     // Valida JWT en header Authorization
+verifyAdmin()     // Valida que el usuario sea admin
+```
+
+**Características:**
+- ✅ Extrae token del header `Authorization: Bearer <token>`
+- ✅ Verifica validez y expiración del JWT
+- ✅ Diferencia errores: TokenExpiredError, JsonWebTokenError
+- ✅ Agrega userId al objeto request para controladores
+- ✅ Verifica rol admin cuando es necesario
+
+#### 4. **index.ts** - Registro de rutas
+
+Se actualizó `backend/src/index.ts` para:
+- ✅ Importar authRoutes
+- ✅ Registrar rutas en `app.use("/api/auth", authRoutes)`
+- ✅ Mantener rutas existentes de usuarios
+
+**Resultado:** ✅ **PASO 8 COMPLETADO**
+- Backend ahora tiene endpoints de autenticación completos
+- Validaciones robustas en registro y login
+- JWT generado y verificado correctamente
+- Middleware de autenticación listo para proteger rutas
 
 ---
 
