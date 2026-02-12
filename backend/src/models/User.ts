@@ -37,7 +37,6 @@ const userSchema = new Schema<IUser>(
     password: {
       type: String,
       required: [true, "Por favor ingresa una contraseña"],
-      minlength: 6,
       select: false,
     },
     rol: {
