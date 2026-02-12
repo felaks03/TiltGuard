@@ -211,8 +211,12 @@ if [ ! -f ".env" ]; then
     fi
 fi
 
+# Desactivar prompts de Angular CLI (analytics, etc.)
+export NG_CLI_ANALYTICS=false
+npx ng analytics disable 2>/dev/null
+
 print_ok "Iniciando frontend en puerto 4200..."
-npm start &
+npx ng serve --skip-confirmation 2>&1 &
 FRONTEND_PID=$!
 sleep 2
 
