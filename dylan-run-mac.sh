@@ -49,6 +49,29 @@ echo -e "${GREEN}========================================${NC}"
 echo ""
 
 # ─────────────────────────────────────────────
+# Limpieza: Matar puertos y procesos anteriores
+# ─────────────────────────────────────────────
+print_info "Limpiando procesos anteriores..."
+echo ""
+kill_port 4200
+kill_port 5000
+kill_port 27017
+kill_port 8081
+
+# Matar procesos de node/angular que puedan haber quedado
+pkill -f "ng serve" 2>/dev/null
+pkill -f "ts-node" 2>/dev/null
+pkill -f "nodemon" 2>/dev/null
+pkill -f "npm run dev" 2>/dev/null
+
+# Parar contenedores Docker anteriores de TiltGuard
+cd "$PROJECT_DIR"
+docker-compose down 2>/dev/null
+
+print_ok "Procesos anteriores limpiados"
+echo ""
+
+# ─────────────────────────────────────────────
 # Git: Cambiar rama y pull
 # ─────────────────────────────────────────────
 cd "$PROJECT_DIR"
@@ -69,15 +92,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 print_ok "Cambios descargados"
-echo ""
-
-# ─────────────────────────────────────────────
-# Liberar puertos
-# ─────────────────────────────────────────────
-print_info "Liberando puertos 4200 y 5000..."
-echo ""
-kill_port 4200
-kill_port 5000
 echo ""
 
 # ─────────────────────────────────────────────
