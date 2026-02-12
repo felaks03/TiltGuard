@@ -80,7 +80,36 @@ TiltGuard/
 - Node.js 18+ y npm
 - MongoDB (incluido en Docker)
 
-### Instalación Completa
+### Instalación Automática (Recomendado)
+
+#### macOS
+```bash
+git clone https://github.com/tu-usuario/TiltGuard.git
+cd TiltGuard
+chmod +x dylan-mac.sh dylan-run-mac.sh setup-ssh-mac.sh run.sh
+./dylan-mac.sh          # Instala todo (Homebrew, Node, Docker, Git, dependencias)
+./dylan-run-mac.sh      # Inicia el proyecto en la rama Dylan
+```
+> **Ver `MAC_SETUP.md` para guía completa de macOS.**
+
+#### Windows
+```powershell
+git clone https://github.com/tu-usuario/TiltGuard.git
+cd TiltGuard
+.\dylan.bat             # Instala todo (Chocolatey, Node, Docker, Git, dependencias)
+.\dylan-run.bat         # Inicia el proyecto en la rama Dylan
+```
+> **Ver `WINDOWS_SETUP.md` para guía completa de Windows.**
+
+#### Linux
+```bash
+git clone https://github.com/tu-usuario/TiltGuard.git
+cd TiltGuard
+chmod +x run.sh
+./run.sh                # Inicia el proyecto
+```
+
+### Instalación Manual
 
 1. **Clonar el proyecto**
 ```bash
@@ -118,10 +147,22 @@ ng serve
 # o acceder en http://localhost:4200
 ```
 
-### Script de Inicio Rápido
-```bash
-./run.sh
-```
+### Scripts Disponibles
+
+| Script | SO | Descripción |
+|--------|-----|-------------|
+| `dylan-mac.sh` | macOS | Instalación completa (una sola vez) |
+| `dylan-run-mac.sh` | macOS | Iniciar proyecto en rama Dylan |
+| `setup-ssh-mac.sh` | macOS | Configurar SSH para GitHub |
+| `dylan.bat` | Windows | Instalación completa (una sola vez) |
+| `dylan-run.bat` | Windows | Iniciar proyecto en rama Dylan |
+| `setup-ssh.bat` | Windows | Configurar SSH para GitHub |
+| `run.sh` | Linux/macOS | Iniciar proyecto (menú interactivo) |
+
+### Configurar SSH para GitHub
+
+- **macOS:** `./setup-ssh-mac.sh` (ver `MAC_SSH.md`)
+- **Windows:** `.\setup-ssh.bat` (ver `WINDOWS_SSH.md`)
 
 ## Estructura de Carpetas Frontend
 
