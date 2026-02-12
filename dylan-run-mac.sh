@@ -176,12 +176,16 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
-if [ ! -f ".env" ]; then
-    print_info "Creando archivo .env del backend..."
-    if [ -f ".env.example" ]; then
-        cp .env.example .env
-    fi
-fi
+# Crear/forzar .env con puerto 3000 (el 5000 lo usa AirPlay en macOS)
+print_info "Configurando .env del backend (puerto 3000)..."
+cat > .env << 'ENVEOF'
+PORT=3000
+MONGODB_URI=mongodb://admin:password123@localhost:27017/tiltguard?authSource=admin
+JWT_SECRET=your_jwt_secret_key_here
+NODE_ENV=development
+FRONTEND_URL=http://localhost:4200
+ENVEOF
+print_ok "Archivo .env del backend configurado con PORT=3000"
 
 print_ok "Iniciando backend en puerto 3000..."
 npm run dev &
