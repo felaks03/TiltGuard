@@ -168,15 +168,84 @@ ng serve
 
 **Norma:** Dentro de `admin/`, `main/` y `pages/` solo deben haber carpetas con componentes, no archivos sueltos.
 
+### Estructura de Cada Componente
+
+**IMPORTANTE:** Cada componente debe tener exactamente estos 5 archivos:
+
+```
+component-name/
+├── component-name.component.ts       # Lógica del componente
+├── component-name.component.html     # Template HTML
+├── component-name.component.scss     # Estilos
+├── component-name.component.module.ts # Módulo Angular
+└── component-name.service.ts         # Servicio (lógica compartida)
+```
+
+**Ejemplo para dashboard:**
+```
+dashboard/
+├── dashboard.component.ts
+├── dashboard.component.html
+├── dashboard.component.scss
+├── dashboard.component.module.ts
+└── dashboard.service.ts
+```
+
+### Carpetas de Componentes
+
 - **`admin/`** - Panel de administración
-  - `dashboard/` - Dashboard del administrador
-  - `userlist/` - Listado de usuarios (gestión)
+  - `dashboard/` - Dashboard del administrador (5 archivos)
+    - dashboard.component.ts
+    - dashboard.component.html
+    - dashboard.component.scss
+    - dashboard.component.module.ts
+    - dashboard.service.ts
+  - `userlist/` - Listado de usuarios (5 archivos)
+    - userlist.component.ts
+    - userlist.component.html
+    - userlist.component.scss
+    - userlist.component.module.ts
+    - userlist.service.ts
+
 - **`main/`** - Componentes principales del usuario
-  - `dashboard/` - Dashboard del usuario (en desarrollo)
-  - `user/` - Gestión de usuario principal
+  - `dashboard/` - Dashboard del usuario (5 archivos)
+    - dashboard.component.ts
+    - dashboard.component.html
+    - dashboard.component.scss
+    - dashboard.component.module.ts
+    - dashboard.service.ts
+  - `user/` - Gestión de usuario principal (5 archivos)
+    - user.component.ts
+    - user.component.html
+    - user.component.scss
+    - user.component.module.ts
+    - user.service.ts
+
 - **`pages/`** - Componentes compartidos
-  - `header/` - Encabezado de la aplicación
-  - `sidebar/` - Barra lateral de navegación
+  - `header/` - Encabezado de la aplicación (5 archivos)
+    - header.component.ts
+    - header.component.html
+    - header.component.scss
+    - header.component.module.ts
+    - header.service.ts
+  - `sidebar/` - Barra lateral de navegación (5 archivos)
+    - sidebar.component.ts
+    - sidebar.component.html
+    - sidebar.component.scss
+    - sidebar.component.module.ts
+    - sidebar.service.ts
+  - `login/` - Página de login (5 archivos)
+    - login.component.ts
+    - login.component.html
+    - login.component.scss
+    - login.component.module.ts
+    - login.service.ts
+  - `register/` - Página de registro (5 archivos)
+    - register.component.ts
+    - register.component.html
+    - register.component.scss
+    - register.component.module.ts
+    - register.service.ts
 
 ## Próximos Pasos
 - [x] Crear modelos de usuario (Mongoose)

@@ -6,14 +6,15 @@ import {
   updateUser,
   deleteUser,
 } from "../controllers/userController";
+import { verifyToken, verifyAdmin } from "../middleware/authMiddleware";
 
 const router = Router();
 
-// Rutas de usuarios
-router.get("/", getAllUsers);
-router.get("/:id", getUserById);
-router.post("/", createUser);
-router.put("/:id", updateUser);
-router.delete("/:id", deleteUser);
+// Rutas de usuarios - todas requieren autenticación + permisos de admin
+router.get("/", verifyToken, verifyAdmin, getAllUsers);
+router.get("/:id", verifyToken, verifyAdmin, getUserById);
+router.post("/", verifyToken, verifyAdmin, createUser);
+router.put("/:id", verifyToken, verifyAdmin, updateUser);
+router.delete("/:id", verifyToken, verifyAdmin, deleteUser);
 
 export default router;

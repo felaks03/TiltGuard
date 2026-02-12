@@ -119,14 +119,17 @@
 }
 
 .usuario-nombre {
-  flex: 1;
+  flex: 0 0 150px;
   font-weight: 600;
   color: #333;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .usuario-email {
-  flex: 1;
+  flex: 0 0 180px;
   color: #666;
   font-size: 13px;
   white-space: nowrap;
@@ -416,6 +419,19 @@
 
     &:hover {
       background-color: #ffebee;
+    }
+  }
+
+  &.impersonate {
+    color: #1976d2;
+
+    &:hover:not(:disabled) {
+      background-color: #e3f2fd;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
   }
 

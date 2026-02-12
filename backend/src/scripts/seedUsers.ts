@@ -29,6 +29,26 @@ interface IUsuarioEjemplo {
 
 const usuariosEjemplo: IUsuarioEjemplo[] = [
   {
+    nombre: "root",
+    email: "root@tiltguard.com",
+    password: "test",
+    rol: "admin",
+    activo: true,
+    telefono: "+34 666 000 000",
+    ciudad: "Madrid",
+    pais: "España",
+  },
+  {
+    nombre: "Webmaster",
+    email: "webmaster@tiltguard.com",
+    password: "tiltguard",
+    rol: "admin",
+    activo: true,
+    telefono: "+34 666 000 000",
+    ciudad: "Madrid",
+    pais: "España",
+  },
+  {
     nombre: "Juan Pérez",
     email: "juan@example.com",
     password: "password123",
@@ -83,24 +103,37 @@ const usuariosEjemplo: IUsuarioEjemplo[] = [
 async function seedDatabase(): Promise<void> {
   try {
     // Conectar a MongoDB
+    console.log("Conectando a MongoDB...");
     await mongoose.connect(MONGODB_URI);
+    console.log("Conectado a MongoDB");
 
     // Limpiar usuarios existentes (opcional)
     const confirm = process.argv[2] === "--clean";
     if (confirm) {
+      console.log("Limpiando usuarios existentes...");
       await User.deleteMany({});
+      console.log("Usuarios limpiados");
     }
 
-    // Insertar nuevos usuarios
-    const usuariosCreados = await User.insertMany(usuariosEjemplo);
+    // Insertar nuevos usuarios (creando instancias individuales para que se ejecute el hook pre('save'))
+    console.log("Insertando nuevos usuarios...");
+    for (const usuarioData of usuariosEjemplo) {
+      const usuarioExistente = await User.findOne({ email: usuarioData.email });
+      if (!usuarioExistente) {
+        const nuevoUsuario = new User(usuarioData);
+        await nuevoUsuario.save();
+        console.log(`✅ Usuario creado: ${usuarioData.email}`);
+      }
+    }
 
-    // Mostrar resumen
-    usuariosCreados.forEach((user, index) => {});
+    console.log(`✅ Usuarios inyectados exitosamente`);
 
     process.exit(0);
   } catch (error) {
     const err = error as any;
+    console.error("❌ Error:", err.message);
     if (err.code === 11000) {
+      console.error("Error de duplicado");
     }
     process.exit(1);
   } finally {

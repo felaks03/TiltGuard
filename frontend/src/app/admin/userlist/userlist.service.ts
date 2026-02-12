@@ -66,4 +66,22 @@ export class UserlistService {
     }
     return { valido: true };
   }
+
+  /**
+   * Suplanta a un usuario (solo para admins)
+   * POST /api/auth/impersonate/:userId
+   */
+  impersonate(userId: string): Observable<any> {
+    const authApiUrl = "http://localhost:5000/api/auth";
+    return this.http.post(`${authApiUrl}/impersonate/${userId}`, {});
+  }
+
+  /**
+   * Detiene la suplantación y vuelve a la sesión del admin original
+   * POST /api/auth/stop-impersonation
+   */
+  stopImpersonation(): Observable<any> {
+    const authApiUrl = "http://localhost:5000/api/auth";
+    return this.http.post(`${authApiUrl}/stop-impersonation`, {});
+  }
 }

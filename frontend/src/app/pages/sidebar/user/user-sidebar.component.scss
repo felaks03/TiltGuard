@@ -1,4 +1,5 @@
 .sidebar {
+    
   width: 250px;
   height: 100vh;
   background-color: #fff;
@@ -48,9 +49,11 @@
         padding: 15px 20px;
         transition: background-color 0.3s;
         white-space: nowrap;
+        font-weight: 500;
 
         &:hover {
           background-color: #f0f0f0;
+          color: #28a745;
         }
       }
 
@@ -68,6 +71,7 @@
 
           &:hover {
             background-color: #fff3cd;
+            color: #856404;
           }
         }
 

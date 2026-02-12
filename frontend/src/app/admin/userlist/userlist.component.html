@@ -4,7 +4,8 @@
     <div class="confirmation-modal">
         <div class="modal-content">
             <h2>Confirmar eliminación</h2>
-            <p>¿Estás seguro de que deseas eliminar a <strong>{{ usuarioAEliminar()?.nombre }}</strong>? Esta acción no se puede deshacer.</p>
+            <p>¿Estás seguro de que deseas eliminar a <strong>{{ usuarioAEliminar()?.nombre }}</strong>? Esta acción no
+                se puede deshacer.</p>
             <div class="modal-buttons">
                 <button class="btn-cancel" (click)="usersDeleteCancel()">Cancelar</button>
                 <button class="btn-delete" (click)="usersDeleteConfirm()">Eliminar</button>
@@ -54,6 +55,16 @@
                         <button class="menu-item" (click)="usersNavigateEdit(usuario)">
                             Editar
                         </button>
+                        @if (usuario.rol === 'usuario') {
+                        <button class="menu-item impersonate" (click)="usersImpersonate(usuario)"
+                            [disabled]="impersonandoUsuarioId() === usuario._id">
+                            @if (impersonandoUsuarioId() === usuario._id) {
+                            Entrando...
+                            } @else {
+                            Entrar como usuario
+                            }
+                        </button>
+                        }
                         <button class="menu-item delete" (click)="usersDeleteStart(usuario)">
                             Eliminar
                         </button>

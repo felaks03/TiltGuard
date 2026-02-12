@@ -2,7 +2,8 @@
     <button class="toggle-btn" (click)="toggleSidebar()">
         {{ isOpen ? '✕' : '☰' }}
     </button>
-    <ul>
-        <li><a routerLink="/usuarios">Usuarios</a></li>
+    <ul *ngIf="isAdmin()">
+        <li><a routerLink="/admin/user-list">📋 Lista de Usuarios</a></li>
+        <li><a routerLink="/admin">📊 Dashboard</a></li>
     </ul>
 </nav>

@@ -1,0 +1,15 @@
+<nav class="sidebar" [class.closed]="!isOpen">
+    <button class="toggle-btn" (click)="toggleSidebar()">
+        {{ isOpen ? '✕' : '☰' }}
+    </button>
+    <ul>
+        <li><a routerLink="/dashboard">🏠 Mi Dashboard</a></li>
+        <li><a routerLink="/dashboard">👤 Mi Perfil</a></li>
+        <li><a routerLink="/dashboard">⚙️ Configuración</a></li>
+        @if (isImpersonating()) {
+        <li class="impersonating-notice">
+            <span>🔒 Suplantado</span>
+        </li>
+        }
+    </ul>
+</nav>
