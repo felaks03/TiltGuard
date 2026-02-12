@@ -43,7 +43,7 @@ kill_port() {
     # Verificación final
     if lsof -ti :${PORT} &>/dev/null; then
         echo -e "${RED}[ERROR]${NC} Puerto $PORT NO se pudo liberar"
-        if [ "$PORT" = "5000" ]; then
+        if [ "$PORT" = "3000" ]; then
             echo -e "${YELLOW}[INFO]${NC} Desactiva AirPlay: Ajustes > General > AirDrop y Handoff > AirPlay Receiver"
         fi
     else
@@ -63,7 +63,7 @@ echo ""
 print_info "Limpiando procesos anteriores..."
 echo ""
 kill_port 4200
-kill_port 5000
+kill_port 3000
 kill_port 27017
 kill_port 8081
 
@@ -79,26 +79,6 @@ sleep 1
 # Parar contenedores Docker anteriores de TiltGuard
 cd "$PROJECT_DIR"
 docker-compose down 2>/dev/null
-
-# Verificación final del puerto 5000
-# Si AirPlay Receiver ocupa el puerto 5000, desactivarlo por consola
-STILL_USED=$(lsof -ti :5000 2>/dev/null)
-if [ -n "$STILL_USED" ]; then
-    print_warning "Puerto 5000 sigue ocupado. Desactivando AirPlay Receiver..."
-    # Desactivar AirPlay Receiver por consola (macOS)
-    defaults write com.apple.controlcenter "NSStatusItem Visible AirplayReceiver" -bool false 2>/dev/null
-    sudo launchctl disable system/com.apple.AirPlayXPCHelper 2>/dev/null
-    sudo launchctl bootout system/com.apple.AirPlayXPCHelper 2>/dev/null
-    sleep 1
-    # Matar lo que quede en el puerto
-    lsof -ti :5000 | xargs kill -9 2>/dev/null
-    sleep 1
-    if lsof -ti :5000 &>/dev/null; then
-        print_error "Puerto 5000 sigue ocupado. Reinicia el Mac para aplicar el cambio de AirPlay"
-    else
-        print_ok "Puerto 5000 liberado (AirPlay Receiver desactivado)"
-    fi
-fi
 
 print_ok "Procesos anteriores limpiados"
 echo ""
@@ -203,7 +183,7 @@ if [ ! -f ".env" ]; then
     fi
 fi
 
-print_ok "Iniciando backend en puerto 5000..."
+print_ok "Iniciando backend en puerto 3000..."
 npm run dev &
 BACKEND_PID=$!
 sleep 2
@@ -253,7 +233,7 @@ echo -e "${GREEN}========================================${NC}"
 echo ""
 echo "URLs:"
 echo "  - Frontend:      http://localhost:4200"
-echo "  - Backend:       http://localhost:5000"
+echo "  - Backend:       http://localhost:3000"
 echo "  - MongoDB:       localhost:27017"
 echo "  - Mongo Express: http://localhost:8081"
 echo ""

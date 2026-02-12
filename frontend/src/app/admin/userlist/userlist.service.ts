@@ -29,7 +29,7 @@ export interface UsuariosResponse {
 })
 export class UserlistService {
   private http = inject(HttpClient);
-  private apiUrl = "http://localhost:5000/api/usuarios";
+  private apiUrl = "http://localhost:3000/api/usuarios";
 
   usersGetAll(): Observable<UsuariosResponse> {
     return this.http.get<UsuariosResponse>(this.apiUrl);
