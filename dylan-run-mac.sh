@@ -109,8 +109,26 @@ if ! command -v docker &> /dev/null; then
 fi
 
 if ! docker info &> /dev/null; then
-    print_error "Docker no está corriendo. Abre Docker Desktop desde Aplicaciones"
-    exit 1
+    print_warning "Docker no está corriendo. Intentando abrir Docker Desktop..."
+    open -a Docker
+    
+    # Esperar hasta 60 segundos a que Docker arranque
+    print_info "Esperando a que Docker arranque (puede tardar hasta 60 segundos)..."
+    DOCKER_WAIT=0
+    DOCKER_MAX=60
+    while ! docker info &> /dev/null; do
+        sleep 2
+        DOCKER_WAIT=$((DOCKER_WAIT + 2))
+        printf "\r  Esperando... %ds / %ds" "$DOCKER_WAIT" "$DOCKER_MAX"
+        if [ $DOCKER_WAIT -ge $DOCKER_MAX ]; then
+            echo ""
+            print_error "Docker no arrancó después de ${DOCKER_MAX}s"
+            print_info "Abre Docker Desktop manualmente y vuelve a ejecutar el script"
+            exit 1
+        fi
+    done
+    echo ""
+    print_ok "Docker Desktop arrancado correctamente"
 fi
 
 # Verificar Node
