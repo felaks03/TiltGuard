@@ -27,29 +27,27 @@ print_error() {
 }
 
 # ─────────────────────────────────────────────
-# Función para liberar un puerto específico
+# Función para liberar un puerto específico (macOS)
 # ─────────────────────────────────────────────
 kill_port() {
     local PORT="$1"
-    local PIDS=$(lsof -ti tcp:${PORT} 2>/dev/null)
 
-    if [ -n "$PIDS" ]; then
-        echo "$PIDS" | while read PID; do
-            kill -9 $PID 2>/dev/null
-            echo -e "${YELLOW}[WARNING]${NC} Puerto $PORT - proceso $PID matado"
-        done
-        sleep 1
-        # Verificar que realmente se liberó
-        local CHECK=$(lsof -ti tcp:${PORT} 2>/dev/null)
-        if [ -n "$CHECK" ]; then
-            echo -e "${RED}[ERROR]${NC} Puerto $PORT sigue ocupado. Intentando con sudo..."
-            echo "$CHECK" | while read PID; do
-                sudo kill -9 $PID 2>/dev/null
-            done
-            sleep 1
+    # Matar todos los procesos en el puerto
+    lsof -ti :${PORT} | xargs kill -9 2>/dev/null
+
+    # Si no funcionó, intentar con sudo
+    if lsof -ti :${PORT} &>/dev/null; then
+        sudo lsof -ti :${PORT} | xargs sudo kill -9 2>/dev/null
+    fi
+
+    # Verificación final
+    if lsof -ti :${PORT} &>/dev/null; then
+        echo -e "${RED}[ERROR]${NC} Puerto $PORT NO se pudo liberar"
+        if [ "$PORT" = "5000" ]; then
+            echo -e "${YELLOW}[INFO]${NC} Desactiva AirPlay: Ajustes > General > AirDrop y Handoff > AirPlay Receiver"
         fi
     else
-        echo -e "${BLUE}[INFO]${NC} No hay procesos en el puerto $PORT"
+        echo -e "${GREEN}[OK]${NC} Puerto $PORT libre"
     fi
 }
 
