@@ -104,43 +104,75 @@ if [ ! -f "$SSH_KEY" ]; then
     fi
 fi
 
+# Asegurar permisos correctos (causa común de errores)
+print_info "Configurando permisos de archivos SSH..."
+chmod 700 "$SSH_DIR"
+chmod 600 "$SSH_KEY"
+chmod 644 "$SSH_KEY_PUB"
+print_ok "Permisos configurados correctamente"
+
 # ─────────────────────────────────────────────
 # Paso 2: Configurar SSH Agent
 # ─────────────────────────────────────────────
 print_section "Paso 2: Configurando SSH Agent"
 
 # Iniciar ssh-agent
-eval "$(ssh-agent -s)"
+print_info "Iniciando SSH agent..."
+eval "$(ssh-agent -s)" > /dev/null 2>&1
 print_ok "SSH agent iniciado"
 
 # Crear/actualizar config de SSH para que use Keychain en macOS
 SSH_CONFIG="$SSH_DIR/config"
 
-if [ ! -f "$SSH_CONFIG" ] || ! grep -q "github.com" "$SSH_CONFIG" 2>/dev/null; then
-    print_info "Configurando SSH para GitHub con Keychain de macOS..."
+# Si existe config anterior para github.com, la eliminamos para recrearla limpia
+if [ -f "$SSH_CONFIG" ] && grep -q "github.com" "$SSH_CONFIG" 2>/dev/null; then
+    print_info "Actualizando configuración SSH existente para GitHub..."
+    # Eliminar bloque anterior de github.com
+    sed -i.bak '/# GitHub SSH config/,/IdentityFile.*id_ed25519/d' "$SSH_CONFIG" 2>/dev/null
+    rm -f "${SSH_CONFIG}.bak"
+fi
 
-    cat >> "$SSH_CONFIG" << EOF
+print_info "Configurando SSH para GitHub con Keychain de macOS..."
+
+cat >> "$SSH_CONFIG" << EOF
 
 # GitHub SSH config (añadido por setup-ssh-mac.sh)
 Host github.com
+    HostName github.com
+    User git
     AddKeysToAgent yes
     UseKeychain yes
     IdentityFile ~/.ssh/id_ed25519
 EOF
 
-    chmod 600 "$SSH_CONFIG"
-    print_ok "Configuración SSH creada"
-else
-    print_ok "Configuración SSH para GitHub ya existe"
+chmod 600 "$SSH_CONFIG"
+print_ok "Configuración SSH creada"
+
+# Añadir clave al ssh-agent con Keychain (probar múltiples métodos)
+print_info "Añadiendo clave al SSH agent y Keychain..."
+ssh-add --apple-use-keychain "$SSH_KEY" 2>/dev/null
+if [ $? -ne 0 ]; then
+    ssh-add -K "$SSH_KEY" 2>/dev/null
+    if [ $? -ne 0 ]; then
+        ssh-add "$SSH_KEY" 2>/dev/null
+    fi
 fi
 
-# Añadir clave al ssh-agent con Keychain
-ssh-add --apple-use-keychain "$SSH_KEY" 2>/dev/null || ssh-add -K "$SSH_KEY" 2>/dev/null || ssh-add "$SSH_KEY" 2>/dev/null
-
-if [ $? -eq 0 ]; then
+# Verificar que la clave está cargada
+if ssh-add -l 2>/dev/null | grep -q "ed25519"; then
     print_ok "Clave añadida al SSH agent y al Keychain de macOS"
 else
-    print_warning "No se pudo añadir la clave al Keychain, pero se añadió al agent"
+    print_warning "No se pudo verificar la clave en el agent. Intentando de nuevo..."
+    eval "$(ssh-agent -s)" > /dev/null 2>&1
+    ssh-add "$SSH_KEY" 2>/dev/null
+    if ssh-add -l 2>/dev/null | grep -q "ed25519"; then
+        print_ok "Clave añadida al SSH agent en segundo intento"
+    else
+        print_error "No se pudo añadir la clave al agent"
+        echo "Ejecuta manualmente:"
+        echo "  eval \"\$(ssh-agent -s)\""
+        echo "  ssh-add ~/.ssh/id_ed25519"
+    fi
 fi
 
 # ─────────────────────────────────────────────
@@ -201,20 +233,40 @@ read -p "Presiona Enter una vez que hayas añadido la clave a GitHub..."
 # ─────────────────────────────────────────────
 print_section "Paso 5: Verificando Conexión SSH"
 
-print_info "Probando conexión a GitHub (escribe 'yes' si te pide confirmación)..."
+# Añadir GitHub a known_hosts automáticamente (evita el prompt "Are you sure...")
+print_info "Añadiendo GitHub a hosts conocidos..."
+ssh-keyscan -t ed25519 github.com >> "$SSH_DIR/known_hosts" 2>/dev/null
+ssh-keyscan -t rsa github.com >> "$SSH_DIR/known_hosts" 2>/dev/null
+chmod 600 "$SSH_DIR/known_hosts" 2>/dev/null
+print_ok "GitHub añadido a hosts conocidos"
 echo ""
 
-ssh -T git@github.com 2>&1
-
+print_info "Probando conexión a GitHub..."
 echo ""
-# ssh -T git@github.com devuelve 1 incluso con éxito, así que verificamos el output
-if ssh -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
+
+# ssh -T git@github.com devuelve exit code 1 incluso con éxito, así que verificamos el output
+SSH_OUTPUT=$(ssh -T git@github.com 2>&1)
+echo "$SSH_OUTPUT"
+echo ""
+
+if echo "$SSH_OUTPUT" | grep -qi "successfully authenticated"; then
     print_ok "Conexión SSH a GitHub verificada correctamente"
 else
     print_warning "No se pudo verificar la conexión SSH"
-    echo "Asegúrate de que:"
-    echo "  - La clave pública está añadida a GitHub"
-    echo "  - Esperaste a que GitHub procese la clave (unos minutos)"
+    echo ""
+    echo "Soluciones:"
+    echo "  1. Verifica que la clave pública está añadida a GitHub:"
+    echo "     https://github.com/settings/keys"
+    echo ""
+    echo "  2. Ejecuta esto para ver el error detallado:"
+    echo "     ssh -vT git@github.com"
+    echo ""
+    echo "  3. Asegúrate de que la clave está en el agent:"
+    echo "     ssh-add -l"
+    echo ""
+    echo "  4. Si no aparece, añádela manualmente:"
+    echo "     eval \"\$(ssh-agent -s)\""
+    echo "     ssh-add --apple-use-keychain ~/.ssh/id_ed25519"
     echo ""
 fi
 
