@@ -9,7 +9,7 @@ import { Router } from "@angular/router";
 })
 export class AuthService {
   // URL del backend
-  private apiUrl = "http://localhost:5000/api/auth";
+  private apiUrl = "http://localhost:3000/api/auth";
 
   // BehaviorSubject para el usuario actual (reactivo)
   private currentUserSubject = new BehaviorSubject<any>(null);

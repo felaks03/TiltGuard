@@ -72,7 +72,7 @@ export class UserlistService {
    * POST /api/auth/impersonate/:userId
    */
   impersonate(userId: string): Observable<any> {
-    const authApiUrl = "http://localhost:5000/api/auth";
+    const authApiUrl = "http://localhost:3000/api/auth";
     return this.http.post(`${authApiUrl}/impersonate/${userId}`, {});
   }
 
@@ -81,7 +81,7 @@ export class UserlistService {
    * POST /api/auth/stop-impersonation
    */
   stopImpersonation(): Observable<any> {
-    const authApiUrl = "http://localhost:5000/api/auth";
+    const authApiUrl = "http://localhost:3000/api/auth";
     return this.http.post(`${authApiUrl}/stop-impersonation`, {});
   }
 }

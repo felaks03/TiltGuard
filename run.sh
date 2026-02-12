@@ -113,7 +113,7 @@ start_project() {
     echo -e "${GREEN}════════════════════════════════════════════════${NC}"
     echo -e "${GREEN}✓ Servicios iniciados:${NC}"
     echo "Frontend: http://localhost:4200"
-    echo "Backend:  http://localhost:5000"
+    echo "Backend:  http://localhost:3000"
     echo "MongoDB:  localhost:27017"
     echo "Mongo Express: http://localhost:8081"
     echo -e "${GREEN}════════════════════════════════════════════════${NC}"
