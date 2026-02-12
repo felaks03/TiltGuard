@@ -81,14 +81,23 @@ cd "$PROJECT_DIR"
 docker-compose down 2>/dev/null
 
 # Verificación final del puerto 5000
-STILL_USED=$(lsof -ti tcp:5000 2>/dev/null)
+# Si AirPlay Receiver ocupa el puerto 5000, desactivarlo por consola
+STILL_USED=$(lsof -ti :5000 2>/dev/null)
 if [ -n "$STILL_USED" ]; then
-    print_warning "Puerto 5000 sigue ocupado. Puede ser AirPlay Receiver de macOS."
-    print_info "Desactívalo en: Ajustes del Sistema > General > AirDrop y Handoff > AirPlay Receiver"
-    echo ""
-    # Intentar matarlo de todas formas
-    echo "$STILL_USED" | xargs kill -9 2>/dev/null
+    print_warning "Puerto 5000 sigue ocupado. Desactivando AirPlay Receiver..."
+    # Desactivar AirPlay Receiver por consola (macOS)
+    defaults write com.apple.controlcenter "NSStatusItem Visible AirplayReceiver" -bool false 2>/dev/null
+    sudo launchctl disable system/com.apple.AirPlayXPCHelper 2>/dev/null
+    sudo launchctl bootout system/com.apple.AirPlayXPCHelper 2>/dev/null
     sleep 1
+    # Matar lo que quede en el puerto
+    lsof -ti :5000 | xargs kill -9 2>/dev/null
+    sleep 1
+    if lsof -ti :5000 &>/dev/null; then
+        print_error "Puerto 5000 sigue ocupado. Reinicia el Mac para aplicar el cambio de AirPlay"
+    else
+        print_ok "Puerto 5000 liberado (AirPlay Receiver desactivado)"
+    fi
 fi
 
 print_ok "Procesos anteriores limpiados"
