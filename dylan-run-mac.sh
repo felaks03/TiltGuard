@@ -31,12 +31,23 @@ print_error() {
 # ─────────────────────────────────────────────
 kill_port() {
     local PORT="$1"
-    local PID=$(lsof -ti :${PORT} 2>/dev/null)
+    local PIDS=$(lsof -ti tcp:${PORT} 2>/dev/null)
 
-    if [ -n "$PID" ]; then
-        kill -9 $PID 2>/dev/null
-        echo -e "${YELLOW}[WARNING]${NC} Puerto $PORT liberado (PID: $PID)"
+    if [ -n "$PIDS" ]; then
+        echo "$PIDS" | while read PID; do
+            kill -9 $PID 2>/dev/null
+            echo -e "${YELLOW}[WARNING]${NC} Puerto $PORT - proceso $PID matado"
+        done
         sleep 1
+        # Verificar que realmente se liberó
+        local CHECK=$(lsof -ti tcp:${PORT} 2>/dev/null)
+        if [ -n "$CHECK" ]; then
+            echo -e "${RED}[ERROR]${NC} Puerto $PORT sigue ocupado. Intentando con sudo..."
+            echo "$CHECK" | while read PID; do
+                sudo kill -9 $PID 2>/dev/null
+            done
+            sleep 1
+        fi
     else
         echo -e "${BLUE}[INFO]${NC} No hay procesos en el puerto $PORT"
     fi
@@ -58,15 +69,29 @@ kill_port 5000
 kill_port 27017
 kill_port 8081
 
-# Matar procesos de node/angular que puedan haber quedado
-pkill -f "ng serve" 2>/dev/null
-pkill -f "ts-node" 2>/dev/null
-pkill -f "nodemon" 2>/dev/null
-pkill -f "npm run dev" 2>/dev/null
+# Matar TODOS los procesos node que puedan haber quedado
+pkill -9 -f "ng serve" 2>/dev/null
+pkill -9 -f "ts-node" 2>/dev/null
+pkill -9 -f "nodemon" 2>/dev/null
+pkill -9 -f "npm run dev" 2>/dev/null
+pkill -9 -f "node.*backend" 2>/dev/null
+pkill -9 -f "node.*frontend" 2>/dev/null
+sleep 1
 
 # Parar contenedores Docker anteriores de TiltGuard
 cd "$PROJECT_DIR"
 docker-compose down 2>/dev/null
+
+# Verificación final del puerto 5000
+STILL_USED=$(lsof -ti tcp:5000 2>/dev/null)
+if [ -n "$STILL_USED" ]; then
+    print_warning "Puerto 5000 sigue ocupado. Puede ser AirPlay Receiver de macOS."
+    print_info "Desactívalo en: Ajustes del Sistema > General > AirDrop y Handoff > AirPlay Receiver"
+    echo ""
+    # Intentar matarlo de todas formas
+    echo "$STILL_USED" | xargs kill -9 2>/dev/null
+    sleep 1
+fi
 
 print_ok "Procesos anteriores limpiados"
 echo ""
