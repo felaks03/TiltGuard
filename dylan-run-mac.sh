@@ -213,10 +213,11 @@ fi
 
 # Desactivar prompts de Angular CLI (analytics, etc.)
 export NG_CLI_ANALYTICS=false
+export NG_FORCE_TTY=false
 npx ng analytics disable 2>/dev/null
 
 print_ok "Iniciando frontend en puerto 4200..."
-npx ng serve --skip-confirmation 2>&1 &
+npx ng serve 2>&1 &
 FRONTEND_PID=$!
 sleep 2
 
