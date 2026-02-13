@@ -29,8 +29,10 @@
             <div class="detail-item">
                 <label>Rol</label>
                 <span class="badge" [class.admin]="usuario()!.rol === 'admin'"
-                    [class.usuario]="usuario()!.rol === 'usuario'">
-                    {{ usuario()!.rol }}
+                    [class.usuario]="usuario()!.rol === 'usuario'"
+                    [class.usuario-prime]="usuario()!.rol === 'usuario-prime'">
+                    {{ usuario()!.rol === 'admin' ? 'Administrador' : usuario()!.rol === 'usuario-prime' ? 'Usuario
+                    Prime' : 'Usuario' }}
                 </span>
             </div>
 

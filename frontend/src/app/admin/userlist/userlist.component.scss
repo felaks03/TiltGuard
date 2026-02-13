@@ -85,10 +85,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 4px 12px;
   background-color: #fff;
   border-bottom: 1px solid #e0e0e0;
   border-radius: 0;
+
   transition: all 0.2s;
   box-shadow: none;
 
@@ -100,26 +101,26 @@
 
 .usuario-info {
   flex: 1;
-  display: flex;
+  display: grid;
+  grid-template-columns: 250px 400px 220px 150px 1fr;
+  gap: 120px;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
   position: relative;
-  gap: 12px;
 }
 
 .usuario-avatar {
-  flex: 0 0 40px;
-  width: 40px;
-  height: 40px;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
   background-color: #e0e0e0;
-  margin-right: 10px;
+  margin-right: 8px;
 }
 
 .usuario-nombre {
-  flex: 0 0 150px;
+  width: 100%;
   font-weight: 600;
   color: #333;
   font-size: 14px;
@@ -129,7 +130,7 @@
 }
 
 .usuario-email {
-  flex: 0 0 180px;
+  width: 100%;
   color: #666;
   font-size: 13px;
   white-space: nowrap;
@@ -138,7 +139,6 @@
 }
 
 .usuario-rol {
-  flex: 0 0 80px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -146,27 +146,35 @@
   border-radius: 16px;
   font-size: 12px;
   font-weight: 600;
-  text-transform: uppercase;
   white-space: nowrap;
+  width: fit-content;
+  justify-self: center;
 
   &.admin {
-    background-color: #fff3e0;
-    color: #e65100;
+    background-color: #5ce60025;
+    color: #317a00;
   }
 
   &.usuario {
-    background-color: #f3e5f5;
-    color: #6a1b9a;
+    background-color: #231b9a25;
+    color: #231b9a;
+  }
+
+  &.usuario-prime {
+    background-color: #7f00e625;
+    color: #7f00e6;
   }
 }
 
 .usuario-estado {
-  flex: 0 0 80px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4px 12px;
   border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -174,11 +182,13 @@
   &.activo {
     background-color: #e8f5e9;
     color: #2e7d32;
+    width: 80px;
   }
 
   &.inactivo {
     background-color: #ffebee;
     color: #c62828;
+    width: 100px;
   }
 }
 

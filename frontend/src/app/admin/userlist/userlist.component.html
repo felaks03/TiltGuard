@@ -37,8 +37,9 @@
                 <div class="usuario-nombre">{{ usuario.nombre }}</div>
                 <div class="usuario-email">{{ usuario.email }}</div>
                 <span class="usuario-rol" [class.admin]="usuario.rol === 'admin'"
-                    [class.usuario]="usuario.rol === 'usuario'">
-                    {{ usuario.rol }}
+                    [class.usuario]="usuario.rol === 'usuario'" [class.usuario-prime]="usuario.rol === 'usuario-prime'">
+                    @if (usuario.rol === 'admin') { Administrador } @else if (usuario.rol === 'usuario-prime') { Usuario
+                    Prime } @else { Usuario }
                 </span>
                 <span class="usuario-estado" [class.activo]="usuario.activo" [class.inactivo]="!usuario.activo">
                     {{ usuario.activo ? "Activo" : "Inactivo" }}
@@ -55,7 +56,7 @@
                         <button class="menu-item" (click)="usersNavigateEdit(usuario)">
                             Editar
                         </button>
-                        @if (usuario.rol === 'usuario') {
+                        @if (usuario.rol === 'usuario' || usuario.rol === 'usuario-prime') {
                         <button class="menu-item impersonate" (click)="usersImpersonate(usuario)"
                             [disabled]="impersonandoUsuarioId() === usuario._id">
                             @if (impersonandoUsuarioId() === usuario._id) {
@@ -115,6 +116,7 @@
             <label for="rol">Rol</label>
             <select id="rol" [(ngModel)]="nuevoUsuario().rol" name="rol">
                 <option value="usuario">Usuario</option>
+                <option value="usuario-prime">Usuario Prime</option>
                 <option value="admin">Admin</option>
             </select>
         </div>

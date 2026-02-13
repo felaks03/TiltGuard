@@ -7,7 +7,7 @@ export interface Usuario {
   nombre: string;
   email: string;
   password?: string;
-  rol: "usuario" | "admin";
+  rol: "usuario" | "usuario-prime" | "admin";
   activo: boolean;
   avatar?: string | null;
   telefono?: string | null;
