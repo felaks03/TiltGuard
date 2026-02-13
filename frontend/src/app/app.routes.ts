@@ -75,6 +75,14 @@ export const routes: Routes = [
       ),
     canActivate: [AuthGuard],
   },
+  {
+    path: "bloqueo",
+    loadComponent: () =>
+      import("./main/bloqueo/bloqueo.component").then(
+        (m) => m.BloqueoComponent,
+      ),
+    canActivate: [AuthGuard],
+  },
 
   // ============================================
   // RUTAS POR DEFECTO

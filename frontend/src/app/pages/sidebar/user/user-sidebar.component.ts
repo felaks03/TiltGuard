@@ -1,12 +1,12 @@
 import { Component, Output, EventEmitter, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterLink } from "@angular/router";
+import { RouterLink, RouterLinkActive } from "@angular/router";
 import { UserSidebarService } from "./user-sidebar.service";
 
 @Component({
   selector: "app-user-sidebar",
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: "./user-sidebar.component.html",
   styleUrls: ["./user-sidebar.component.scss"],
 })

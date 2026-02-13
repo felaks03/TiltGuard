@@ -1,5 +1,4 @@
 .sidebar {
-    
   width: 250px;
   height: 100vh;
   background-color: #fff;
@@ -54,6 +53,12 @@
         &:hover {
           background-color: #f0f0f0;
           color: #28a745;
+        }
+
+        &.active {
+          background-color: #e8f5e9;
+          color: #28a745;
+          border-right: 3px solid #28a745;
         }
       }
 
