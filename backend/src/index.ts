@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import userRoutes from "./routes/users";
 import authRoutes from "./routes/auth";
 import blockingRoutes from "./routes/blocking";
+import guideAccessRoutes from "./routes/guideAccess";
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/usuarios", userRoutes);
 app.use("/api/blocking", blockingRoutes);
+app.use("/api/guide-access", guideAccessRoutes);
 
 // Health check
 app.get("/api/health", (_req: Request, res: Response) => {

@@ -1,0 +1,312 @@
+<div class="guias-page">
+
+    <!-- Access Block Overlay -->
+    @if (showOverlay()) {
+    <div class="access-overlay">
+        <div class="access-overlay-content">
+            @if (overlayMode() === 'request') {
+            <h2>🔐 Acceso Restringido</h2>
+            <p>Ya has completado la configuración. Si necesitas volver a revisar las guías, solicita acceso.</p>
+            <button class="request-btn" (click)="requestAccess()" [disabled]="isLoading()">
+                @if (isLoading()) {
+                Solicitando...
+                } @else {
+                📋 Solicitar acceso
+                }
+            </button>
+            } @else if (overlayMode() === 'cooldown') {
+            <h2>⏳ Procesando solicitud...</h2>
+            <p>Por favor espera para acceder a las guías:</p>
+            <div class="cooldown-timer-box">
+                <strong>{{ cooldownText() }}</strong>
+            </div>
+            <p class="cooldown-hint">El acceso se desbloqueará automáticamente al terminar</p>
+            }
+        </div>
+    </div>
+    }
+
+    <!-- Access Timer (top-right badge) -->
+    @if (hasActiveAccess()) {
+    <div class="access-timer-badge">
+        <span class="timer-label">⏱️ Acceso:</span>
+        <span class="timer-value">{{ accessText() }}</span>
+    </div>
+    }
+
+    <!-- Main Content (blurs when overlay is active) -->
+    <div class="guias-main-content" [class.blurred]="showOverlay()">
+
+        <div class="guias-header">
+            <h1>🔒 Protección Avanzada TiltGuard</h1>
+            <p class="subtitle">Un solo comando para: extensión inremovible + incógnito desactivado + Tradovate
+                eliminado</p>
+        </div>
+
+        <!-- Error -->
+        @if (errorMessage()) {
+        <div class="alert alert-error">
+            <span>⚠️ {{ errorMessage() }}</span>
+            <button class="retry-btn" (click)="retryLoad()">🔄 Reintentar</button>
+        </div>
+        }
+
+        <!-- Loading -->
+        @if (isLoading() && !showOverlay()) {
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Cargando...</p>
+        </div>
+        }
+
+        <div class="guias-content">
+            <!-- Controls -->
+            <div class="controls-card">
+                <div class="main-selector">
+                    <p class="selector-label">¿Qué deseas hacer?</p>
+                    <div class="main-buttons">
+                        <button class="main-btn" [class.active]="mainType() === 'install'"
+                            (click)="setMainType('install')">
+                            📥 Activar protección
+                        </button>
+                        <button class="main-btn" [class.active]="mainType() === 'uninstall'"
+                            [disabled]="!canUninstall()" (click)="setMainType('uninstall')">
+                            🗑️ Desactivar protección
+                        </button>
+                    </div>
+                </div>
+
+                <div class="browser-detector">
+                    <p>Navegador: <strong>Google Chrome</strong></p>
+                </div>
+
+                <div class="os-selector">
+                    <p class="selector-label">Selecciona tu sistema operativo:</p>
+                    <div class="os-buttons">
+                        <button class="os-btn" [class.active]="(selectedOSId() || detectedOSId()) === 'windows'"
+                            (click)="selectOS('windows')">
+                            🪟 Windows
+                        </button>
+                        <button class="os-btn" [class.active]="(selectedOSId() || detectedOSId()) === 'mac'"
+                            (click)="selectOS('mac')">
+                            🍎 macOS
+                        </button>
+                        <button class="os-btn" [class.active]="(selectedOSId() || detectedOSId()) === 'linux'"
+                            (click)="selectOS('linux')">
+                            🐧 Linux
+                        </button>
+                    </div>
+                    <p class="os-detected-hint">SO detectado: <strong>{{ detectedOS() }}</strong> (puedes cambiarlo)</p>
+                </div>
+
+                @if (extensionId()) {
+                <div class="extension-id-badge">
+                    <span>🔑 ID de extensión detectado: <strong>{{ extensionId() }}</strong></span>
+                </div>
+                } @else {
+                <div class="extension-id-warning">
+                    <span>⚠️ No se ha detectado el ID de la extensión. Asegúrate de tener la extensión TiltGuard
+                        instalada e iniciada sesión en ella.</span>
+                </div>
+                }
+            </div>
+
+            <!-- WINDOWS -->
+            @if (guideConfigs().guideId === 'windows-install' || guideConfigs().guideId === 'windows-uninstall') {
+            <div class="guide-section">
+                @if (mainType() === 'install') {
+                <h2>🪟 Windows - Activar protección completa</h2>
+                <div class="warning-box">
+                    <p>⚠️ <strong>Importante:</strong> Necesitas abrir PowerShell como Administrador.</p>
+                    <div class="admin-steps">
+                        <p><strong>Cómo abrir PowerShell como Administrador:</strong></p>
+                        <ol>
+                            <li>Pulsa la tecla <strong>Windows</strong> en tu teclado</li>
+                            <li>Escribe <strong>PowerShell</strong></li>
+                            <li>Haz clic derecho en <strong>"Windows PowerShell"</strong></li>
+                            <li>Selecciona <strong>"Ejecutar como administrador"</strong></li>
+                            <li>Haz clic en <strong>"Sí"</strong> en el aviso que aparece</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="what-it-does">
+                    <h3>Este comando hace las 3 cosas a la vez:</h3>
+                    <ul>
+                        <li>🔒 Fuerza la extensión TiltGuard (no se puede desinstalar)</li>
+                        <li>🚫 Desactiva el modo incógnito en Chrome</li>
+                        <li>🗑️ Elimina Tradovate de escritorio, instaladores y datos</li>
+                    </ul>
+                </div>
+                <div class="guide-instructions">
+                    @if (extensionId()) {
+                    <p>Copia y pega todo el siguiente bloque en PowerShell (Administrador):</p>
+                    } @else {
+                    <p>⚠️ El ID de la extensión no se ha detectado. Abre la extensión TiltGuard, inicia sesión y recarga
+                        esta página. Mientras tanto, puedes reemplazar <code>TU_EXTENSION_ID</code> manualmente
+                        copiándolo de <code>chrome://extensions</code>.</p>
+                    }
+                    <div class="code-block" [innerText]="codeBlock()"></div>
+                </div>
+                } @else {
+                <h2>🪟 Windows - Desactivar protección</h2>
+                <div class="warning-box">
+                    <p>⚠️ Abre <strong>PowerShell como Administrador</strong> (tecla Windows → escribe "PowerShell" →
+                        clic derecho → "Ejecutar como administrador").</p>
+                </div>
+                <div class="guide-instructions">
+                    <p>Copia y pega en PowerShell (Administrador):</p>
+                    <div class="code-block" [innerText]="codeBlock()"></div>
+                </div>
+                }
+            </div>
+            }
+
+            <!-- MAC -->
+            @if (guideConfigs().guideId === 'mac-install' || guideConfigs().guideId === 'mac-uninstall') {
+            <div class="guide-section">
+                @if (mainType() === 'install') {
+                <h2>🍎 macOS - Activar protección completa</h2>
+                <div class="warning-box">
+                    <p>⚠️ <strong>Importante:</strong> Este comando usa <code>sudo</code>, te pedirá tu contraseña de
+                        Mac.</p>
+                    <div class="admin-steps">
+                        <p><strong>Cómo abrir Terminal:</strong></p>
+                        <ol>
+                            <li>Pulsa <strong>Cmd + Espacio</strong> (búsqueda Spotlight)</li>
+                            <li>Escribe <strong>Terminal</strong> y pulsa <strong>Enter</strong></li>
+                            <li>Pega el comando y pulsa <strong>Enter</strong></li>
+                            <li>Cuando pida contraseña, escríbela (no se ve al escribir) y pulsa <strong>Enter</strong>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="what-it-does">
+                    <h3>Este comando hace las 3 cosas a la vez:</h3>
+                    <ul>
+                        <li>🔒 Fuerza la extensión TiltGuard (no se puede desinstalar)</li>
+                        <li>🚫 Desactiva el modo incógnito en Chrome</li>
+                        <li>🗑️ Elimina Tradovate de escritorio, instaladores y datos</li>
+                    </ul>
+                </div>
+                <div class="guide-instructions">
+                    @if (extensionId()) {
+                    <p>Copia y pega todo el siguiente bloque en Terminal:</p>
+                    } @else {
+                    <p>⚠️ El ID de la extensión no se ha detectado. Abre la extensión TiltGuard, inicia sesión y recarga
+                        esta página. Mientras tanto, puedes reemplazar <code>TU_EXTENSION_ID</code> manualmente
+                        copiándolo de <code>chrome://extensions</code>.</p>
+                    }
+                    <div class="code-block" [innerText]="codeBlock()"></div>
+                </div>
+                } @else {
+                <h2>🍎 macOS - Desactivar protección</h2>
+                <div class="warning-box">
+                    <p>⚠️ Este comando usa <code>sudo</code>, te pedirá tu contraseña de Mac.</p>
+                </div>
+                <div class="guide-instructions">
+                    <p>Abre Terminal (<strong>Cmd + Espacio</strong> → escribe "Terminal") y pega:</p>
+                    <div class="code-block" [innerText]="codeBlock()"></div>
+                </div>
+                }
+            </div>
+            }
+
+            <!-- LINUX -->
+            @if (guideConfigs().guideId === 'linux-install' || guideConfigs().guideId === 'linux-uninstall') {
+            <div class="guide-section">
+                @if (mainType() === 'install') {
+                <h2>🐧 Linux - Activar protección completa</h2>
+                <div class="warning-box">
+                    <p>⚠️ <strong>Importante:</strong> Este comando usa <code>sudo</code>, te pedirá tu contraseña de
+                        usuario.</p>
+                    <div class="admin-steps">
+                        <p><strong>Cómo abrir Terminal:</strong></p>
+                        <ol>
+                            <li>Pulsa <strong>Ctrl + Alt + T</strong> (atajo en la mayoría de distros)</li>
+                            <li>O busca <strong>"Terminal"</strong> en el menú de aplicaciones</li>
+                            <li>Pega el comando y pulsa <strong>Enter</strong></li>
+                            <li>Cuando pida contraseña, escríbela (no se ve al escribir) y pulsa <strong>Enter</strong>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="what-it-does">
+                    <h3>Este comando hace las 3 cosas a la vez:</h3>
+                    <ul>
+                        <li>🔒 Fuerza la extensión TiltGuard (no se puede desinstalar)</li>
+                        <li>🚫 Desactiva el modo incógnito en Chrome</li>
+                        <li>🗑️ Elimina Tradovate de escritorio, instaladores y datos</li>
+                    </ul>
+                </div>
+                <div class="guide-instructions">
+                    @if (extensionId()) {
+                    <p>Copia y pega todo el siguiente bloque en Terminal:</p>
+                    } @else {
+                    <p>⚠️ El ID de la extensión no se ha detectado. Abre la extensión TiltGuard, inicia sesión y recarga
+                        esta página. Mientras tanto, puedes reemplazar <code>TU_EXTENSION_ID</code> manualmente
+                        copiándolo de <code>chrome://extensions</code>.</p>
+                    }
+                    <div class="code-block" [innerText]="codeBlock()"></div>
+                </div>
+                } @else {
+                <h2>🐧 Linux - Desactivar protección</h2>
+                <div class="warning-box">
+                    <p>⚠️ Este comando usa <code>sudo</code>, te pedirá tu contraseña de usuario.</p>
+                </div>
+                <div class="guide-instructions">
+                    <p>Abre Terminal (<strong>Ctrl + Alt + T</strong>) y pega:</p>
+                    <div class="code-block" [innerText]="codeBlock()"></div>
+                </div>
+                }
+            </div>
+            }
+
+            <!-- Footer action -->
+            <div class="footer-card">
+                @if (mainType() === 'install') {
+                <button class="done-btn" (click)="openConfirmModal('install')">
+                    ✓ Ya he ejecutado el comando
+                </button>
+                } @else {
+                <button class="done-btn uninstall" (click)="openConfirmModal('uninstall')">
+                    ✓ Ya he ejecutado el comando
+                </button>
+                }
+            </div>
+
+            <!-- Sync info -->
+            <div class="sync-info">
+                <div class="sync-icon">🔗</div>
+                <div class="sync-text">
+                    <h4>Sincronización con la extensión</h4>
+                    <p>
+                        Los timers de acceso a guías se sincronizan automáticamente
+                        entre la web y la extensión del navegador.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+@if (showConfirmModal()) {
+<div class="modal-overlay" (click)="cancelConfirmModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+        @if (confirmAction() === 'install') {
+        <h2>¿Completar instalación?</h2>
+        <p>Confirma que has ejecutado el comando y completado la protección.</p>
+        <p class="modal-warning">
+            Después de confirmar, necesitarás solicitar acceso (espera de 2 horas) para volver a ver las guías.
+        </p>
+        } @else {
+        <h2>¿Desactivar protección?</h2>
+        <p>Esto desactivará toda la protección (extensión, incógnito y bloqueo de Tradovate). ¿Deseas continuar?</p>
+        }
+        <div class="modal-actions">
+            <button class="btn btn-cancel" (click)="cancelConfirmModal()">Cancelar</button>
+            <button class="btn btn-confirm" (click)="confirmSetup()">Confirmar</button>
+        </div>
+    </div>
+</div>
+}

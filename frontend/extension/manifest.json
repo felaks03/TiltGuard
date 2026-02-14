@@ -6,7 +6,8 @@
   "permissions": [
     "scripting",
     "storage",
-    "alarms"
+    "alarms",
+    "declarativeNetRequest"
   ],
   "host_permissions": [
     "https://tradovate.com/*",

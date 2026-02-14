@@ -83,6 +83,12 @@ export const routes: Routes = [
       ),
     canActivate: [AuthGuard],
   },
+  {
+    path: "guias",
+    loadComponent: () =>
+      import("./main/guias/guias.component").then((m) => m.GuiasComponent),
+    canActivate: [AuthGuard],
+  },
 
   // ============================================
   // RUTAS POR DEFECTO

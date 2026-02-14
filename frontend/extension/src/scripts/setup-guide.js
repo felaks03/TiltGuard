@@ -1,12 +1,103 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Verificar que chrome.runtime esté disponible
   if (!chrome || !chrome.runtime) {
-    // En modo web puro, solo inicializar sin verificar storage
     initializeGuide();
     return;
   }
 
-  // Verificar si el usuario completó la instalación
+  // Cargar estado desde la API del backend (sincronizado)
+  loadGuideStatusFromAPI();
+});
+
+const GUIDE_API_URL = "http://localhost:4000/api/guide-access";
+
+/**
+ * Obtiene el token JWT del storage local de la extensión
+ */
+async function getAuthToken() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(["tiltguardToken"], (result) => {
+      resolve(result.tiltguardToken || null);
+    });
+  });
+}
+
+/**
+ * Carga el estado de guías desde el backend API
+ */
+async function loadGuideStatusFromAPI() {
+  try {
+    const token = await getAuthToken();
+    if (!token) {
+      // Sin token, usar chrome.storage como fallback
+      loadFromChromeStorage();
+      return;
+    }
+
+    const response = await fetch(`${GUIDE_API_URL}/status`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+      loadFromChromeStorage();
+      return;
+    }
+
+    const data = await response.json();
+    if (!data.success) {
+      loadFromChromeStorage();
+      return;
+    }
+
+    const { setupCompleted, cooldownUntil, accessUntil } = data.data;
+    const now = Date.now();
+    const cooldownUntilMs = cooldownUntil
+      ? new Date(cooldownUntil).getTime()
+      : null;
+    const accessUntilMs = accessUntil ? new Date(accessUntil).getTime() : null;
+
+    // Sincronizar con chrome.storage
+    chrome.storage.sync.set({
+      setupGuideCompleted: setupCompleted || false,
+      cooldownUntil: cooldownUntilMs,
+      accessUntil: accessUntilMs,
+    });
+
+    initializeGuide();
+
+    if (setupCompleted) {
+      if (cooldownUntilMs && now < cooldownUntilMs) {
+        const blockContent = document.getElementById("accessBlockContent");
+        blockContent.innerHTML = `
+          <h2>⏳ Procesando solicitud...</h2>
+          <p>Por favor espera:</p>
+          <div class="access-timer">
+            <strong id="cooldownTime">--:--:--</strong>
+          </div>
+        `;
+        document.getElementById("accessBlockOverlay").style.display = "flex";
+        showCooldownTimerDisplay(cooldownUntilMs);
+      } else if (accessUntilMs && now < accessUntilMs) {
+        document.getElementById("accessBlockOverlay").style.display = "none";
+        startFreeAccessTimer(accessUntilMs);
+      } else {
+        showRequestAccessOverlay();
+      }
+    } else {
+      const overlay = document.getElementById("accessBlockOverlay");
+      if (overlay) {
+        overlay.style.display = "none";
+      }
+    }
+  } catch (error) {
+    loadFromChromeStorage();
+  }
+}
+
+/**
+ * Fallback: cargar estado desde chrome.storage si API no está disponible
+ */
+function loadFromChromeStorage() {
   chrome.storage.sync.get(
     ["setupGuideCompleted", "accessUntil", "cooldownUntil"],
     (result) => {
@@ -15,32 +106,27 @@ document.addEventListener("DOMContentLoaded", () => {
       const hasActiveAccess = result.accessUntil && now < result.accessUntil;
       const hasCooldown = result.cooldownUntil && now < result.cooldownUntil;
 
-      // Inicializar la guía en cualquier caso
       initializeGuide();
 
       if (isSetupCompleted) {
         if (hasCooldown) {
-          // El usuario está en cooldown, mostrar timer de cooldown
           const blockContent = document.getElementById("accessBlockContent");
           blockContent.innerHTML = `
           <h2>⏳ Procesando solicitud...</h2>
           <p>Por favor espera:</p>
           <div class="access-timer">
-            <strong id="cooldownTime">0:15</strong>
+            <strong id="cooldownTime">--:--:--</strong>
           </div>
         `;
           document.getElementById("accessBlockOverlay").style.display = "flex";
           showCooldownTimerDisplay(result.cooldownUntil);
         } else if (hasActiveAccess) {
-          // Timer activo - mostrar las guías libremente con timer de 20 segundos de visualización
           document.getElementById("accessBlockOverlay").style.display = "none";
           startFreeAccessTimer(result.accessUntil);
         } else {
-          // Setup completado pero sin acceso activo - mostrar overlay con "Solicitar acceso"
           showRequestAccessOverlay();
         }
       } else {
-        // Primera vez - sin restricciones
         const overlay = document.getElementById("accessBlockOverlay");
         if (overlay) {
           overlay.style.display = "none";
@@ -48,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     },
   );
-});
+}
 
 // Funciones para la modal de confirmación
 let pendingAction = null;
@@ -112,40 +198,12 @@ function showRequestAccessOverlay() {
   });
 }
 
-/**
- * Obtiene la hora actual del servidor usando worldtimeapi.org
- * Sincroniza el reloj del navegador con un servidor para evitar manipulaciones
- * @returns {Promise<number>} Timestamp en milisegundos
- */
-async function getServerTime() {
-  try {
-    const response = await fetch(
-      "https://worldtimeapi.org/api/timezone/Etc/UTC",
-      {
-        cache: "no-cache",
-      },
-    );
-
-    if (!response.ok) throw new Error("API error: " + response.status);
-
-    const data = await response.json();
-    const serverTime = new Date(data.utc_datetime).getTime();
-
-    return serverTime;
-  } catch (error) {
-    // Fallback: usar hora local
-    return Date.now();
-  }
-}
-
 function startCooldownTimer() {
-  // Timer 1: 10 segundos de cooldown (overlay visible con contador)
+  // Llama al API para solicitar acceso (2 horas de cooldown)
 
-  // Mostrar contador de acceso en la esquina superior derecha
   const timerDisplay = document.getElementById("accessTimer");
   if (timerDisplay) {
     timerDisplay.style.display = "flex";
-    // Actualizar label a "Cooldown"
     const timerLabel = timerDisplay.querySelector(".timer-label");
     if (timerLabel) {
       timerLabel.textContent = "⏳ Cooldown:";
@@ -154,69 +212,119 @@ function startCooldownTimer() {
 
   const blockContent = document.getElementById("accessBlockContent");
   blockContent.innerHTML = `
-    <h2>⏳ Procesando solicitud...</h2>
+    <h2>⏳ Solicitando acceso...</h2>
     <p>Por favor espera:</p>
     <div class="access-timer">
-      <strong id="cooldownTime">0:10</strong>
+      <strong id="cooldownTime">--:--:--</strong>
     </div>
   `;
 
-  // Obtener tiempo del servidor
-  getServerTime()
-    .then((serverNow) => {
-      const cooldownUntil = serverNow + 10 * 1000; // 10 segundos
-
-      // Guardar en storage para sincronización si se recarga la página
-      chrome.storage.sync.set({ cooldownUntil: cooldownUntil }, () => {
-        showCooldownTimerDisplay(cooldownUntil);
-      });
-    })
-    .catch((error) => {
-      // Fallback: usar hora local si API falla
+  // Llamar al API del backend
+  getAuthToken().then(async (token) => {
+    if (!token) {
+      // Fallback sin API: usar 2h localmente
       const now = Date.now();
-      const cooldownUntil = now + 10 * 1000;
+      const cooldownUntil = now + 2 * 60 * 60 * 1000; // 2 horas
       chrome.storage.sync.set({ cooldownUntil: cooldownUntil }, () => {
         showCooldownTimerDisplay(cooldownUntil);
       });
-    });
+      return;
+    }
+
+    try {
+      const response = await fetch(`${GUIDE_API_URL}/request-access`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+      if (data.success && data.data.cooldownUntil) {
+        const cooldownUntilMs = new Date(data.data.cooldownUntil).getTime();
+        chrome.storage.sync.set({ cooldownUntil: cooldownUntilMs }, () => {
+          showCooldownTimerDisplay(cooldownUntilMs);
+        });
+      } else {
+        // Error from API, fallback
+        const now = Date.now();
+        const cooldownUntil = now + 2 * 60 * 60 * 1000;
+        chrome.storage.sync.set({ cooldownUntil: cooldownUntil }, () => {
+          showCooldownTimerDisplay(cooldownUntil);
+        });
+      }
+    } catch (error) {
+      const now = Date.now();
+      const cooldownUntil = now + 2 * 60 * 60 * 1000;
+      chrome.storage.sync.set({ cooldownUntil: cooldownUntil }, () => {
+        showCooldownTimerDisplay(cooldownUntil);
+      });
+    }
+  });
 }
 
 function showCooldownTimerDisplay(cooldownUntil) {
   let intervalId = null;
 
-  async function updateCooldownDisplay() {
-    try {
-      // Obtener hora del servidor para máxima precisión
-      const serverNow = await getServerTime();
-      const remaining = cooldownUntil - serverNow;
+  function formatTime(ms) {
+    const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
 
-      // Actualizar ambos contadores (overlay y esquina superior)
-      const totalSeconds = Math.ceil(remaining / 1000);
-      const timeString = `0:${String(totalSeconds).padStart(2, "0")}`;
+  function updateCooldownDisplay() {
+    const now = Date.now();
+    const remaining = cooldownUntil - now;
 
-      // Contador en el overlay
-      const cooldownTimeEl = document.getElementById("cooldownTime");
-      if (cooldownTimeEl) {
-        cooldownTimeEl.textContent = timeString;
-      }
+    const timeString = formatTime(remaining);
 
-      // Contador en la esquina superior derecha
-      const timerValueEl = document.querySelector(".timer-value");
-      if (timerValueEl) {
-        timerValueEl.textContent = `${totalSeconds}s`;
-      }
+    // Contador en el overlay
+    const cooldownTimeEl = document.getElementById("cooldownTime");
+    if (cooldownTimeEl) {
+      cooldownTimeEl.textContent = timeString;
+    }
 
-      if (remaining <= 0) {
-        // Cooldown completado, iniciar acceso de 10 segundos
+    // Contador en la esquina superior derecha
+    const timerValueEl = document.querySelector(".timer-value");
+    if (timerValueEl) {
+      timerValueEl.textContent = timeString;
+    }
 
-        if (intervalId) clearInterval(intervalId);
+    if (remaining <= 0) {
+      if (intervalId) clearInterval(intervalId);
+      document.getElementById("accessBlockOverlay").style.display = "none";
 
-        document.getElementById("accessBlockOverlay").style.display = "none";
-
-        // Obtener hora del servidor para el nuevo timer
-        const now = await getServerTime();
-        const accessUntil = now + 5 * 1000; // 5 segundos de acceso
-
+      // Cooldown terminado → obtener accessUntil del backend
+      getAuthToken().then(async (token) => {
+        if (token) {
+          try {
+            // Re-fetch status — backend auto-grants 24h access when cooldown expires
+            const response = await fetch(`${GUIDE_API_URL}/status`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await response.json();
+            if (data.success && data.data.accessUntil) {
+              const accessUntilMs = new Date(data.data.accessUntil).getTime();
+              chrome.storage.sync.set(
+                {
+                  accessUntil: accessUntilMs,
+                  cooldownUntil: null,
+                },
+                () => {
+                  startFreeAccessTimer(accessUntilMs);
+                },
+              );
+              return;
+            }
+          } catch (e) {
+            // fallback below
+          }
+        }
+        // Fallback: 24 horas de acceso local
+        const accessUntil = Date.now() + 24 * 60 * 60 * 1000;
         chrome.storage.sync.set(
           {
             accessUntil: accessUntil,
@@ -226,138 +334,64 @@ function showCooldownTimerDisplay(cooldownUntil) {
             startFreeAccessTimer(accessUntil);
           },
         );
-        return;
-      }
-    } catch (error) {
-      // Fallback a hora local si falla la API
-      const now = Date.now();
-      const remaining = cooldownUntil - now;
-
-      const totalSeconds = Math.ceil(remaining / 1000);
-      const timeString = `0:${String(totalSeconds).padStart(2, "0")}`;
-
-      // Actualizar contador en overlay
-      const cooldownTimeEl = document.getElementById("cooldownTime");
-      if (cooldownTimeEl) {
-        cooldownTimeEl.textContent = timeString;
-      }
-
-      // Actualizar contador en esquina superior
-      const timerValueEl = document.querySelector(".timer-value");
-      if (timerValueEl) {
-        timerValueEl.textContent = `${totalSeconds}s`;
-      }
-
-      if (remaining <= 0) {
-        if (intervalId) clearInterval(intervalId);
-        document.getElementById("accessBlockOverlay").style.display = "none";
-        const accessUntil = now + 5 * 1000;
-        chrome.storage.sync.set({ accessUntil: accessUntil }, () => {
-          startFreeAccessTimer(accessUntil);
-        });
-        return;
-      }
+      });
+      return;
     }
   }
 
-  // Actualizar cada 100ms para mejor precisión
   updateCooldownDisplay();
-  intervalId = setInterval(updateCooldownDisplay, 100);
+  intervalId = setInterval(updateCooldownDisplay, 1000);
 }
 
 function startFreeAccessTimer(accessUntil) {
-  // Timer 2: 10 segundos de acceso libre (overlay oculto)
+  // Timer de acceso libre (24 horas) — overlay oculto
 
-  // Mostrar contador de acceso en la esquina superior derecha
   const timerDisplay = document.getElementById("accessTimer");
+
+  function formatTime(ms) {
+    const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
 
   if (timerDisplay) {
     timerDisplay.style.display = "flex";
-
-    // Actualizar label a "Acceso"
     const timerLabel = timerDisplay.querySelector(".timer-label");
     if (timerLabel) {
       timerLabel.textContent = "⏱️ Acceso:";
     }
-
-    // Set initial value synchronously to avoid blank counter
     const timerValueEl = timerDisplay.querySelector(".timer-value");
     if (timerValueEl) {
-      const now = Date.now();
-      const remaining = accessUntil - now;
-      const seconds = Math.max(0, Math.ceil(remaining / 1000));
-      timerValueEl.textContent = `${seconds}s`;
+      timerValueEl.textContent = formatTime(accessUntil - Date.now());
     }
-  } else {
-    // Element not found
   }
 
   let intervalId = null;
 
-  async function updateAccessDisplay() {
-    try {
-      // Obtener hora del servidor para máxima precisión
-      const serverNow = await getServerTime();
-      const remaining = accessUntil - serverNow;
+  function updateAccessDisplay() {
+    const now = Date.now();
+    const remaining = accessUntil - now;
 
-      // Actualizar contador visible
-      const timerValueEl = document.querySelector(".timer-value");
-      if (timerValueEl) {
-        const seconds = Math.max(0, Math.ceil(remaining / 1000));
-        timerValueEl.textContent = `${seconds}s`;
-      } else {
-        // timer-value element not found
+    const timerValueEl = document.querySelector(".timer-value");
+    if (timerValueEl) {
+      timerValueEl.textContent = formatTime(remaining);
+    }
+
+    if (remaining <= 0) {
+      if (intervalId) clearInterval(intervalId);
+      if (timerDisplay) {
+        timerDisplay.style.display = "none";
       }
-
-      if (remaining <= 0) {
-        // Acceso expirado, cerrar ventana
-
-        if (intervalId) {
-          clearInterval(intervalId);
-        }
-
-        // Ocultar contador
-        if (timerDisplay) {
-          timerDisplay.style.display = "none";
-        }
-
-        chrome.storage.sync.remove(["accessUntil", "cooldownUntil"], () => {
-          setTimeout(() => {
-            window.close();
-          }, 500);
-        });
-        return;
-      }
-    } catch (error) {
-      // Fallback a hora local si falla la API
-      const now = Date.now();
-      const remaining = accessUntil - now;
-
-      // Actualizar contador con fallback
-      const timerValueEl = document.querySelector(".timer-value");
-      if (timerValueEl) {
-        const seconds = Math.max(0, Math.ceil(remaining / 1000));
-        timerValueEl.textContent = `${seconds}s`;
-      }
-
-      if (remaining <= 0) {
-        if (intervalId) clearInterval(intervalId);
-        if (timerDisplay) {
-          timerDisplay.style.display = "none";
-        }
-        chrome.storage.sync.remove(["accessUntil", "cooldownUntil"], () => {
-          setTimeout(() => {
-            window.close();
-          }, 500);
-        });
-        return;
-      }
+      chrome.storage.sync.remove(["accessUntil", "cooldownUntil"], () => {
+        showRequestAccessOverlay();
+      });
+      return;
     }
   }
 
-  // Actualizar inmediatamente y luego cada segundo
-  updateAccessDisplay().catch(() => {});
-
+  updateAccessDisplay();
   intervalId = setInterval(updateAccessDisplay, 1000);
 }
 
@@ -518,29 +552,59 @@ function showCooldownScreen(cooldownUntil) {
 function completeSetup() {
   const mainType = getCurrentMainType();
 
-  if (mainType === "install") {
-    // Guardar que completó la instalación y habilitar botón de desinstalación
-    chrome.storage.sync.set({ setupGuideCompleted: true }, () => {
-      // Habilitar botón de desinstalación
-      const uninstallBtn = document.querySelector(
-        '.main-btn[data-main-type="uninstall"]',
-      );
-      if (uninstallBtn) {
-        uninstallBtn.disabled = false;
+  getAuthToken().then(async (token) => {
+    if (mainType === "install") {
+      // Llamar al API para marcar setup como completado
+      if (token) {
+        try {
+          await fetch(`${GUIDE_API_URL}/complete-setup`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+        } catch (e) {
+          // Continue with local storage fallback
+        }
       }
 
-      // Cerrar la ventana después de guardar
-      setTimeout(() => {
-        window.close();
-      }, 500);
-    });
-  } else if (mainType === "uninstall") {
-    // Remover el bloqueo
-    chrome.storage.sync.remove(["setupGuideCompleted", "accessUntil"], () => {
-      alert("Bloqueo desactivado. Ahora puedes cerrar esta ventana.");
-      window.close();
-    });
-  }
+      chrome.storage.sync.set({ setupGuideCompleted: true }, () => {
+        const uninstallBtn = document.querySelector(
+          '.main-btn[data-main-type="uninstall"]',
+        );
+        if (uninstallBtn) {
+          uninstallBtn.disabled = false;
+        }
+        setTimeout(() => {
+          window.close();
+        }, 500);
+      });
+    } else if (mainType === "uninstall") {
+      // Llamar al API para deshacer setup
+      if (token) {
+        try {
+          await fetch(`${GUIDE_API_URL}/undo-setup`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+        } catch (e) {
+          // Continue with local storage fallback
+        }
+      }
+
+      chrome.storage.sync.remove(
+        ["setupGuideCompleted", "accessUntil", "cooldownUntil"],
+        () => {
+          alert("Bloqueo desactivado. Ahora puedes cerrar esta ventana.");
+          window.close();
+        },
+      );
+    }
+  });
 }
 
 function completeInstallation() {
