@@ -33,7 +33,7 @@ show_menu() {
     echo -e "${GREEN}════════════════════════════════════════${NC}"
     echo -e "${BLUE}TiltGuard - Gestor de Servicios${NC}"
     echo -e "${GREEN}════════════════════════════════════════${NC}"
-    echo "1) Matar puertos 4200 y 5000"
+    echo "1) Matar puertos 4200 y 3000"
     echo "2) Iniciar proyecto (Frontend + Backend + MongoDB)"
     echo "0) Salir"
     echo -e "${GREEN}════════════════════════════════════════${NC}"
@@ -63,7 +63,7 @@ start_project() {
     # Liberar puertos antes de arrancar
     echo -e "${BLUE}[Sistema]${NC} Liberando puertos necesarios..."
     kill_port 4200
-    kill_port 5000
+    kill_port 3000
 
     # ───── MongoDB Docker ─────
     echo ""
@@ -91,7 +91,7 @@ start_project() {
         cp .env.example .env
     fi
 
-    echo -e "${GREEN}[Backend]${NC} Iniciando en puerto 5000..."
+    echo -e "${GREEN}[Backend]${NC} Iniciando en puerto 3000..."
     npm run dev &
     BACKEND_PID=$!
 
@@ -138,10 +138,10 @@ start_project() {
 # Matar puertos manualmente
 # ─────────────────────────────────────────────
 kill_ports() {
-    echo -e "${YELLOW}Liberando puertos 4200 y 5000...${NC}"
+    echo -e "${YELLOW}Liberando puertos 4200 y 3000...${NC}"
     echo ""
     kill_port 4200
-    kill_port 5000
+    kill_port 3000
     echo ""
     echo -e "${GREEN}✓ Puertos liberados${NC}"
 }
