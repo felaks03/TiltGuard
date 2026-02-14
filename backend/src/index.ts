@@ -25,7 +25,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:4200",
-      "http://localhost:3000",
+      "http://localhost:4000",
       /^chrome-extension:\/\//,
     ],
     credentials: true,
@@ -49,5 +49,5 @@ app.use((_err: any, _req: Request, res: Response, _next: NextFunction) => {
   res.status(500).json({ error: "Something went wrong!" });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {});

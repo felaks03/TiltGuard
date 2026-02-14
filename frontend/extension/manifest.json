@@ -13,7 +13,7 @@
     "https://www.tradovate.com/*",
     "https://trader.tradovate.com/*",
     "https://worldtimeapi.org/*",
-    "http://localhost:3000/*"
+    "http://localhost:4000/*"
   ],
   "background": {
     "service_worker": "src/scripts/background.js"

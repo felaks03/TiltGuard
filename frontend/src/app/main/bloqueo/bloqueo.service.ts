@@ -14,7 +14,7 @@ export interface BlockingStatus {
   providedIn: "root",
 })
 export class BloqueoService {
-  private apiUrl = "http://localhost:3000/api/blocking";
+  private apiUrl = "http://localhost:4000/api/blocking";
   private http = inject(HttpClient);
 
   /**

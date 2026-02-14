@@ -1,5 +1,5 @@
 // Service Worker para la extensión TiltGuard
-const API_URL = "http://localhost:3000/api";
+const API_URL = "http://localhost:4000/api";
 
 chrome.runtime.onInstalled.addListener(() => {
   // Crear alarma para polling cada 60 segundos

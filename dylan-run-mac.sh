@@ -43,7 +43,7 @@ kill_port() {
     # Verificación final
     if lsof -ti :${PORT} &>/dev/null; then
         echo -e "${RED}[ERROR]${NC} Puerto $PORT NO se pudo liberar"
-        if [ "$PORT" = "3000" ]; then
+        if [ "$PORT" = "4000" ]; then
             echo -e "${YELLOW}[INFO]${NC} Desactiva AirPlay: Ajustes > General > AirDrop y Handoff > AirPlay Receiver"
         fi
     else
@@ -63,7 +63,7 @@ echo ""
 print_info "Limpiando procesos anteriores..."
 echo ""
 kill_port 4200
-kill_port 3000
+kill_port 4000
 kill_port 27017
 kill_port 8081
 
@@ -176,18 +176,18 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
-# Crear/forzar .env con puerto 3000 (el 5000 lo usa AirPlay en macOS)
-print_info "Configurando .env del backend (puerto 3000)..."
+# Crear/forzar .env con puerto 4000 (el 5000 lo usa AirPlay en macOS)
+print_info "Configurando .env del backend (puerto 4000)..."
 cat > .env << 'ENVEOF'
-PORT=3000
+PORT=4000
 MONGODB_URI=mongodb://admin:password123@localhost:27017/tiltguard?authSource=admin
 JWT_SECRET=your_jwt_secret_key_here
 NODE_ENV=development
 FRONTEND_URL=http://localhost:4200
 ENVEOF
-print_ok "Archivo .env del backend configurado con PORT=3000"
+print_ok "Archivo .env del backend configurado con PORT=4000"
 
-print_ok "Iniciando backend en puerto 3000..."
+print_ok "Iniciando backend en puerto 4000..."
 npm run dev &
 BACKEND_PID=$!
 sleep 2
@@ -242,7 +242,7 @@ echo -e "${GREEN}========================================${NC}"
 echo ""
 echo "URLs:"
 echo "  - Frontend:      http://localhost:4200"
-echo "  - Backend:       http://localhost:3000"
+echo "  - Backend:       http://localhost:4000"
 echo "  - MongoDB:       localhost:27017"
 echo "  - Mongo Express: http://localhost:8081"
 echo ""
