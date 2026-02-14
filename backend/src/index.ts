@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import userRoutes from "./routes/users";
 import authRoutes from "./routes/auth";
+import blockingRoutes from "./routes/blocking";
 
 dotenv.config();
 
@@ -20,13 +21,23 @@ mongoose.connect(MONGODB_URI).catch((_err) => {
 });
 
 // Middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:4200",
+      "http://localhost:3000",
+      /^chrome-extension:\/\//,
+    ],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/usuarios", userRoutes);
+app.use("/api/blocking", blockingRoutes);
 
 // Health check
 app.get("/api/health", (_req: Request, res: Response) => {

@@ -12,45 +12,84 @@
   <div class="container">
     <h1>TiltGuard</h1>
 
-    <div class="guide">
-      <div class="step">
-        <h3>Paso 1</h3>
-        <a id="link1" class="step-link">
-          Ir a Tradovate →
-        </a>
-      </div>
+    <!-- ==========================================
+         AUTH SCREEN - Login/Register (shown when not logged in)
+         ========================================== -->
+    <div id="authScreen" class="auth-screen">
+      <div class="auth-card">
+        <p class="auth-subtitle">Inicia sesión para continuar</p>
 
-      <div class="step">
-        <h3>Paso 2</h3>
-        <div class="step-with-help">
-          <p class="message">Configura tus Settings</p>
-          <button id="helpBtn" class="help-btn" title="Ver guía">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="11"></circle>
-              <path d="M12 16v-4"></path>
-              <circle cx="12" cy="7.5" r="0.5" fill="currentColor"></circle>
-            </svg>
-          </button>
+        <div class="auth-form-group">
+          <label for="authEmail">Email</label>
+          <input type="email" id="authEmail" class="auth-input" placeholder="tu@email.com" />
         </div>
-      </div>
 
-      <div class="step">
-        <h3>Paso 3</h3>
-        <select id="blockDuration" class="select-duration">
-          <option value="">Selecciona duración</option>
-          <option value="day">Día</option>
-          <option value="week">Semana</option>
-          <option value="month">Mes</option>
-        </select>
-        <button id="toggleBlockBtn" class="btn btn-toggle" disabled>Bloquear Risk Settings</button>
-        <p class="status" id="status">Estado: Desbloqueado ✗</p>
-        <p class="countdown" id="countdown"></p>
+        <div class="auth-form-group">
+          <label for="authPassword">Contraseña</label>
+          <input type="password" id="authPassword" class="auth-input" placeholder="Tu contraseña" />
+        </div>
+
+        <p id="authError" class="auth-error"></p>
+
+        <button id="authLoginBtn" class="btn-submit">Iniciar Sesión</button>
+
+        <p class="register-link">
+          ¿No tienes cuenta? <a href="#" id="registerLink">Regístrate aquí</a>
+        </p>
       </div>
     </div>
 
-    <div class="advanced-setup">
-      <a href="#" id="advancedSetupBtn" class="setup-link">🔒 Protección Avanzada</a>
+    <!-- ==========================================
+         MAIN SCREEN - App content (shown when logged in)
+         ========================================== -->
+    <div id="mainScreen" class="main-screen" style="display:none;">
+
+      <!-- User bar -->
+      <div class="user-bar">
+        <span id="authUserEmail" class="user-email">usuario</span>
+        <button id="authLogoutBtn" class="btn-logout">Salir</button>
+      </div>
+
+      <div class="guide">
+        <div class="step">
+          <h3>Paso 1</h3>
+          <a id="link1" class="step-link">
+            Ir a Tradovate →
+          </a>
+        </div>
+
+        <div class="step">
+          <h3>Paso 2</h3>
+          <div class="step-with-help">
+            <p class="message">Configura tus Settings</p>
+            <button id="helpBtn" class="help-btn" title="Ver guía">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="11"></circle>
+                <path d="M12 16v-4"></path>
+                <circle cx="12" cy="7.5" r="0.5" fill="currentColor"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>Paso 3</h3>
+          <select id="blockDuration" class="select-duration">
+            <option value="">Selecciona duración</option>
+            <option value="day">Día</option>
+            <option value="week">Semana</option>
+            <option value="month">Mes</option>
+          </select>
+          <button id="toggleBlockBtn" class="btn btn-toggle" disabled>Bloquear Risk Settings</button>
+          <p class="status" id="status">Estado: Desbloqueado ✗</p>
+          <p class="countdown" id="countdown"></p>
+        </div>
+      </div>
+
+      <div class="advanced-setup">
+        <a href="#" id="advancedSetupBtn" class="setup-link">🔒 Protección Avanzada</a>
+      </div>
     </div>
   </div>
 

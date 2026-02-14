@@ -1,0 +1,125 @@
+<div class="bloqueo-page">
+    <div class="bloqueo-header">
+        <h1>🔒 Bloqueo de Risk Settings</h1>
+        <p class="subtitle">Protege tu configuración de riesgo en Tradovate</p>
+    </div>
+
+    <!-- Error -->
+    @if (errorMessage()) {
+    <div class="alert alert-error">
+        <span>⚠️ {{ errorMessage() }}</span>
+    </div>
+    }
+
+    <!-- Loading -->
+    @if (isLoading()) {
+    <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Cargando...</p>
+    </div>
+    }
+
+    <div class="bloqueo-content">
+        <!-- Paso 1 -->
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-body">
+                <h3>Abre Tradovate</h3>
+                <a href="https://trader.tradovate.com" target="_blank" rel="noopener" class="step-link">
+                    Ir a Tradovate →
+                </a>
+            </div>
+        </div>
+
+        <!-- Paso 2 -->
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-body">
+                <h3>Configura tus Settings</h3>
+                <p class="step-description">Ajusta tu configuración de riesgo antes de activar el bloqueo.</p>
+            </div>
+        </div>
+
+        <!-- Paso 3: Bloqueo -->
+        <div class="step-card" [class.step-active]="isBlocked()">
+            <div class="step-number">3</div>
+            <div class="step-body">
+                <h3>Bloquear Risk Settings</h3>
+
+                @if (!isBlocked()) {
+                <div class="blocking-controls">
+                    <select class="duration-select" [ngModel]="selectedDuration()"
+                        (ngModelChange)="selectedDuration.set($event)">
+                        <option value="">Selecciona duración</option>
+                        <option value="day">Día</option>
+                        <option value="week">Semana</option>
+                        <option value="month">Mes</option>
+                    </select>
+
+                    <button class="btn btn-block" [disabled]="!canActivate()" (click)="requestActivation()">
+                        @if (isLoading()) {
+                        Activando...
+                        } @else {
+                        🔒 Bloquear Risk Settings
+                        }
+                    </button>
+                </div>
+
+                <div class="status-badge status-off">
+                    <span class="status-dot"></span>
+                    Estado: Desbloqueado
+                </div>
+                } @else {
+                <div class="blocked-state">
+                    <div class="status-badge status-on">
+                        <span class="status-dot"></span>
+                        Estado: Bloqueado ✓
+                    </div>
+
+                    @if (countdownText()) {
+                    <div class="countdown-box">
+                        <span class="countdown-label">Tiempo restante</span>
+                        <span class="countdown-timer">{{ countdownText() }}</span>
+                    </div>
+                    }
+
+                    <p class="blocked-notice">
+                        El bloqueo se desactivará automáticamente cuando expire el tiempo.
+                        No es posible desbloquearlo manualmente.
+                    </p>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Info de sincronización -->
+        <div class="sync-info">
+            <div class="sync-icon">🔗</div>
+            <div class="sync-text">
+                <h4>Sincronización con la extensión</h4>
+                <p>
+                    Si tienes la extensión TiltGuard instalada y has iniciado sesión,
+                    el bloqueo se sincronizará automáticamente entre la web y la extensión.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación -->
+@if (showModal()) {
+<div class="modal-overlay" (click)="cancelModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+        <h2>⚠️ ¿Estás seguro?</h2>
+        <p>{{ confirmationMessage() }}</p>
+        <p class="modal-warning">
+            Una vez activado, <strong>no podrás desbloquear manualmente</strong>.
+            Deberás esperar a que expire.
+        </p>
+        <div class="modal-actions">
+            <button class="btn btn-cancel" (click)="cancelModal()">Cancelar</button>
+            <button class="btn btn-confirm" (click)="confirmActivation()">Confirmar Bloqueo</button>
+        </div>
+    </div>
+</div>
+}

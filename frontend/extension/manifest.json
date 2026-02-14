@@ -5,13 +5,15 @@
   "description": "Bloquea elementos específicos en Tradovate.com",
   "permissions": [
     "scripting",
-    "storage"
+    "storage",
+    "alarms"
   ],
   "host_permissions": [
     "https://tradovate.com/*",
     "https://www.tradovate.com/*",
     "https://trader.tradovate.com/*",
-    "https://worldtimeapi.org/*"
+    "https://worldtimeapi.org/*",
+    "http://localhost:3000/*"
   ],
   "background": {
     "service_worker": "src/scripts/background.js"
