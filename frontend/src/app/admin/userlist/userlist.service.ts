@@ -7,7 +7,7 @@ export interface Usuario {
   nombre: string;
   email: string;
   password?: string;
-  rol: "usuario" | "admin";
+  rol: "usuario" | "usuario-prime" | "admin";
   activo: boolean;
   avatar?: string | null;
   telefono?: string | null;
@@ -29,7 +29,7 @@ export interface UsuariosResponse {
 })
 export class UserlistService {
   private http = inject(HttpClient);
-  private apiUrl = "http://localhost:5000/api/usuarios";
+  private apiUrl = "http://localhost:3000/api/usuarios";
 
   usersGetAll(): Observable<UsuariosResponse> {
     return this.http.get<UsuariosResponse>(this.apiUrl);
@@ -72,7 +72,7 @@ export class UserlistService {
    * POST /api/auth/impersonate/:userId
    */
   impersonate(userId: string): Observable<any> {
-    const authApiUrl = "http://localhost:5000/api/auth";
+    const authApiUrl = "http://localhost:3000/api/auth";
     return this.http.post(`${authApiUrl}/impersonate/${userId}`, {});
   }
 
@@ -81,7 +81,7 @@ export class UserlistService {
    * POST /api/auth/stop-impersonation
    */
   stopImpersonation(): Observable<any> {
-    const authApiUrl = "http://localhost:5000/api/auth";
+    const authApiUrl = "http://localhost:3000/api/auth";
     return this.http.post(`${authApiUrl}/stop-impersonation`, {});
   }
 }

@@ -49,15 +49,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Validar longitud de contraseña
-    if (password.length < 6) {
-      res.status(400).json({
-        success: false,
-        error: "La contraseña debe tener al menos 6 caracteres",
-      });
-      return;
-    }
-
     // Verificar si el usuario ya existe
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {

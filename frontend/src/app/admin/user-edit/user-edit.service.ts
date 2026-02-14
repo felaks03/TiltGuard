@@ -13,7 +13,7 @@ export interface UsuarioResponse {
 })
 export class UserEditService {
   private http = inject(HttpClient);
-  private apiUrl = "http://localhost:5000/api/usuarios";
+  private apiUrl = "http://localhost:3000/api/usuarios";
 
   usersGetById(id: string): Observable<UsuarioResponse> {
     return this.http.get<UsuarioResponse>(`${this.apiUrl}/${id}`);

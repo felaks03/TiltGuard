@@ -49,5 +49,5 @@ app.use((_err: any, _req: Request, res: Response, _next: NextFunction) => {
   res.status(500).json({ error: "Something went wrong!" });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {});
