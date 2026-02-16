@@ -1,0 +1,76 @@
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-card-header">
+            <button class="back-btn" (click)="goBack()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                </svg>
+            </button>
+            <h2>Editar perfil</h2>
+        </div>
+
+        @if (success) {
+        <div class="alert alert-success">
+            Perfil actualizado correctamente.
+        </div>
+        }
+
+        @if (errorMessage) {
+        <div class="alert alert-error">
+            {{ errorMessage }}
+        </div>
+        }
+
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input id="nombre" type="text" formControlName="nombre" placeholder="Tu nombre" />
+                @if (profileForm.get('nombre')?.invalid && profileForm.get('nombre')?.touched) {
+                <span class="error-text">El nombre es obligatorio (mín. 2 caracteres).</span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input id="email" type="email" formControlName="email" placeholder="tu@email.com" />
+                @if (profileForm.get('email')?.invalid && profileForm.get('email')?.touched) {
+                <span class="error-text">Introduce un email válido.</span>
+                }
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input id="telefono" type="text" formControlName="telefono" placeholder="Tu teléfono" />
+                </div>
+
+                <div class="form-group">
+                    <label for="ciudad">Ciudad</label>
+                    <input id="ciudad" type="text" formControlName="ciudad" placeholder="Tu ciudad" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <input id="direccion" type="text" formControlName="direccion" placeholder="Tu dirección" />
+                </div>
+
+                <div class="form-group">
+                    <label for="pais">País</label>
+                    <input id="pais" type="text" formControlName="pais" placeholder="Tu país" />
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-save" [disabled]="profileForm.invalid || loading">
+                    @if (loading) {
+                    Guardando...
+                    } @else {
+                    Guardar cambios
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

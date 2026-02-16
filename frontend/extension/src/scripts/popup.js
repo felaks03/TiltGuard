@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const authLoginBtn = document.getElementById("authLoginBtn");
   const authError = document.getElementById("authError");
   const registerLink = document.getElementById("registerLink");
+  const guestModeBtn = document.getElementById("guestModeBtn");
 
   // Main screen elements
   const authUserEmail = document.getElementById("authUserEmail");
@@ -168,6 +169,41 @@ document.addEventListener("DOMContentLoaded", () => {
   registerLink.addEventListener("click", (e) => {
     e.preventDefault();
     chrome.tabs.create({ url: "http://localhost:4200/register" });
+  });
+
+  // Guest mode - Temporary session without login
+  guestModeBtn.addEventListener("click", async () => {
+    guestModeBtn.disabled = true;
+    guestModeBtn.textContent = "Cargando...";
+
+    try {
+      // Create a guest session with 1 hour expiration
+      const guestToken = "guest_" + Math.random().toString(36).substr(2, 9);
+      const guestEmail = "guest@temporary";
+
+      // Save guest session
+      await saveToken(guestToken, guestEmail);
+
+      // Update UI
+      authUserEmail.textContent = `⏱ ${guestEmail} (temporal)`;
+      showScreen("main");
+      loadStatus();
+
+      // Auto-logout after 1 hour
+      setTimeout(async () => {
+        await clearToken();
+        showScreen("auth");
+        authEmail.value = "";
+        authPassword.value = "";
+        hideAuthError();
+      }, 3600000); // 1 hour in milliseconds
+    } catch {
+      authError.textContent = "Error al iniciar sesión temporal";
+      authError.style.display = "block";
+    }
+
+    guestModeBtn.disabled = false;
+    guestModeBtn.textContent = "Usar sin login (Temporal)";
   });
 
   // Logout

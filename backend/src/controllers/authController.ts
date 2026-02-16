@@ -206,6 +206,10 @@ export const getCurrentUser = async (
         nombre: user.nombre,
         email: user.email,
         rol: user.rol,
+        telefono: user.telefono,
+        direccion: user.direccion,
+        ciudad: user.ciudad,
+        pais: user.pais,
       },
     });
   } catch (error) {
@@ -213,6 +217,88 @@ export const getCurrentUser = async (
     res.status(500).json({
       success: false,
       error: err.message || "Error al obtener usuario",
+    });
+  }
+};
+
+/**
+ * PUT /api/auth/profile
+ * Actualizar perfil del usuario autenticado
+ * Requiere: Token JWT en header Authorization
+ * Body: { nombre?, email?, telefono?, direccion?, ciudad?, pais? }
+ */
+export const updateProfile = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = (req as any).userId;
+
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        error: "No autorizado",
+      });
+      return;
+    }
+
+    const { nombre, email, telefono, direccion, ciudad, pais } = req.body;
+
+    // Construir objeto de actualización solo con los campos permitidos
+    const updateData: any = {};
+    if (nombre !== undefined) updateData.nombre = nombre.trim();
+    if (email !== undefined) updateData.email = email.toLowerCase().trim();
+    if (telefono !== undefined) updateData.telefono = telefono || null;
+    if (direccion !== undefined) updateData.direccion = direccion || null;
+    if (ciudad !== undefined) updateData.ciudad = ciudad || null;
+    if (pais !== undefined) updateData.pais = pais || null;
+
+    // Si se cambia el email, verificar que no esté en uso
+    if (updateData.email) {
+      const existingUser = await User.findOne({
+        email: updateData.email,
+        _id: { $ne: userId },
+      });
+      if (existingUser) {
+        res.status(400).json({
+          success: false,
+          error: "El email ya está en uso por otro usuario",
+        });
+        return;
+      }
+    }
+
+    const user = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        error: "Usuario no encontrado",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        nombre: user.nombre,
+        email: user.email,
+        rol: user.rol,
+        telefono: user.telefono,
+        direccion: user.direccion,
+        ciudad: user.ciudad,
+        pais: user.pais,
+      },
+    });
+  } catch (error) {
+    const err = error as any;
+    res.status(400).json({
+      success: false,
+      error: err.message || "Error al actualizar perfil",
     });
   }
 };

@@ -1,12 +1,12 @@
 {
   "manifest_version": 3,
   "name": "TiltGuard",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Bloquea elementos específicos en Tradovate.com",
   "permissions": [
-    "scripting",
     "storage",
-    "alarms"
+    "alarms",
+    "declarativeNetRequest"
   ],
   "host_permissions": [
     "https://tradovate.com/*",

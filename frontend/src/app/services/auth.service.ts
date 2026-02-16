@@ -163,6 +163,32 @@ export class AuthService {
   }
 
   /**
+   * Actualiza el perfil del usuario autenticado
+   * PUT /api/auth/profile
+   *
+   * Parámetros (todos opcionales):
+   * - nombre: string
+   * - email: string
+   * - telefono: string
+   * - direccion: string
+   * - ciudad: string
+   * - pais: string
+   */
+  updateProfile(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/profile`, data).pipe(
+      tap((response: any) => {
+        if (response.user) {
+          // Actualiza los datos del usuario en localStorage y BehaviorSubject
+          const currentUser = this.currentUserSubject.value;
+          const updatedUser = { ...currentUser, ...response.user };
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+          this.currentUserSubject.next(updatedUser);
+        }
+      }),
+    );
+  }
+
+  /**
    * Suplanta a otro usuario (solo para admins)
    * POST /api/auth/impersonate/:userId
    *

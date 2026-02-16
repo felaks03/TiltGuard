@@ -1,5 +1,5 @@
 <!-- Banner de impersonación -->
-@if (isImpersonating) {
+@if (isImpersonating && !isAuthPage) {
 <div class="impersonation-banner">
   <div class="banner-content">
     <span class="banner-text">
