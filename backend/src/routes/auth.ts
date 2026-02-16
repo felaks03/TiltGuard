@@ -3,6 +3,7 @@ import {
   register,
   login,
   getCurrentUser,
+  updateProfile,
   impersonate,
   stopImpersonation,
 } from "../controllers/authController";
@@ -33,6 +34,15 @@ router.post("/login", login);
  * Response: { user: { id, nombre, email, rol } }
  */
 router.get("/me", verifyToken, getCurrentUser);
+
+/**
+ * PUT /api/auth/profile
+ * Actualizar perfil del usuario autenticado
+ * Requiere: Token JWT válido en header Authorization
+ * Body: { nombre?, email?, telefono?, direccion?, ciudad?, pais? }
+ * Response: { user: { id, nombre, email, rol, telefono, direccion, ciudad, pais } }
+ */
+router.put("/profile", verifyToken, updateProfile);
 
 /**
  * POST /api/auth/impersonate/:userId
