@@ -1,9 +1,10 @@
-<nav class="sidebar" [class.closed]="!isOpen">
+<nav class="sidebar" [class.closed]="!isOpen()">
     <button class="toggle-btn" (click)="toggleSidebar()">
-        {{ isOpen ? '✕' : '☰' }}
+        {{ isOpen() ? '✕' : '☰' }}
     </button>
-    <ul *ngIf="isAdmin()">
-        <li><a routerLink="/admin/user-list">📋 Lista de Usuarios</a></li>
-        <li><a routerLink="/admin">📊 Dashboard</a></li>
+    @if (isAdmin()) {
+    <ul>
+        <li><a routerLink="/admin/user-list">Lista de Usuarios</a></li>
     </ul>
+    }
 </nav>
