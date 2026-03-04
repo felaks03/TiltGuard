@@ -49,11 +49,29 @@
     font-size: 14px;
     font-weight: 500;
     border-radius: 8px;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 
     svg {
+      flex-shrink: 0;
       opacity: 0.6;
       transition: opacity 0.2s ease;
+    }
+
+    // Reserve bold width to prevent layout shift on active
+    span {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      &::after {
+        content: attr(data-text);
+        font-weight: 600;
+        height: 0;
+        overflow: hidden;
+        visibility: hidden;
+        pointer-events: none;
+      }
     }
 
     &:hover {
