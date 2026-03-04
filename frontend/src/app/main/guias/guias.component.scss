@@ -3,16 +3,12 @@
 // ==========================================
 
 .guias-page {
-  margin-left: 250px;
   margin-top: 20px;
   padding: 30px;
   max-width: 850px;
-  transition: margin-left 0.3s ease;
+  margin-left: auto;
+  margin-right: auto;
   position: relative;
-
-  :host-context(.sidebar-closed) & {
-    margin-left: 60px;
-  }
 }
 
 // Header
@@ -100,17 +96,13 @@
   top: 0;
   right: 0;
   bottom: 0;
-  left: 250px;
+  left: 0;
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 900;
   animation: fadeIn 0.3s ease;
-
-  :host-context(.sidebar-closed) & {
-    left: 60px;
-  }
 }
 
 // Blur effect on content behind overlay

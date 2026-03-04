@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "TiltGuard Frontend - Landing Page and User Registration",
     "engines": {
-        "node": ">=25.0.0",
+        "node": ">=24.0.0",
         "npm": ">=10.0.0"
     },
     "scripts": {
@@ -34,5 +34,8 @@
         "@angular/compiler-cli": "^21.0.0",
         "@types/node": "^22.0.0",
         "typescript": "~5.9.0"
+    },
+    "overrides": {
+        "serialize-javascript": "^7.0.4"
     }
 }
