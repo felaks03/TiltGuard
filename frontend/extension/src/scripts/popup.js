@@ -37,6 +37,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // ==========================================
   // Auth helpers
   // ==========================================
+  function isGuestSession() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(["tiltguardToken"], (r) => {
+        resolve(r.tiltguardToken && r.tiltguardToken.startsWith("guest_"));
+      });
+    });
+  }
+
   function showAuthError(msg) {
     authError.textContent = msg;
     authError.style.display = "block";
@@ -289,13 +297,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function loadStatus() {
-    const { token } = await getToken();
-    if (token) {
-      const loaded = await loadStatusFromBackend();
-      if (loaded) return;
+    const guest = await isGuestSession();
+
+    // Guest sessions: only use local chrome.storage, never call backend
+    if (!guest) {
+      const { token } = await getToken();
+      if (token) {
+        const loaded = await loadStatusFromBackend();
+        if (loaded) return;
+      }
     }
 
-    // Fallback: chrome.storage.sync
+    // Fallback: chrome.storage.sync (also used for guest sessions)
     chrome.storage.sync.get(["blockRiskSettings", "blockUntil"], (result) => {
       const isBlocked = result.blockRiskSettings || false;
       const blockUntil = result.blockUntil;
@@ -336,14 +349,17 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
           let blockUntil;
 
-          const { token } = await getToken();
-          if (token) {
-            const result = await apiCall("/blocking/activate", {
-              method: "POST",
-              body: JSON.stringify({ duration }),
-            });
-            if (result && result.success) {
-              blockUntil = new Date(result.data.blockUntil).getTime();
+          const guest = await isGuestSession();
+          if (!guest) {
+            const { token } = await getToken();
+            if (token) {
+              const result = await apiCall("/blocking/activate", {
+                method: "POST",
+                body: JSON.stringify({ duration }),
+              });
+              if (result && result.success) {
+                blockUntil = new Date(result.data.blockUntil).getTime();
+              }
             }
           }
 
